@@ -33,7 +33,8 @@ const Intro = ({navigation}) => {
     },
     {
       key: 2,
-      title: 'Acompanhe, atenda chamados, contribua com registros e muito mais!',
+      title:
+        'Acompanhe, atenda chamados, contribua com registros e muito mais!',
       text: 'Nossa plataforma faz com que seu trabalho seu mais limpo, organizado e claro, evitando dores de cabeça.',
       image: require('../../../assets/initialScreen/slide_2.png'),
       bg: Colors.whitetheme.primary,
