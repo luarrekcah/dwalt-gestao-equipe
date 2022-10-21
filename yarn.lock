@@ -1251,6 +1251,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/eslint-plugin/-/eslint-plugin-1.2.0.tgz#7d6d789ae8edf73dc9bed1246cd48277edea8066"
   integrity sha512-o6aam+0Ug1xGK3ABYmBm0B1YuEKfM/5kaoZO0eHbZwSpw9UzDX4G5y4Nx/K20FHqUmJHkZmLvOUFYwN4N+HqKA==
 
+"@react-native-google-signin/google-signin@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@react-native-google-signin/google-signin/-/google-signin-8.0.1.tgz#b03e7fa07013800ec4cff47881e7704a9d8d917f"
+  integrity sha512-ZsHzul3FWM/En3Upx7++KNPVMJxPuzX1H6LWMDiwxlgMmJxpvKpq7UsW4vE3O8x6E6gLfbCFKpjRZXojwXaI+g==
+
 "@react-native/assets@1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@react-native/assets/-/assets-1.0.0.tgz#c6f9bf63d274bafc8e970628de24986b30a55c8e"
