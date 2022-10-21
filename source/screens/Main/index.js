@@ -47,7 +47,7 @@ const Main = ({navigation}) => {
             <View
               style={
                 focused
-                  ? [styles.iconTabHome, styles.iconTabHomeActive]
+                  ? [styles.iconTabHome, styles.iconTabActive]
                   : styles.iconTabHome
               }>
               <Ionicons
@@ -76,9 +76,8 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     backgroundColor: Colors.whitetheme.primary,
   },
-  iconTabHomeActive: {
+  iconTabActive: {
     marginBottom: 20,
-    elevation: 3,
     width: 60,
     height: 60,
   },

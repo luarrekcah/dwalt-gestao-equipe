@@ -109,8 +109,16 @@ const Home = ({navigation}) => {
               />
             </ScrollView>
             <TextSection value={'Chamado em andamento'} />
-            <View>
-              <Text style={{color: '#000000'}}>Nenhuma solicitação ativa</Text>
+            <View style={styles.emptyCard}>
+              <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
+                Nenhuma solicitação ativa
+              </Text>
+            </View>
+            <TextSection value={'Projetos'} />
+            <View style={styles.emptyCard}>
+              <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
+                Nenhum projeto registrado
+              </Text>
             </View>
           </View>
         </ScrollView>
@@ -136,7 +144,7 @@ const styles = new StyleSheet.create({
   },
   headerDetail: {padding: 10},
   backgroundDetail: {
-    backgroundColor: '#f5f2f2',
+    backgroundColor: Colors.whitetheme.backgroundColor,
     padding: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -171,6 +179,15 @@ const styles = new StyleSheet.create({
     color: Colors.whitetheme.gray,
     fontSize: 15,
     fontWeight: 'bold',
+  },
+  emptyCard: {
+    padding: 30,
+    borderRadius: 20,
+    height: 200,
+    backgroundColor: Colors.whitetheme.primaryDark,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
