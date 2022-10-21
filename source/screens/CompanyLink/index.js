@@ -61,7 +61,7 @@ const CompanyLink = ({navigation}) => {
     setUser(updatedUser);
     await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
     database()
-      .ref('/gestaoempresa/usuarios')
+      .ref('/gestaoempresa/funcionarios')
       .once('value')
       .then(async snapshot => {
         let users = [];
@@ -75,7 +75,7 @@ const CompanyLink = ({navigation}) => {
         } else {
           users.push(updatedUser);
           database()
-            .ref('/gestaoempresa/usuarios')
+            .ref('/gestaoempresa/funcionarios')
             .set(users)
             .then(async () => {
               setLink({success: 'user registered'});

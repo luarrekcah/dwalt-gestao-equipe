@@ -9,6 +9,7 @@ import Colors from './global/colorScheme';
 import Intro from './screens/Intro';
 import Login from './screens/Login';
 import CompanyLink from './screens/CompanyLink';
+import Main from './screens/Main';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,8 +45,8 @@ const Routes = () => {
           component={Login}
           options={({navigation}) => ({
             headerStyle: {backgroundColor: Colors.whitetheme.primary},
-            headerTransparent: true,
-            headerTitle: 'Login Equipe',
+            headerTransparent: false,
+            headerTitle: 'Realize o login',
             headerTitleAlign: 'center',
             headerTitleStyle: {color: 'white'},
             headerLeft: () => (
@@ -63,8 +64,8 @@ const Routes = () => {
           component={CompanyLink}
           options={({navigation}) => ({
             headerStyle: {backgroundColor: Colors.whitetheme.primary},
-            headerTransparent: true,
-            headerTitle: 'Conexão funcionário com a empresa',
+            headerTransparent: false,
+            headerTitle: 'Última etapa',
             headerTitleAlign: 'center',
             headerTitleStyle: {color: 'white'},
             headerLeft: () => (
@@ -73,6 +74,33 @@ const Routes = () => {
                   Linking.openURL('https://www.dlwalt.com/faq');
                 }}>
                 <Icon name="help" size={30} color="#fff" />
+              </TouchableOpacity>
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="Main"
+          component={Main}
+          options={({navigation}) => ({
+            headerStyle: {backgroundColor: Colors.whitetheme.primary},
+            headerTransparent: false,
+            headerTitle: 'D | Walt Gestão',
+            headerTitleAlign: 'center',
+            headerTitleStyle: {color: 'white'},
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => {
+                  Linking.openURL('https://www.dlwalt.com/faq');
+                }}>
+                <Icon name="help" size={30} color="#fff" />
+              </TouchableOpacity>
+            ),
+            headerRight: () => (
+              <TouchableOpacity
+                onPress={() => {
+                  Linking.openURL('https://www.dlwalt.com');
+                }}>
+                <Icon name="settings" size={30} color="#fff" />
               </TouchableOpacity>
             ),
           })}
