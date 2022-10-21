@@ -66,14 +66,6 @@ const Home = ({navigation}) => {
     return unsubscribe;
   }, [navigation, user]);
 
-  const getKwp = () => {
-    let kwpTotal = 0;
-    projects.forEach(item => {
-      kwpTotal += Number(item.kwp);
-    });
-    return kwpTotal;
-  };
-
   if (loading) {
     return <LoadingActivity />;
   } else {
@@ -87,77 +79,39 @@ const Home = ({navigation}) => {
             <Text style={styles.linkedOn}>
               Vinculado a {business.documents.nome_fantasia}
             </Text>
+            <Text
+              style={[styles.welcome, {alignSelf: 'center', marginBottom: 10}]}>
+              Equipe Principal
+            </Text>
           </View>
           <View style={styles.backgroundDetail}>
             <TextSection value={'Informações'} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <MiniCard
-                textValue={projects.length + ' projetos'}
+                textValue={'0 Chamados'}
+                iconName="warning"
+                iconSize={40}
+              />
+              <MiniCard
+                textValue={'0 Clientes Totais'}
+                iconName="group"
+                iconSize={40}
+              />
+              <MiniCard
+                textValue={'0 Projetos'}
                 iconName="folder"
                 iconSize={40}
               />
               <MiniCard
-                textValue={getKwp() + ' kWp'}
-                iconName="flash-on"
-                iconSize={40}
-              />
-              <MiniCard
-                textValue={getKwp() * 30 * 4.5 + ' kWh/mês'}
-                iconName="flash-on"
-                iconSize={40}
-              />
-              <MiniCard
-                textValue="95% Economia"
-                iconName="flash-on"
+                textValue={'0 Membros na equipe'}
+                iconName="folder"
                 iconSize={40}
               />
             </ScrollView>
-            <TextSection value={'Solicitações'} />
+            <TextSection value={'Chamado em andamento'} />
             <View>
-              <Text>Nenhuma solicitação ativa</Text>
+              <Text style={{color: '#000000'}}>Nenhuma solicitação ativa</Text>
             </View>
-            <TextSection value={'Projetos'} />
-            {projects === null || projects.length === 0 ? (
-              <View>
-                <Text style={styles.nullWarn}>Sem projetos</Text>
-              </View>
-            ) : (
-              <View>
-                {projects.map((item, index) => {
-                  return (
-                    <TouchableOpacity
-                      style={styles.marginCard}
-                      key={index}
-                      onPress={() =>
-                        navigation.navigate('ProjectDetails', {project: item})
-                      }>
-                      <ImageBackground
-                        imageStyle={styles.imageCard}
-                        source={require('../../../../assets/home/bannerbackground.jpg')}>
-                        <View style={styles.projectCard}>
-                          <Text style={styles.projectTitle}>
-                            {item.apelidoProjeto}
-                          </Text>
-                          <Text style={styles.projectCategory}>
-                            {item.category}
-                          </Text>
-                          <View style={styles.bottomProject}>
-                            <Text style={styles.bottomKwp}>
-                              <Icon name="flash-on" size={20} color="#fff" />
-                              {item.kwp}
-                              kWp
-                            </Text>
-                            <Text style={styles.bottomStatus}>
-                              Status: {item.Status}
-                            </Text>
-                          </View>
-                        </View>
-                      </ImageBackground>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            )}
           </View>
         </ScrollView>
       </View>
@@ -167,7 +121,6 @@ const Home = ({navigation}) => {
 
 const styles = new StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: Colors.whitetheme.primary,
   },
   welcome: {
