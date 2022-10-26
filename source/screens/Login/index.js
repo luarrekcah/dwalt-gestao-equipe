@@ -7,6 +7,7 @@ import {
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import database from '@react-native-firebase/database';
 
 const Login = ({navigation}) => {
   React.useEffect(() => {
@@ -20,20 +21,40 @@ const Login = ({navigation}) => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      const user = {
-        _id: userInfo.user.id,
-        nome: userInfo.user.givenName,
-        sobrenome: userInfo.user.familyName,
-        email: userInfo.user.email,
-        foto: userInfo.user.photo,
-        email_link: '',
-        team: {
-          name: '',
-          id: '',
-        },
-      };
-      await AsyncStorage.setItem('user', JSON.stringify(user));
-      navigation.navigate('CompanyLink');
+      database()
+        .ref('/gestaoempresa/funcionarios')
+        .once('value')
+        .then(async snapshot => {
+          const all = snapshot.val();
+          const existsUser = all.find(item => {
+            return item._id === userInfo.user.id;
+          });
+          let user;
+          if (existsUser) {
+            user = existsUser;
+            console.log(user);
+            navigation.navigate('Main', {user: user});
+            await AsyncStorage.setItem(
+              'logged',
+              JSON.stringify({logged: true}),
+            );
+          } else {
+            user = {
+              _id: userInfo.user.id,
+              nome: userInfo.user.givenName,
+              sobrenome: userInfo.user.familyName,
+              email: userInfo.user.email,
+              foto: userInfo.user.photo,
+              email_link: '',
+              team: {
+                name: '',
+                id: '',
+              },
+            };
+            navigation.navigate('CompanyLink');
+          }
+          await AsyncStorage.setItem('user', JSON.stringify(user));
+        });
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log(error);
