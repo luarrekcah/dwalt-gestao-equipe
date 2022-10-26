@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ImageBackground,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../../../global/colorScheme';
 import {
@@ -16,45 +9,39 @@ import {
 } from '../../../global/Components';
 import database from '@react-native-firebase/database';
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
-const Home = ({navigation}) => {
-  const [user, setUser] = React.useState();
-  const [projects, setProjects] = React.useState([]);
+const Home = ({navigation, route}) => {
+  const {user} = route.params;
+  //const [user, setUser] = React.useState(route.params.user || {});
   const [business, setBusiness] = React.useState();
   const [loading, setLoading] = React.useState(true);
 
   const loadData = async () => {
     await AsyncStorage.getItem('user').then(data => {
       const userdata = JSON.parse(data);
-      setUser(userdata);
       database()
-        .ref('/gestaoempresa/projetos')
+        .ref('/gestaoempresa/funcionarios')
         .once('value')
-        .then(snapshot => {
-          let allProjects = [];
-          if (snapshot.val() !== null) {
-            allProjects = snapshot.val();
-          }
-          const myProjects = allProjects.filter(item => {
-            return item.emailApp === userdata.email;
+        .then(async snapshot => {
+          const all = snapshot.val();
+          const actUser = all.filter(item => {
+            return item._id === userdata._id;
           });
-          setProjects(myProjects);
-
-          database()
-            .ref('/gestaoempresa/empresa')
-            .once('value')
-            .then(snapshotB => {
-              let allBusiness = [];
-              if (snapshot.val() !== null) {
-                allBusiness = snapshotB.val();
-              }
-              const myBusiness = allBusiness.filter(item => {
-                return item._id === userdata.email_link;
-              });
-              setBusiness(myBusiness[0]);
-              setLoading(false);
-            });
+          setUser(actUser);
+          await AsyncStorage.setItem('user', JSON.stringify(actUser));
+        });
+      database()
+        .ref('/gestaoempresa/empresa')
+        .once('value')
+        .then(snapshotB => {
+          let allBusiness = [];
+          if (snapshotB.val() !== null) {
+            allBusiness = snapshotB.val();
+          }
+          const myBusiness = allBusiness.filter(item => {
+            return item._id === userdata.email_link;
+          });
+          setBusiness(myBusiness[0]);
+          setLoading(false);
         });
     });
   };
@@ -81,8 +68,26 @@ const Home = ({navigation}) => {
             </Text>
           </View>
           <View style={styles.backgroundDetail}>
-            <View style={[styles.emptyCard, {height: 100}]}>
-              <View>
+            {user.team.name === '' ? (
+              <View style={[styles.emptyCard, {height: 100}]}>
+                <View>
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      alignSelf: 'center',
+                    }}>
+                    Em nenhuma equipe!
+                  </Text>
+                  <Text style={{color: Colors.whitetheme.gray, fontSize: 15}}>
+                    Seu acesso as informações só será liberado assim que a
+                    empresa lhe adicionar em uma equipe.
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <View style={[styles.emptyCard, {height: 100}]}>
                 <Text
                   style={{
                     color: '#fff',
@@ -90,14 +95,11 @@ const Home = ({navigation}) => {
                     fontWeight: 'bold',
                     alignSelf: 'center',
                   }}>
-                  Em nenhuma equipe!
-                </Text>
-                <Text style={{color: Colors.whitetheme.gray, fontSize: 15}}>
-                  Seu acesso as informações só será liberado assim que a empresa
-                  lhe adicionar em uma equipe.
+                  EQUIPE
                 </Text>
               </View>
-            </View>
+            )}
+
             <TextSection value={'Informações'} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <MiniCard
