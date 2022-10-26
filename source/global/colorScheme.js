@@ -6,6 +6,7 @@ const Colors = {
     gray: '#999999',
     danger: '#db0a07',
     warning: '#fc9003',
+    success: '#007d4f',
   },
 };
 

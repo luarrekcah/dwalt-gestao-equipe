@@ -94,7 +94,7 @@ export const DocumentCard = ({title, onPress, haveContent}) => {
   }
 };
 
-export const SimpleButton = ({icon, onPress, value, type, style}) => {
+export const SimpleButton = ({icon, onPress, value, type}) => {
   if (type === 'primary') {
     return (
       <TouchableOpacity
@@ -116,6 +116,20 @@ export const SimpleButton = ({icon, onPress, value, type, style}) => {
         style={[
           styles.simplebutton,
           {backgroundColor: Colors.whitetheme.warning},
+        ]}>
+        {icon ? <Icon name={icon} size={25} color={'#fff'} /> : ''}
+        <View>
+          <Text style={{color: '#fff'}}>{value}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  } else if (type === 'success') {
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        style={[
+          styles.simplebutton,
+          {backgroundColor: Colors.whitetheme.success},
         ]}>
         {icon ? <Icon name={icon} size={25} color={'#fff'} /> : ''}
         <View>
