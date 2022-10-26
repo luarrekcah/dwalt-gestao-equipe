@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+
 import React from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -73,15 +75,7 @@ const Home = ({navigation}) => {
             {user.team.name === '' ? (
               <View style={[styles.emptyCard, {height: 100}]}>
                 <View>
-                  <Text
-                    style={{
-                      color: '#fff',
-                      fontSize: 20,
-                      fontWeight: 'bold',
-                      alignSelf: 'center',
-                    }}>
-                    Em nenhuma equipe!
-                  </Text>
+                  <Text style={styles.titleCards}>Em nenhuma equipe!</Text>
                   <Text style={{color: Colors.whitetheme.gray, fontSize: 15}}>
                     Seu acesso as informações só será liberado assim que a
                     empresa lhe adicionar em uma equipe.
@@ -205,6 +199,12 @@ const styles = new StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  titleCards: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    alignSelf: 'center',
   },
 });
 
