@@ -7,6 +7,9 @@ import Home from './components/Home';
 
 import Business from '../Business';
 import User from '../User';
+import Calls from '../Calls';
+import Team from '../Team';
+
 import {StyleSheet, Text, View} from 'react-native';
 
 const Tab = createBottomTabNavigator();
@@ -53,9 +56,9 @@ const Main = ({navigation}) => {
       })}
       initialRouteName="Home">
       <Tab.Screen name="Empresa" component={Business} />
-      <Tab.Screen name="Equipe" component={Home} />
+      <Tab.Screen name="Equipe" component={Team} />
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Chamados" component={Home} />
+      <Tab.Screen name="Chamados" component={Calls} />
       <Tab.Screen name="Usuário" component={User} />
     </Tab.Navigator>
   );
