@@ -84,15 +84,18 @@ const Home = ({navigation}) => {
               </View>
             ) : (
               <View style={[styles.emptyCard, {height: 100}]}>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                    alignSelf: 'center',
-                  }}>
-                  EQUIPE
-                </Text>
+                <View>
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      alignSelf: 'center',
+                    }}>
+                    Equipe {user.team.name}
+                  </Text>
+                </View>
+                <Text>Seu cargo: {user.team.role}</Text>
               </View>
             )}
 
@@ -196,7 +199,6 @@ const styles = new StyleSheet.create({
     borderRadius: 20,
     height: 200,
     backgroundColor: Colors.whitetheme.primaryDark,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },

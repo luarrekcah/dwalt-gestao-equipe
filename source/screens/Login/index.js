@@ -49,7 +49,9 @@ const Login = ({navigation}) => {
               team: {
                 name: '',
                 id: '',
+                role: '',
               },
+              permissions: [],
             };
             navigation.navigate('CompanyLink');
           }
