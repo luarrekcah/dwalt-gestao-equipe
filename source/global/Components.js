@@ -13,16 +13,23 @@ export const TextSection = ({value}) => {
   return <Text style={styles.textSection}>{value}</Text>;
 };
 
+export const Divisor = () => {
+  return <View style={styles.divisor}>{''}</View>;
+};
+
 export const MiniCard = ({
   iconName,
   iconSize = 40,
   iconColor = '#fff',
-  textValue,
+  content = ['Informe', 'Informe'],
 }) => {
   return (
     <View style={styles.miniCard}>
       <Icon name={iconName} size={iconSize} color={iconColor} />
-      <Text style={styles.textCard}>{textValue}</Text>
+      <Divisor />
+      <Text style={styles.textCardTitle}>{content[0]}</Text>
+      <Divisor />
+      <Text style={styles.textCardDesc}>{content[1]}</Text>
     </View>
   );
 };
@@ -134,12 +141,21 @@ export const SimpleButton = ({icon, onPress, value, type, style}) => {
 };
 
 const styles = new StyleSheet.create({
+  /* SECTION */
   textSection: {
     color: Colors.whitetheme.gray,
     fontSize: 15,
     fontWeight: 'bold',
     marginVertical: 20,
   },
+  /* DIVISOR */
+  divisor: {
+    backgroundColor: '#fff',
+    height: 1,
+    width: 80,
+    margin: 10,
+  },
+  /* MINI CARD */
   miniCard: {
     backgroundColor: Colors.whitetheme.primary,
     paddingHorizontal: 10,
@@ -149,11 +165,17 @@ const styles = new StyleSheet.create({
     marginRight: 10,
     width: 100,
   },
-  textCard: {
+  textCardTitle: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: 20,
     fontWeight: 'bold',
   },
+  textCardDesc: {
+    color: '#fff',
+    fontSize: 15,
+    textTransform: 'uppercase',
+  },
+  /* BUTTON */
   button: {
     display: 'flex',
     flexDirection: 'row',
@@ -180,6 +202,7 @@ const styles = new StyleSheet.create({
     justifyContent: 'space-around',
     padding: 10,
   },
+  /* DOCUMENTS CARD */
   documentsCard: {
     backgroundColor: Colors.whitetheme.primary,
     borderRadius: 10,
@@ -205,6 +228,7 @@ const styles = new StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
+  /* SIMPLE BUTTON */
   simplebutton: {
     borderRadius: 20,
     alignContent: 'center',

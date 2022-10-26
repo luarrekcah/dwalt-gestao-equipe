@@ -88,22 +88,22 @@ const Home = ({navigation}) => {
             <TextSection value={'Informações'} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <MiniCard
-                textValue={'0 Chamados'}
+                content={['0', 'Chamados']}
                 iconName="warning"
                 iconSize={40}
               />
               <MiniCard
-                textValue={'0 Clientes Totais'}
+                content={['0', 'Clientes Totais']}
                 iconName="group"
                 iconSize={40}
               />
               <MiniCard
-                textValue={'0 Projetos'}
+                content={['0', 'Projetos']}
                 iconName="folder"
                 iconSize={40}
               />
               <MiniCard
-                textValue={'0 Membros na equipe'}
+                content={['0', 'Membros na Equipe']}
                 iconName="folder"
                 iconSize={40}
               />
