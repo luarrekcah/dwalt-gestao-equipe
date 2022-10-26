@@ -9,26 +9,28 @@ import {
 } from '../../../global/Components';
 import database from '@react-native-firebase/database';
 
-const Home = ({navigation, route}) => {
-  const {user} = route.params;
-  //const [user, setUser] = React.useState(route.params.user || {});
+const Home = ({navigation}) => {
+  const [user, setUser] = React.useState();
   const [business, setBusiness] = React.useState();
   const [loading, setLoading] = React.useState(true);
 
   const loadData = async () => {
     await AsyncStorage.getItem('user').then(data => {
+      console.log(data);
       const userdata = JSON.parse(data);
+
       database()
         .ref('/gestaoempresa/funcionarios')
         .once('value')
         .then(async snapshot => {
           const all = snapshot.val();
-          const actUser = all.filter(item => {
+          const actUser = all.find(item => {
             return item._id === userdata._id;
           });
           setUser(actUser);
           await AsyncStorage.setItem('user', JSON.stringify(actUser));
         });
+
       database()
         .ref('/gestaoempresa/empresa')
         .once('value')
@@ -37,10 +39,10 @@ const Home = ({navigation, route}) => {
           if (snapshotB.val() !== null) {
             allBusiness = snapshotB.val();
           }
-          const myBusiness = allBusiness.filter(item => {
+          const myBusiness = allBusiness.find(item => {
             return item._id === userdata.email_link;
           });
-          setBusiness(myBusiness[0]);
+          setBusiness(myBusiness);
           setLoading(false);
         });
     });
