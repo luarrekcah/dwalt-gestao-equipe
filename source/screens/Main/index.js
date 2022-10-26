@@ -17,7 +17,7 @@ const Main = ({navigation}) => {
       screenOptions={({route}) => ({
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: {backgroundColor: Colors.whitetheme.primary, height: 60},
+        tabBarStyle: {backgroundColor: Colors.whitetheme.primary, height: 75},
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
           if (route.name === 'Home') {
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   iconTabActive: {
     width: 60,
-    height: 60,
+    height: 100,
     backgroundColor: Colors.whitetheme.primaryDark,
   },
   centerIconsTab: {

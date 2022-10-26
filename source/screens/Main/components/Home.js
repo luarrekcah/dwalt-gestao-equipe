@@ -79,12 +79,25 @@ const Home = ({navigation}) => {
             <Text style={styles.linkedOn}>
               Vinculado a {business.documents.nome_fantasia}
             </Text>
-            <Text
-              style={[styles.welcome, {alignSelf: 'center', marginBottom: 10}]}>
-              Equipe Principal
-            </Text>
           </View>
           <View style={styles.backgroundDetail}>
+            <View style={[styles.emptyCard, {height: 100}]}>
+              <View>
+                <Text
+                  style={{
+                    color: '#fff',
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    alignSelf: 'center',
+                  }}>
+                  Em nenhuma equipe!
+                </Text>
+                <Text style={{color: Colors.whitetheme.gray, fontSize: 15}}>
+                  Seu acesso as informações só será liberado assim que a empresa
+                  lhe adicionar em uma equipe.
+                </Text>
+              </View>
+            </View>
             <TextSection value={'Informações'} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <MiniCard
@@ -104,7 +117,7 @@ const Home = ({navigation}) => {
               />
               <MiniCard
                 content={['0', 'Membros na Equipe']}
-                iconName="folder"
+                iconName="group"
                 iconSize={40}
               />
             </ScrollView>
