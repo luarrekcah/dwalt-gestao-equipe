@@ -24,7 +24,6 @@ const CompanyLink = ({navigation}) => {
   React.useEffect(() => {
     AsyncStorage.getItem('user').then(data => {
       const userdata = JSON.parse(data);
-      console.log(userdata);
       setUser(userdata);
     });
   }, []);

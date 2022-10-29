@@ -1,5 +1,5 @@
 import React from 'react';
-
+import database from '@react-native-firebase/database';
 import {
   StyleSheet,
   Text,
@@ -8,53 +8,51 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SimpleButton} from '../../global/Components';
 
 const Calls = () => {
-  const data = [
-    {
-      id: 1,
-      description: 'PROBLEMA NO MEU GERADOR',
-      date: '2019-03-25 13:33:00',
-      color: '#FF0000',
-      completed: 0,
-    },
-    {
-      id: 2,
-      description: 'PROBLEMA NO MEU GERADOR',
-      date: '2019-03-25 13:33:00',
-      color: '#FF0000',
-      completed: 0,
-    },
-    {
-      id: 3,
-      description: 'PROBLEMA NO MEU GERADOR',
-      date: '2019-03-25 13:33:00',
-      color: '#FF0000',
-      completed: 0,
-    },
-    {
-      id: 4,
-      description: 'PROBLEMA NO MEU GERADOR',
-      date: '2019-03-25 13:33:00',
-      color: '#FF0000',
-      completed: 0,
-    },
-  ];
+  const [user, setUser] = React.useState();
+  const [survey, setSurvey] = React.useState([]);
+
+  React.useEffect(() => {
+    AsyncStorage.getItem('user').then(async data => {
+      const userdata = JSON.parse(data);
+      await setUser(userdata);
+      getSurveys();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getSurveys = () => {
+    database()
+      .ref('/gestaoempresa/survey')
+      .once('value')
+      .then(async snapshot => {
+        let surveys = [];
+        if (snapshot.val() !== null) {
+          surveys = snapshot.val();
+        }
+
+        setSurvey(
+          surveys.filter(item => item.ids.businessId === user.email_link),
+        );
+      });
+  };
 
   return (
     <View style={styles.container}>
       <FlatList
         style={styles.tasks}
         columnWrapperStyle={styles.listContainer}
-        data={data}
+        data={survey}
         keyExtractor={item => {
-          return item.id;
+          return item.ids.projectId;
         }}
         renderItem={({item}) => {
           return (
             <TouchableOpacity
-              style={[styles.card, {borderColor: item.color}]}
+              style={[styles.card, {borderColor: '#FF0000'}]}
               onPress={() => {
                 console.log('aa');
               }}>
@@ -65,9 +63,9 @@ const Calls = () => {
                 }}
               />
               <View style={styles.cardContent}>
-                <Text style={[styles.description]}>{item.description}</Text>
-                <Text style={styles.date}>AAAAAAAAAAA</Text>
-                <Text style={styles.date}>DATA: {item.date}</Text>
+                <Text style={[styles.description]}>{item.text}</Text>
+                <Text style={styles.date}>{item.status}</Text>
+                <Text style={styles.date}>DATA: {item.createdAt}</Text>
               </View>
               <View style={{marginLeft: 20}}>
                 <SimpleButton
