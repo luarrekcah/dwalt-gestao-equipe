@@ -15,6 +15,7 @@ const Home = ({navigation}) => {
   const [user, setUser] = React.useState();
   const [business, setBusiness] = React.useState();
   const [loading, setLoading] = React.useState(true);
+  const [survey, setSurvey] = React.useState([]);
 
   const loadData = async () => {
     await AsyncStorage.getItem('user').then(data => {
@@ -47,7 +48,25 @@ const Home = ({navigation}) => {
           setBusiness(myBusiness);
           setLoading(false);
         });
+
+      getSurveys();
     });
+  };
+
+  const getSurveys = () => {
+    database()
+      .ref('/gestaoempresa/survey')
+      .once('value')
+      .then(async snapshot => {
+        let surveys = [];
+        if (snapshot.val() !== null) {
+          surveys = snapshot.val();
+        }
+
+        setSurvey(
+          surveys.filter(item => item.ids.businessId === user.email_link),
+        );
+      });
   };
 
   React.useEffect(() => {
@@ -55,6 +74,7 @@ const Home = ({navigation}) => {
       loadData();
     });
     return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigation, user]);
 
   if (loading) {
@@ -102,7 +122,7 @@ const Home = ({navigation}) => {
             <TextSection value={'Informações'} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <MiniCard
-                content={['0', 'Chamados']}
+                content={[`${survey.length}`, 'Chamados']}
                 iconName="warning"
                 iconSize={40}
               />
