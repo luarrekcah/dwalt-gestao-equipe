@@ -44,3 +44,13 @@ export const getSurveyData = async () => {
     });
   return survey;
 };
+
+export const getStaffsData = async () => {
+  const staffs = await database()
+    .ref('/gestaoempresa/funcionarios')
+    .once('value')
+    .then(snapshot => {
+      return snapshot.val();
+    });
+  return staffs;
+};

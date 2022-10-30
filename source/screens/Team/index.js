@@ -7,78 +7,75 @@ import {
   Image,
   FlatList,
 } from 'react-native';
+import {LoadingActivity} from '../../global/Components';
+import {getStaffsData, getUserData} from '../../services/Database';
 
-const data = [
-  {
-    id: 1,
-    name: 'Raul Rodrigues',
-    position: 'Instalador',
-    image:
-      'https://lh3.googleusercontent.com/a/ALm5wu2Arf5ek8xCHnDM1fphrGbcvWeeVHnQ5TaVKoyfpV4',
-  },
-  {
-    id: 2,
-    name: 'Raul Rodrigues',
-    position: 'Instalador',
-    image:
-      'https://lh3.googleusercontent.com/a/ALm5wu2Arf5ek8xCHnDM1fphrGbcvWeeVHnQ5TaVKoyfpV4',
-  },
-  {
-    id: 3,
-    name: 'Raul Rodrigues',
-    position: 'Instalador',
-    image:
-      'https://lh3.googleusercontent.com/a/ALm5wu2Arf5ek8xCHnDM1fphrGbcvWeeVHnQ5TaVKoyfpV4',
-  },
-  {
-    id: 4,
-    name: 'Raul Rodrigues',
-    position: 'Instalador',
-    image:
-      'https://lh3.googleusercontent.com/a/ALm5wu2Arf5ek8xCHnDM1fphrGbcvWeeVHnQ5TaVKoyfpV4',
-  },
-];
+const Team = ({navigation}) => {
+  const [loading, setLoading] = React.useState(true);
+  const [team, setTeam] = React.useState();
 
-const Team = () => {
-  return (
-    <View style={styles.container}>
-      <FlatList
-        style={styles.list}
-        contentContainerStyle={styles.listContainer}
-        data={data}
-        horizontal={false}
-        numColumns={2}
-        keyExtractor={item => {
-          return item.id;
-        }}
-        renderItem={({item}) => {
-          return (
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => {
-                this.clickEventListener(item);
-              }}>
-              <View style={styles.cardHeader}>
-                <Image
-                  style={styles.icon}
-                  source={{
-                    uri: 'https://icons.veryicon.com/png/o/miscellaneous/core-music/staff-8.png',
-                  }}
-                />
-              </View>
-              <Image style={styles.userImage} source={{uri: item.image}} />
-              <View style={styles.cardFooter}>
-                <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                  <Text style={styles.name}>{item.name}</Text>
-                  <Text style={styles.position}>{item.position}</Text>
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const loadData = async () => {
+    setLoading(true);
+    const allSt = await getStaffsData();
+    const useract = await getUserData();
+    const teeam = await allSt.filter(item => item.team.id === useract.team.id);
+    setTeam(teeam);
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadData();
+    });
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation]);
+
+  if (loading) {
+    return <LoadingActivity />;
+  } else {
+    return (
+      <View style={styles.container}>
+        <FlatList
+          style={styles.list}
+          contentContainerStyle={styles.listContainer}
+          data={team}
+          horizontal={false}
+          numColumns={2}
+          keyExtractor={item => {
+            return item.id;
+          }}
+          renderItem={({item}) => {
+            return (
+              <TouchableOpacity
+                style={styles.card}
+                onPress={() => {
+                  console.log('click!');
+                }}>
+                <View key={item._id} style={styles.cardHeader}>
+                  <Image
+                    style={styles.icon}
+                    source={{
+                      uri: 'https://lh3.googleusercontent.com/a/ALm5wu2Arf5ek8xCHnDM1fphrGbcvWeeVHnQ5TaVKoyfpV4',
+                    }}
+                  />
                 </View>
-              </View>
-            </TouchableOpacity>
-          );
-        }}
-      />
-    </View>
-  );
+                <Image style={styles.userImage} source={{uri: item.foto}} />
+                <View style={styles.cardFooter}>
+                  <View
+                    style={{alignItems: 'center', justifyContent: 'center'}}>
+                    <Text style={styles.name}>{item.nome}</Text>
+                    <Text style={styles.position}>{item.team.role}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </View>
+    );
+  }
 };
 
 const styles = new StyleSheet.create({
