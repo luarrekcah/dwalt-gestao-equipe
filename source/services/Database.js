@@ -17,3 +17,37 @@ export const getUserData = async () => {
     });
   return user;
 };
+
+export const getBusinessData = async () => {
+  const userLocal = await AsyncStorage.getItem('user').then(async data => {
+    return await JSON.parse(data);
+  });
+  const business = await database()
+    .ref('/gestaoempresa/empresa')
+    .once('value')
+    .then(snapshot => {
+      const all = snapshot.val();
+      const actBusiness = all.find(item => {
+        return item._id === userLocal.email_link;
+      });
+      return actBusiness;
+    });
+  return business;
+};
+
+export const getSurveyData = async () => {
+  const userLocal = await AsyncStorage.getItem('user').then(async data => {
+    return await JSON.parse(data);
+  });
+  const survey = await database()
+    .ref('/gestaoempresa/survey')
+    .once('value')
+    .then(snapshot => {
+      const all = snapshot.val();
+      const actsurvey = all.find(item => {
+        return item.ids.businessId === userLocal.email_link;
+      });
+      return actsurvey;
+    });
+  return survey;
+};

@@ -1,16 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
-
 import React from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../../../global/colorScheme';
 import {
   LoadingActivity,
   MiniCard,
   TextSection,
 } from '../../../global/Components';
-import database from '@react-native-firebase/database';
-import {getUserData} from '../../../services/Database';
+import {
+  getBusinessData,
+  getSurveyData,
+  getUserData,
+} from '../../../services/Database';
 
 const Home = ({navigation}) => {
   const [user, setUser] = React.useState();
@@ -19,58 +20,11 @@ const Home = ({navigation}) => {
   const [survey, setSurvey] = React.useState([]);
 
   const loadData = async () => {
-    const usera = await getUserData();
-
-    console.log(usera._id);
-
-    await AsyncStorage.getItem('user').then(async data => {
-      const userdata = await JSON.parse(data);
-
-      database()
-        .ref('/gestaoempresa/funcionarios')
-        .once('value')
-        .then(async snapshot => {
-          const all = snapshot.val();
-          const actUser = all.find(item => {
-            return item._id === userdata._id;
-          });
-          setUser(actUser);
-          await AsyncStorage.setItem('user', JSON.stringify(actUser));
-        });
-
-      database()
-        .ref('/gestaoempresa/empresa')
-        .once('value')
-        .then(snapshotB => {
-          let allBusiness = [];
-          if (snapshotB.val() !== null) {
-            allBusiness = snapshotB.val();
-          }
-          const myBusiness = allBusiness.find(item => {
-            return item._id === userdata.email_link;
-          });
-          setBusiness(myBusiness);
-          setLoading(false);
-        });
-
-      getSurveys();
-    });
-  };
-
-  const getSurveys = () => {
-    database()
-      .ref('/gestaoempresa/survey')
-      .once('value')
-      .then(async snapshot => {
-        let surveys = [];
-        if (snapshot.val() !== null) {
-          surveys = snapshot.val();
-        }
-
-        setSurvey(
-          surveys.filter(item => item.ids.businessId === user.email_link),
-        );
-      });
+    setLoading(true);
+    setUser(await getUserData());
+    setBusiness(await getBusinessData());
+    setSurvey(await getSurveyData());
+    setLoading(false);
   };
 
   React.useEffect(() => {
@@ -78,7 +32,6 @@ const Home = ({navigation}) => {
       loadData();
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigation, user]);
 
   if (loading) {
