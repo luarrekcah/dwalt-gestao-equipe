@@ -14,7 +14,6 @@ const Team = ({navigation}) => {
   const [loading, setLoading] = React.useState(true);
   const [team, setTeam] = React.useState();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const loadData = async () => {
     setLoading(true);
     const allSt = await getStaffsData();
@@ -29,7 +28,6 @@ const Team = ({navigation}) => {
       loadData();
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigation]);
 
   if (loading) {
