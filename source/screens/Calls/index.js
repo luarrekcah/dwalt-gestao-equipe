@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
   StyleSheet,
@@ -8,11 +9,16 @@ import {
   FlatList,
   ToastAndroid,
 } from 'react-native';
-import {LoadingActivity, SimpleButton} from '../../global/Components';
+import {
+  LoadingActivity,
+  SimpleButton,
+  TextSection,
+} from '../../global/Components';
 import {getSurveyData} from '../../services/Database';
 import database from '@react-native-firebase/database';
 
 import moment from '../../vendors/moment';
+import Colors from '../../global/colorScheme';
 
 const Calls = () => {
   const [survey, setSurvey] = React.useState([]);
@@ -58,11 +64,112 @@ const Calls = () => {
       });
   };
 
+  const concludeSurvey = id => {
+    database()
+      .ref('/gestaoempresa/survey')
+      .once('value')
+      .then(snapshot => {
+        const all = snapshot.val();
+        const allSurveys = all.map(item => {
+          if (item.ids.projectId === id) {
+            item.accepted = true;
+            item.finished = true;
+            item.status = 'Chamado concluído';
+          }
+          return item;
+        });
+        database()
+          .ref('/gestaoempresa/survey')
+          .set(allSurveys)
+          .then(loadData());
+      });
+  };
+
   if (loading) {
     return <LoadingActivity />;
   } else {
     return (
       <View style={styles.container}>
+        <TextSection value={'Chamado ativo'} />
+        {survey.filter(i => !i.finished).length !== 0 ? (
+          <FlatList
+            style={styles.tasks}
+            columnWrapperStyle={styles.listContainer}
+            data={survey}
+            keyExtractor={item => {
+              return item.ids.projectId;
+            }}
+            renderItem={({item}) => {
+              if (!item.finished) {
+                return (
+                  <TouchableOpacity
+                    style={[
+                      styles.card,
+                      {borderColor: item.accepted ? '#02610a' : '#FF0000'},
+                    ]}>
+                    <Image
+                      style={styles.image}
+                      source={{
+                        uri: item.accepted
+                          ? 'https://img.icons8.com/color/344/time-span.png'
+                          : 'https://img.icons8.com/flat_round/64/000000/delete-sign.png',
+                      }}
+                    />
+                    <View style={styles.cardContent}>
+                      <Text style={[styles.description]}>{item.text}</Text>
+                      <Text style={styles.date}>{item.status}</Text>
+                      <Text style={styles.date}>
+                        Solicitado {moment(item.createdAt).fromNow()}
+                      </Text>
+                    </View>
+                    <View>
+                      <SimpleButton
+                        icon={item.accepted ? 'map' : 'add'}
+                        value={
+                          item.accepted ? 'ABRIR ROTAS' : 'ACEITAR CHAMADO'
+                        }
+                        type={'success'}
+                        onPress={() => {
+                          acceptSurvey(item.ids.projectId);
+                        }}
+                      />
+                    </View>
+                    <View style={{flex: 1}}>
+                      <SimpleButton
+                        icon="info"
+                        value={'VER PROJETO'}
+                        type={'primary'}
+                      />
+                    </View>
+                    {item.accepted ? (
+                      <View style={{flex: 1}}>
+                        <SimpleButton
+                          icon={item.accepted ? 'check' : ''}
+                          value={item.accepted ? 'CONCLUIR' : ''}
+                          type={'success'}
+                          onPress={() => {
+                            concludeSurvey(item.ids.projectId);
+                          }}
+                        />
+                      </View>
+                    ) : (
+                      ''
+                    )}
+                  </TouchableOpacity>
+                );
+              }
+            }}
+          />
+        ) : (
+          <View style={{alignContent: 'center', alignItems: 'center'}}>
+            <Text style={{color: '#000000'}}>Não há chamados pendentes.</Text>
+          </View>
+        )}
+        <TextSection
+          value={
+            'Chamados antigos (' + survey.filter(i => i.finished).length + ')'
+          }
+        />
         <FlatList
           style={styles.tasks}
           columnWrapperStyle={styles.listContainer}
@@ -73,56 +180,20 @@ const Calls = () => {
           renderItem={({item}) => {
             return (
               <TouchableOpacity
-                style={[
-                  styles.card,
-                  {borderColor: item.accepted ? '#02610a' : '#FF0000'},
-                ]}>
+                style={[styles.card, {borderColor: Colors.whitetheme.primary}]}>
                 <Image
                   style={styles.image}
                   source={{
-                    uri: item.accepted
-                      ? 'https://img.icons8.com/color/344/time-span.png'
-                      : 'https://img.icons8.com/flat_round/64/000000/delete-sign.png',
+                    uri: 'https://img.icons8.com/tiny-color/344/checked.png',
                   }}
                 />
                 <View style={styles.cardContent}>
                   <Text style={[styles.description]}>{item.text}</Text>
-                  <Text style={styles.date}>{item.status}</Text>
+                  <Text style={styles.status}>{item.status}</Text>
                   <Text style={styles.date}>
                     Solicitado {moment(item.createdAt).fromNow()}
                   </Text>
                 </View>
-                <View>
-                  <SimpleButton
-                    icon={item.accepted ? 'map' : 'add'}
-                    value={item.accepted ? 'ABRIR ROTAS' : 'ACEITAR CHAMADO'}
-                    type={'success'}
-                    onPress={() => {
-                      acceptSurvey(item.ids.projectId);
-                    }}
-                  />
-                </View>
-                <View style={{flex: 1}}>
-                  <SimpleButton
-                    icon="info"
-                    value={'VER PROJETO'}
-                    type={'primary'}
-                  />
-                </View>
-                {item.accepted ? (
-                  <View style={{flex: 1}}>
-                    <SimpleButton
-                      icon={item.accepted ? 'check' : ''}
-                      value={item.accepted ? 'CONCLUIR' : ''}
-                      type={'success'}
-                      onPress={() => {
-                        acceptSurvey(item.ids.projectId);
-                      }}
-                    />
-                  </View>
-                ) : (
-                  ''
-                )}
               </TouchableOpacity>
             );
           }}
@@ -135,8 +206,8 @@ const Calls = () => {
 const styles = new StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 20,
     backgroundColor: '#eeeeee',
+    padding: 20,
   },
   tasks: {
     flex: 1,
@@ -171,6 +242,16 @@ const styles = new StyleSheet.create({
     fontSize: 18,
     flex: 1,
     color: '#008080',
+    fontWeight: 'bold',
+  },
+  status: {
+    color: '#fff',
+    padding: 20,
+    backgroundColor: Colors.whitetheme.primary,
+    borderRadius: 20,
+    alignSelf: 'center',
+    margin: 20,
+    width: '100%',
     fontWeight: 'bold',
   },
   date: {

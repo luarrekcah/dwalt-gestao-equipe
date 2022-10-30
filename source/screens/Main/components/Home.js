@@ -134,7 +134,9 @@ const Home = ({navigation}) => {
                 style={styles.marginCard}
                 key={activeSurvey[0].ids.projectId}
                 onPress={() =>
-                  navigation.navigate('ProjectDetails', {project: activeSurvey[0]})
+                  navigation.navigate('ProjectDetails', {
+                    project: activeSurvey[0],
+                  })
                 }>
                 <ImageBackground
                   imageStyle={styles.imageCard}
