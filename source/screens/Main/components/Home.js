@@ -1,14 +1,24 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native';
 import Colors from '../../../global/colorScheme';
 import {
   LoadingActivity,
   MiniCard,
   TextSection,
 } from '../../../global/Components';
+
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
   getBusinessData,
+  getProjectsData,
   getSurveyData,
   getUserData,
 } from '../../../services/Database';
@@ -18,12 +28,14 @@ const Home = ({navigation}) => {
   const [business, setBusiness] = React.useState();
   const [loading, setLoading] = React.useState(true);
   const [survey, setSurvey] = React.useState([]);
+  const [projects, setProjects] = React.useState();
 
   const loadData = async () => {
     setLoading(true);
     setUser(await getUserData());
     setBusiness(await getBusinessData());
     setSurvey(await getSurveyData());
+    setProjects(await getProjectsData());
     setLoading(false);
   };
 
@@ -89,7 +101,7 @@ const Home = ({navigation}) => {
                 iconSize={40}
               />
               <MiniCard
-                content={['0', 'Projetos']}
+                content={[`${projects.length}`, 'Projetos']}
                 iconName="folder"
                 iconSize={40}
               />
@@ -106,11 +118,47 @@ const Home = ({navigation}) => {
               </Text>
             </View>
             <TextSection value={'Projetos'} />
-            <View style={styles.emptyCard}>
-              <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
-                Nenhum projeto registrado
-              </Text>
-            </View>
+            {projects.length === 0 ? (
+              <View style={styles.emptyCard}>
+                <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
+                  Nenhum projeto registrado
+                </Text>
+              </View>
+            ) : (
+              projects.map((item, index) => {
+                return (
+                  <TouchableOpacity
+                    style={styles.marginCard}
+                    key={index}
+                    onPress={() =>
+                      navigation.navigate('ProjectDetails', {project: item})
+                    }>
+                    <ImageBackground
+                      imageStyle={styles.imageCard}
+                      source={require('../../../../assets/home/bannerbackground.jpg')}>
+                      <View style={styles.projectCard}>
+                        <Text style={styles.projectTitle}>
+                          {item.apelidoProjeto}
+                        </Text>
+                        <Text style={styles.projectCategory}>
+                          {item.category}
+                        </Text>
+                        <View style={styles.bottomProject}>
+                          <Text style={styles.bottomKwp}>
+                            <Icon name="flash-on" size={20} color="#fff" />
+                            {item.kwp}
+                            kWp
+                          </Text>
+                          <Text style={styles.bottomStatus}>
+                            Status: {item.Status}
+                          </Text>
+                        </View>
+                      </View>
+                    </ImageBackground>
+                  </TouchableOpacity>
+                );
+              })
+            )}
           </View>
         </ScrollView>
       </View>

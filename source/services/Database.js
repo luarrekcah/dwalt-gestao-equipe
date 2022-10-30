@@ -54,3 +54,20 @@ export const getStaffsData = async () => {
     });
   return staffs;
 };
+
+export const getProjectsData = async () => {
+  const userLocal = await AsyncStorage.getItem('user').then(async data => {
+    return await JSON.parse(data);
+  });
+  const projects = await database()
+    .ref('/gestaoempresa/projetos')
+    .once('value')
+    .then(snapshot => {
+      const all = snapshot.val();
+      const myBusinessProjects = all.filter(item => {
+        return item.business === userLocal.email_link;
+      });
+      return myBusinessProjects;
+    });
+  return projects;
+};
