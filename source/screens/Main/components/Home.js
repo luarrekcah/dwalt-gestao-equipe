@@ -10,6 +10,7 @@ import {
   TextSection,
 } from '../../../global/Components';
 import database from '@react-native-firebase/database';
+import {getUserData} from '../../../services/Database';
 
 const Home = ({navigation}) => {
   const [user, setUser] = React.useState();
@@ -18,9 +19,12 @@ const Home = ({navigation}) => {
   const [survey, setSurvey] = React.useState([]);
 
   const loadData = async () => {
-    await AsyncStorage.getItem('user').then(data => {
-      console.log(data);
-      const userdata = JSON.parse(data);
+    const usera = await getUserData();
+
+    console.log(usera._id);
+
+    await AsyncStorage.getItem('user').then(async data => {
+      const userdata = await JSON.parse(data);
 
       database()
         .ref('/gestaoempresa/funcionarios')

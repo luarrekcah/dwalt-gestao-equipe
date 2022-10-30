@@ -25,7 +25,7 @@ const Calls = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getSurveys = (userd) => {
+  const getSurveys = userd => {
     database()
       .ref('/gestaoempresa/survey')
       .once('value')

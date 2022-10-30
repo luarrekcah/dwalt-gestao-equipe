@@ -23,7 +23,6 @@ const Business = ({navigation}) => {
   const loadData = () => {
     AsyncStorage.getItem('user').then(data => {
       const userdata = JSON.parse(data);
-      console.log(userdata);
       setUser(userdata);
     });
   };

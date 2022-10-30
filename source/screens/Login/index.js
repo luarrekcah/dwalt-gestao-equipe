@@ -32,7 +32,6 @@ const Login = ({navigation}) => {
           let user;
           if (existsUser) {
             user = existsUser;
-            console.log(user);
             navigation.navigate('Main');
             await AsyncStorage.setItem(
               'logged',
