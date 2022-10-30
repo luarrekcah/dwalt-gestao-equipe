@@ -3,6 +3,7 @@ import {Linking, TouchableOpacity} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import NetInfo from '@react-native-community/netinfo';
 
 import Colors from './global/colorScheme';
 import {LoadingActivity} from './components/Global';
@@ -131,6 +132,11 @@ const Routes = () => {
     }
 
     initialVerifications();
+  });
+
+  NetInfo.fetch().then(state => {
+    console.log('Connection type', state.type);
+    console.log('Is connected?', state.isConnected);
   });
 
   if (isLoading) {
