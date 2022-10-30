@@ -8,38 +8,22 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {LoadingActivity, SimpleButton} from '../../global/Components';
+import {getSurveyData} from '../../services/Database';
 
 const Calls = () => {
-  const [user, setUser] = React.useState();
   const [survey, setSurvey] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
 
-  React.useEffect(() => {
-    AsyncStorage.getItem('user').then(async data => {
-      const userdata = JSON.parse(data);
-      await setUser(userdata);
-      getSurveys(userdata);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getSurveys = userd => {
-    database()
-      .ref('/gestaoempresa/survey')
-      .once('value')
-      .then(async snapshot => {
-        let surveys = [];
-        if (snapshot.val() !== null) {
-          surveys = snapshot.val();
-        }
-
-        setSurvey(
-          surveys.filter(item => item.ids.businessId === userd.email_link),
-        );
-      });
+  const loadData = async () => {
+    setLoading(true);
+    setSurvey(await getSurveyData());
+    setLoading(false);
   };
+
+  React.useEffect(() => {
+    loadData();
+  }, []);
 
   if (loading) {
     return <LoadingActivity />;
