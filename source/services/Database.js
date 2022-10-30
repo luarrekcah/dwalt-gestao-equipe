@@ -36,18 +36,11 @@ export const getBusinessData = async () => {
 };
 
 export const getSurveyData = async () => {
-  const userLocal = await AsyncStorage.getItem('user').then(async data => {
-    return await JSON.parse(data);
-  });
   const survey = await database()
     .ref('/gestaoempresa/survey')
     .once('value')
     .then(snapshot => {
-      const all = snapshot.val();
-      const actsurvey = all.find(item => {
-        return item.ids.businessId === userLocal.email_link;
-      });
-      return actsurvey;
+      return snapshot.val();
     });
   return survey;
 };

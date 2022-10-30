@@ -23,6 +23,7 @@ const Home = ({navigation}) => {
     setLoading(true);
     setUser(await getUserData());
     setBusiness(await getBusinessData());
+    console.log(await getSurveyData());
     setSurvey(await getSurveyData());
     setLoading(false);
   };
