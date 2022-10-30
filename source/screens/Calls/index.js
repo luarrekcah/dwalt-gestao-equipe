@@ -45,6 +45,7 @@ const Calls = () => {
             if (item.ids.projectId === id) {
               item.accepted = true;
               item.finished = false;
+              item.status = 'Chamado foi atendido pela empresa';
             }
             return item;
           });
@@ -147,7 +148,6 @@ const styles = new StyleSheet.create({
     width: 25,
     height: 25,
   },
-
   card: {
     shadowColor: '#00000021',
     shadowOffset: {
@@ -157,7 +157,6 @@ const styles = new StyleSheet.create({
     shadowOpacity: 0.37,
     shadowRadius: 7.49,
     elevation: 12,
-
     marginVertical: 10,
     marginHorizontal: 20,
     backgroundColor: 'white',
@@ -167,7 +166,6 @@ const styles = new StyleSheet.create({
     flexWrap: 'wrap',
     borderLeftWidth: 6,
   },
-
   description: {
     fontSize: 18,
     flex: 1,

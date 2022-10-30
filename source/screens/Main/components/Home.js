@@ -22,6 +22,7 @@ import {
   getSurveyData,
   getUserData,
 } from '../../../services/Database';
+import moment from '../../../vendors/moment';
 
 const Home = ({navigation}) => {
   const [user, setUser] = React.useState();
@@ -91,7 +92,10 @@ const Home = ({navigation}) => {
             <TextSection value={'Informações'} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <MiniCard
-                content={[`${survey.length}`, 'Chamados']}
+                content={[
+                  `${survey.filter(i => i.accepted && !i.finished).length}`,
+                  'Chamados',
+                ]}
                 iconName="warning"
                 iconSize={40}
               />
@@ -112,11 +116,56 @@ const Home = ({navigation}) => {
               />
             </ScrollView>
             <TextSection value={'Chamado em andamento'} />
-            <View style={styles.emptyCard}>
-              <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
-                Nenhuma solicitação ativa
-              </Text>
-            </View>
+            {survey.length === 0 ? (
+              <View style={styles.emptyCard}>
+                <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
+                  Nenhuma solicitação ativa
+                </Text>
+              </View>
+            ) : (
+              survey.map(item => {
+                if (item.accepted && !item.finished) {
+                  return (
+                    <TouchableOpacity
+                      style={styles.marginCard}
+                      key={item.ids.projectId}
+                      onPress={() =>
+                        navigation.navigate('ProjectDetails', {project: item})
+                      }>
+                      <ImageBackground
+                        imageStyle={styles.imageCard}
+                        source={require('../../../../assets/home/bannerbackground.jpg')}>
+                        <View style={styles.projectCard}>
+                          <Text
+                            style={{
+                              alignSelf: 'center',
+                              fontSize: 20,
+                              fontWeight: 'bold',
+                              color: '#fff',
+                            }}>
+                            {item.text}
+                          </Text>
+                          <Text
+                            style={{
+                              marginVertical: 20,
+                              alignSelf: 'center',
+                              fontSize: 15,
+                              fontWeight: 'bold',
+                              color: '#fff',
+                            }}>
+                            Status: {item.status}
+                          </Text>
+                          <Text style={{alignSelf: 'center'}}>
+                            Solicitado {moment(item.createdAt).fromNow()}
+                          </Text>
+                        </View>
+                      </ImageBackground>
+                    </TouchableOpacity>
+                  );
+                }
+              })
+            )}
+
             <TextSection value={'Projetos'} />
             {projects.length === 0 ? (
               <View style={styles.emptyCard}>
