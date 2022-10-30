@@ -4,9 +4,17 @@ import {Image, Linking, ScrollView, StyleSheet, Text, View} from 'react-native';
 import Colors from '../../global/colorScheme';
 import {Button, LoadingActivity, TextSection} from '../../global/Components';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {getUserData} from '../../services/Database';
 
 const Business = ({navigation}) => {
   const [user, setUser] = React.useState();
+  const [loading, setLoading] = React.useState(true);
+
+  const loadData = async () => {
+    setLoading(true);
+    setUser(await getUserData());
+    setLoading(false);
+  };
 
   React.useEffect(() => {
     GoogleSignin.configure({
@@ -17,15 +25,7 @@ const Business = ({navigation}) => {
       loadData();
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigation]);
-
-  const loadData = () => {
-    AsyncStorage.getItem('user').then(data => {
-      const userdata = JSON.parse(data);
-      setUser(userdata);
-    });
-  };
 
   const signOut = async () => {
     try {
@@ -41,7 +41,7 @@ const Business = ({navigation}) => {
     }
   };
 
-  if (user === undefined || user === null) {
+  if (loading) {
     return <LoadingActivity />;
   } else {
     return (
