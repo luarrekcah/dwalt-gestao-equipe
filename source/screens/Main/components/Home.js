@@ -30,13 +30,20 @@ const Home = ({navigation}) => {
   const [loading, setLoading] = React.useState(true);
   const [survey, setSurvey] = React.useState([]);
   const [projects, setProjects] = React.useState();
+  const [activeSurvey, setActiveSurvey] = React.useState([]);
 
   const loadData = async () => {
     setLoading(true);
     setUser(await getUserData());
-    setBusiness(await getBusinessData());
-    setSurvey(await getSurveyData());
+    const surveys = await getSurveyData();
+    const businesss = await getBusinessData();
+    const actSurvey = surveys.filter(
+      i => i.accepted && !i.finished && i.ids.businessId === businesss._id,
+    );
+    setBusiness(businesss);
+    setSurvey(surveys);
     setProjects(await getProjectsData());
+    setActiveSurvey(actSurvey);
     setLoading(false);
   };
 
@@ -45,6 +52,7 @@ const Home = ({navigation}) => {
       await loadData();
     });
     return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigation]);
 
   if (loading) {
@@ -93,7 +101,11 @@ const Home = ({navigation}) => {
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <MiniCard
                 content={[
-                  `${survey.filter(i => i.accepted && !i.finished).length}`,
+                  `${
+                    survey.filter(
+                      i => !i.finished && i.ids.businessId === business._id,
+                    ).length
+                  }`,
                   'Chamados',
                 ]}
                 iconName="warning"
@@ -116,54 +128,49 @@ const Home = ({navigation}) => {
               />
             </ScrollView>
             <TextSection value={'Chamado em andamento'} />
-            {survey.length === 0 ? (
+
+            {activeSurvey.length !== 0 ? (
+              <TouchableOpacity
+                style={styles.marginCard}
+                key={activeSurvey[0].ids.projectId}
+                onPress={() =>
+                  navigation.navigate('ProjectDetails', {project: activeSurvey[0]})
+                }>
+                <ImageBackground
+                  imageStyle={styles.imageCard}
+                  source={require('../../../../assets/home/survey.jpg')}>
+                  <View style={styles.projectCard}>
+                    <Text
+                      style={{
+                        alignSelf: 'center',
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        color: '#fff',
+                      }}>
+                      {activeSurvey[0].text}
+                    </Text>
+                    <Text
+                      style={{
+                        marginVertical: 20,
+                        alignSelf: 'center',
+                        fontSize: 15,
+                        fontWeight: 'bold',
+                        color: '#fff',
+                      }}>
+                      Status: {activeSurvey[0].status}
+                    </Text>
+                    <Text style={{alignSelf: 'center'}}>
+                      Solicitado {moment(activeSurvey[0].createdAt).fromNow()}
+                    </Text>
+                  </View>
+                </ImageBackground>
+              </TouchableOpacity>
+            ) : (
               <View style={styles.emptyCard}>
                 <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
                   Nenhuma solicitação ativa
                 </Text>
               </View>
-            ) : (
-              survey.map(item => {
-                if (item.accepted && !item.finished) {
-                  return (
-                    <TouchableOpacity
-                      style={styles.marginCard}
-                      key={item.ids.projectId}
-                      onPress={() =>
-                        navigation.navigate('ProjectDetails', {project: item})
-                      }>
-                      <ImageBackground
-                        imageStyle={styles.imageCard}
-                        source={require('../../../../assets/home/bannerbackground.jpg')}>
-                        <View style={styles.projectCard}>
-                          <Text
-                            style={{
-                              alignSelf: 'center',
-                              fontSize: 20,
-                              fontWeight: 'bold',
-                              color: '#fff',
-                            }}>
-                            {item.text}
-                          </Text>
-                          <Text
-                            style={{
-                              marginVertical: 20,
-                              alignSelf: 'center',
-                              fontSize: 15,
-                              fontWeight: 'bold',
-                              color: '#fff',
-                            }}>
-                            Status: {item.status}
-                          </Text>
-                          <Text style={{alignSelf: 'center'}}>
-                            Solicitado {moment(item.createdAt).fromNow()}
-                          </Text>
-                        </View>
-                      </ImageBackground>
-                    </TouchableOpacity>
-                  );
-                }
-              })
             )}
 
             <TextSection value={'Projetos'} />
