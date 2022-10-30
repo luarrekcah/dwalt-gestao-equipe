@@ -5,6 +5,7 @@ import Colors from '../../global/colorScheme';
 import {Button, LoadingActivity, TextSection} from '../../global/Components';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {getUserData} from '../../services/Database';
+import {onLogoutPress} from '../../services/Auth';
 
 const Business = ({navigation}) => {
   const [user, setUser] = React.useState();
@@ -60,7 +61,13 @@ const Business = ({navigation}) => {
             <Text style={styles.email}>{user.email}</Text>
           </View>
           <TextSection value="Conta" />
-          <Button icon="logout" value="Sair da Conta" onPress={signOut} />
+          <Button
+            icon="logout"
+            value="Sair da Conta"
+            onPress={async () => {
+              await onLogoutPress({navigation});
+            }}
+          />
           <TextSection value="Outros" />
           <Button
             icon="info"

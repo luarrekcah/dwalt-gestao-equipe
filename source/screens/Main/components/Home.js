@@ -42,10 +42,10 @@ const Home = ({navigation}) => {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
-      loadData();
+      await loadData();
     });
     return unsubscribe;
-  }, [navigation, user]);
+  }, [navigation]);
 
   if (loading) {
     return <LoadingActivity />;

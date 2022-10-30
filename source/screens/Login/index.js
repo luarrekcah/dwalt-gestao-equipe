@@ -8,6 +8,7 @@ import {
 } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import database from '@react-native-firebase/database';
+import {saveUserAuth} from '../../services/Auth';
 
 const Login = ({navigation}) => {
   React.useEffect(() => {
@@ -37,6 +38,7 @@ const Login = ({navigation}) => {
               'logged',
               JSON.stringify({logged: true}),
             );
+            await saveUserAuth(user);
           } else {
             user = {
               _id: userInfo.user.id,

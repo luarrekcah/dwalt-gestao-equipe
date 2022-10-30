@@ -20,7 +20,7 @@ import Main from './screens/Main';
 const AppScreens = ({logged, initiated}) => {
   return (
     <Stack.Navigator
-      initialRouteName={logged ? (initiated ? 'Main' : 'Intro') : 'Login'}
+      initialRouteName={logged ? (initiated ? 'Main' : 'Login') : 'Intro'}
       screenOptions={{
         headerShown: true,
       }}>
