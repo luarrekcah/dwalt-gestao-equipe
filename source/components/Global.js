@@ -210,6 +210,7 @@ const styles = new StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    backgroundColor: Colors.whitetheme.backgroundColor,
   },
   horizontal: {
     flexDirection: 'row',
