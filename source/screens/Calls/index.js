@@ -1,5 +1,4 @@
 import React from 'react';
-import database from '@react-native-firebase/database';
 import {
   StyleSheet,
   Text,
@@ -10,6 +9,8 @@ import {
 } from 'react-native';
 import {LoadingActivity, SimpleButton} from '../../global/Components';
 import {getSurveyData} from '../../services/Database';
+
+import moment from '../../vendors/moment';
 
 const Calls = () => {
   const [survey, setSurvey] = React.useState([]);
@@ -53,7 +54,9 @@ const Calls = () => {
                 <View style={styles.cardContent}>
                   <Text style={[styles.description]}>{item.text}</Text>
                   <Text style={styles.date}>{item.status}</Text>
-                  <Text style={styles.date}>DATA: {item.createdAt}</Text>
+                  <Text style={styles.date}>
+                    DATA: {moment(item.createdAt).fromNow()}
+                  </Text>
                 </View>
                 <View style={{marginLeft: 20}}>
                   <SimpleButton
