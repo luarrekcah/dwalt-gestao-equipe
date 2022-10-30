@@ -6,9 +6,11 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  ToastAndroid,
 } from 'react-native';
 import {LoadingActivity, SimpleButton} from '../../global/Components';
 import {getSurveyData} from '../../services/Database';
+import database from '@react-native-firebase/database';
 
 import moment from '../../vendors/moment';
 
@@ -26,6 +28,34 @@ const Calls = () => {
     loadData();
   }, []);
 
+  const acceptSurvey = id => {
+    database()
+      .ref('/gestaoempresa/survey')
+      .once('value')
+      .then(snapshot => {
+        const all = snapshot.val();
+        const haveCurrent = all.filter(item => item.accepted && !item.finished);
+        if (haveCurrent) {
+          return ToastAndroid.show(
+            'Finalize primeiro o chamado ativo para aceitar outro.',
+            ToastAndroid.SHORT,
+          );
+        } else {
+          const allSurveys = all.map(item => {
+            if (item.ids.projectId === id) {
+              item.accepted = true;
+              item.finished = false;
+            }
+            return item;
+          });
+          database()
+            .ref('/gestaoempresa/survey')
+            .set(allSurveys)
+            .then(loadData());
+        }
+      });
+  };
+
   if (loading) {
     return <LoadingActivity />;
   } else {
@@ -41,37 +71,56 @@ const Calls = () => {
           renderItem={({item}) => {
             return (
               <TouchableOpacity
-                style={[styles.card, {borderColor: '#FF0000'}]}
-                onPress={() => {
-                  console.log('aa');
-                }}>
+                style={[
+                  styles.card,
+                  {borderColor: item.accepted ? '#02610a' : '#FF0000'},
+                ]}>
                 <Image
                   style={styles.image}
                   source={{
-                    uri: 'https://img.icons8.com/flat_round/64/000000/delete-sign.png',
+                    uri: item.accepted
+                      ? 'https://img.icons8.com/color/344/time-span.png'
+                      : 'https://img.icons8.com/flat_round/64/000000/delete-sign.png',
                   }}
                 />
                 <View style={styles.cardContent}>
                   <Text style={[styles.description]}>{item.text}</Text>
                   <Text style={styles.date}>{item.status}</Text>
                   <Text style={styles.date}>
-                    DATA: {moment(item.createdAt).fromNow()}
+                    Solicitado {moment(item.createdAt).fromNow()}
                   </Text>
                 </View>
-                <View style={{marginLeft: 20}}>
+                <View>
+                  <SimpleButton
+                    icon={item.accepted ? 'map' : 'add'}
+                    value={item.accepted ? 'ABRIR ROTAS' : 'ACEITAR CHAMADO'}
+                    type={'success'}
+                    onPress={() => {
+                      acceptSurvey(item.ids.projectId);
+                    }}
+                  />
+                </View>
+                <View style={{flex: 1}}>
                   <SimpleButton
                     icon="info"
                     value={'VER PROJETO'}
                     type={'primary'}
                   />
                 </View>
-                <View>
-                  <SimpleButton
-                    icon="add"
-                    value={'ACEITAR CHAMADO'}
-                    type={'success'}
-                  />
-                </View>
+                {item.accepted ? (
+                  <View style={{flex: 1}}>
+                    <SimpleButton
+                      icon={item.accepted ? 'check' : ''}
+                      value={item.accepted ? 'CONCLUIR' : ''}
+                      type={'success'}
+                      onPress={() => {
+                        acceptSurvey(item.ids.projectId);
+                      }}
+                    />
+                  </View>
+                ) : (
+                  ''
+                )}
               </TouchableOpacity>
             );
           }}
