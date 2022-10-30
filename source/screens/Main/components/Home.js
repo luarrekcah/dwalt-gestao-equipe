@@ -168,11 +168,16 @@ const Home = ({navigation}) => {
                 </ImageBackground>
               </TouchableOpacity>
             ) : (
-              <View style={styles.emptyCard}>
-                <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
-                  Nenhuma solicitação ativa
-                </Text>
-              </View>
+              <ImageBackground
+                imageStyle={styles.imageCard}
+                source={require('../../../../assets/home/no-content.jpg')}>
+                <View style={styles.emptyCardNB}>
+                  <Text
+                    style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
+                    Nenhuma solicitação ativa
+                  </Text>
+                </View>
+              </ImageBackground>
             )}
 
             <TextSection value={'Projetos'} />
@@ -282,6 +287,13 @@ const styles = new StyleSheet.create({
     borderRadius: 20,
     height: 200,
     backgroundColor: Colors.whitetheme.primaryDark,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyCardNB: {
+    padding: 30,
+    borderRadius: 20,
+    height: 200,
     alignItems: 'center',
     justifyContent: 'center',
   },
