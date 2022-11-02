@@ -17,6 +17,7 @@ import Intro from './screens/Intro';
 import Login from './screens/Login';
 import CompanyLink from './screens/CompanyLink';
 import Main from './screens/Main';
+import Config from './screens/Config';
 
 const AppScreens = ({logged, initiated}) => {
   return (
@@ -102,9 +103,28 @@ const AppScreens = ({logged, initiated}) => {
           headerRight: () => (
             <TouchableOpacity
               onPress={() => {
-                Linking.openURL('https://www.dlwalt.com');
+                navigation.navigate('Config');
               }}>
               <Icon name="settings" size={30} color="#fff" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="Config"
+        component={Config}
+        options={({navigation}) => ({
+          headerStyle: {backgroundColor: Colors.whitetheme.primary},
+          headerTransparent: false,
+          headerTitle: 'Configurações do Aplicativo',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {color: 'white'},
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}>
+              <Icon name="arrow-back" size={30} color="#fff" />
             </TouchableOpacity>
           ),
         })}
@@ -137,7 +157,6 @@ const Routes = () => {
 
   NetInfo.fetch().then(state => {
     console.log('Is connected?', state.isConnected);
-
     setisConnected(state.isConnected);
   });
 
