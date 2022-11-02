@@ -62,9 +62,23 @@ export const LoadingActivity = () => {
 
 export const NotConnected = () => {
   return (
-    <View style={[styles.container, styles.horizontal]}>
-      <Text>Sem conexão com internet...</Text>
-      <ActivityIndicator size="large" color={Colors.whitetheme.danger} />
+    <View
+      style={[
+        styles.container,
+        {alignContent: 'center', alignItems: 'center'},
+      ]}>
+      <View>
+        <Text
+          style={{
+            color: '#000000',
+            fontSize: 20,
+            fontWeight: 'bold',
+            margin: 20,
+          }}>
+          Sem conexão com internet...
+        </Text>
+        <ActivityIndicator size="large" color={Colors.whitetheme.danger} />
+      </View>
     </View>
   );
 };
