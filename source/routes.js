@@ -18,6 +18,7 @@ import Login from './screens/Login';
 import CompanyLink from './screens/CompanyLink';
 import Main from './screens/Main';
 import Config from './screens/Config';
+import ProjectDetails from './screens/ProjectDetails';
 
 const AppScreens = ({logged, initiated}) => {
   return (
@@ -125,6 +126,33 @@ const AppScreens = ({logged, initiated}) => {
                 navigation.goBack();
               }}>
               <Icon name="arrow-back" size={30} color="#fff" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="ProjectDetails"
+        component={ProjectDetails}
+        options={({navigation}) => ({
+          headerStyle: {backgroundColor: Colors.whitetheme.primary},
+          headerTransparent: false,
+          headerTitle: 'Detalhes de Projeto',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {color: 'white'},
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}>
+              <Icon name="arrow-back" size={30} color="#fff" />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('ProjectDetails');
+              }}>
+              <Icon name="help" size={30} color="#fff" />
             </TouchableOpacity>
           ),
         })}

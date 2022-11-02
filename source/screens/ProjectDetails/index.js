@@ -7,28 +7,20 @@ import {
   ImageBackground,
   TouchableOpacity,
   Linking,
-  Modal,
-  TextInput,
-  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../global/colorScheme';
-import {DocumentCard, SimpleButton, TextSection} from '../../global/Components';
+import {DocumentCard, TextSection} from '../../global/Components';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageView from 'react-native-image-viewing';
 import database from '@react-native-firebase/database';
 //import MapView from 'react-native-maps'; desinstalar
-import moment from 'moment';
 
 const ProjectDetails = ({navigation, route}) => {
   const {project} = route.params;
   const [allMedia, setAllmedia] = React.useState(project.photos || []);
   const [visibleImageViewer, setIsVisibleImageViewer] = React.useState(false);
   const [viewerURI, setViewerURI] = React.useState([]);
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [value, setValue] = React.useState('');
-  const [typeRequest, setTypeRequest] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
 
   const pickImages = () => {
     ImagePicker.openPicker({
@@ -120,44 +112,6 @@ const ProjectDetails = ({navigation, route}) => {
     );
   };
 
-  const sendRequest = () => {
-    if (value === '') {
-      return Alert.alert(
-        'Erro',
-        'Sua solicitação precisa ter uma razão, preencha a caixa de texto',
-        [{text: 'OK'}],
-      );
-    }
-    setLoading(true);
-    database()
-      .ref('/gestaoempresa/' + typeRequest)
-      .once('value')
-      .then(snapshot => {
-        let all = [];
-        if (snapshot.val() !== null) {
-          all = snapshot.val();
-        }
-        all.push({
-          ids: {
-            customerId: project.emailApp,
-            businessId: project.business,
-            projectId: project._id,
-          },
-          text: value,
-          createdAt: moment().format(),
-          finished: false,
-          businessAnswer: '',
-          status: 'Aguardando resposta da empresa...',
-        });
-        database()
-          .ref('/gestaoempresa/' + typeRequest)
-          .set(all);
-        setLoading(false);
-        setModalVisible(false);
-        setValue('');
-      });
-  };
-
   return (
     <ScrollView style={styles.white}>
       <ImageView
@@ -233,59 +187,6 @@ const ProjectDetails = ({navigation, route}) => {
             <Text>Clique para abrir o Maps</Text>
           </ImageBackground>
         </TouchableOpacity>
-        <TextSection value={'Suporte & Reclamação'} />
-        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-          <SimpleButton
-            icon={'warning'}
-            type="primary"
-            value="Solicitar Vistoria"
-            onPress={() => {
-              setModalVisible(true);
-              setTypeRequest('survey');
-            }}
-          />
-          <SimpleButton
-            icon={'warning'}
-            type="danger"
-            value="Fazer Reclamação"
-            onPress={() => {
-              setModalVisible(true);
-              setTypeRequest('complaint');
-            }}
-          />
-        </View>
-      </View>
-      <View style={styles.centeredView}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalTitle}>
-                Olá, qual a razão da{' '}
-                {typeRequest === 'complaint' ? 'Reclamação' : 'Vistoria'}
-              </Text>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Estou com um problema em..."
-                placeholderTextColor={Colors.whitetheme.primary}
-                autoCapitalize="none"
-                multiline={true}
-                onChangeText={text => setValue(text)}
-                numberOfLines={10}
-              />
-              <SimpleButton
-                value="Enviar"
-                type={'primary'}
-                onPress={() => sendRequest()}
-              />
-            </View>
-          </View>
-        </Modal>
       </View>
     </ScrollView>
   );
