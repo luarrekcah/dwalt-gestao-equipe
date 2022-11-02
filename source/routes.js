@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import NetInfo from '@react-native-community/netinfo';
 
 import Colors from './global/colorScheme';
-import {LoadingActivity} from './components/Global';
+import {LoadingActivity, NotConnected} from './components/Global';
 
 import {isInitialized} from './services/Welcome';
 import {isLogged} from './services/Auth';
@@ -117,6 +117,7 @@ const Routes = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [initiated, setInitiated] = useState(false);
   const [logged, setLogged] = useState(false);
+  const [isConnected, setisConnected] = useState(false);
 
   useEffect(() => {
     async function initialVerifications() {
@@ -135,12 +136,17 @@ const Routes = () => {
   });
 
   NetInfo.fetch().then(state => {
-    console.log('Connection type', state.type);
     console.log('Is connected?', state.isConnected);
+
+    setisConnected(state.isConnected);
   });
 
   if (isLoading) {
     return <LoadingActivity />;
+  }
+
+  if (!isConnected) {
+    return <NotConnected />;
   }
 
   return (

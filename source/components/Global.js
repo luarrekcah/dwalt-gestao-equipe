@@ -60,6 +60,15 @@ export const LoadingActivity = () => {
   );
 };
 
+export const NotConnected = () => {
+  return (
+    <View style={[styles.container, styles.horizontal]}>
+      <Text>Sem conexão com internet...</Text>
+      <ActivityIndicator size="large" color={Colors.whitetheme.danger} />
+    </View>
+  );
+};
+
 export const DocumentCard = ({title, onPress, haveContent}) => {
   if (haveContent) {
     return (
