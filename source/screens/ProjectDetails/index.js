@@ -10,47 +10,59 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Colors from '../../global/colorScheme';
-import {DocumentCard, TextSection} from '../../global/Components';
+import {
+  DocumentCard,
+  LoadingActivity,
+  TextSection,
+} from '../../global/Components';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageView from 'react-native-image-viewing';
-import database from '@react-native-firebase/database';
+import {createItem, getAllItems} from '../../services/Database';
 //import MapView from 'react-native-maps'; desinstalar
 
 const ProjectDetails = ({navigation, route}) => {
   const {project} = route.params;
-  const [allMedia, setAllmedia] = React.useState(project.photos || []);
+  const [allMedia, setAllmedia] = React.useState([]);
+  const [allDocuments, setAllDocuments] = React.useState([]);
   const [visibleImageViewer, setIsVisibleImageViewer] = React.useState(false);
   const [viewerURI, setViewerURI] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  const loadData = async () => {
+    setLoading(true);
+    setAllmedia(
+      await getAllItems({
+        path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/photos`,
+      }),
+    );
+
+    setAllDocuments(
+      await getAllItems({
+        path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/documents`,
+      }),
+    );
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const pickImages = () => {
     ImagePicker.openPicker({
       includeBase64: true,
       multiple: true,
     }).then(images => {
-      database()
-        .ref('/gestaoempresa/projetos')
-        .once('value')
-        .then(snapshot => {
-          let allProjects = [];
-          if (snapshot.val() !== null) {
-            allProjects = snapshot.val();
-          }
-          allProjects.map(projeto => {
-            if (projeto._id === project._id) {
-              images.forEach((item, i) => {
-                if (projeto.photos === null || projeto.photos === undefined) {
-                  projeto.photos = [];
-                }
-                projeto.photos.push('data:image/png;base64,' + item.data);
-              });
-              setAllmedia(projeto.photos);
-              return projeto;
-            } else {
-              return projeto;
-            }
-          });
-          database().ref('/gestaoempresa/projetos').set(allProjects);
+      let array = [];
+      images.forEach(async i => {
+        array.push({data: {base64: 'data:image/png;base64,' + i.data}});
+        createItem({
+          path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/photos`,
+          params: {base64: 'data:image/png;base64,' + i.data},
         });
+      });
+      setAllmedia(array);
     });
   };
 
@@ -60,7 +72,7 @@ const ProjectDetails = ({navigation, route}) => {
         <Text style={styles.collectedCard}>
           Nome Completo
           <Icon
-            name={project.nomeComp !== '' ? 'check' : 'x'}
+            name={project.data.nomeComp !== '' ? 'check' : 'x'}
             size={15}
             color={'#fff'}
           />
@@ -112,84 +124,98 @@ const ProjectDetails = ({navigation, route}) => {
     );
   };
 
-  return (
-    <ScrollView style={styles.white}>
-      <ImageView
-        images={[
-          {
-            uri: viewerURI,
-          },
-        ]}
-        imageIndex={0}
-        visible={visibleImageViewer}
-        onRequestClose={() => setIsVisibleImageViewer(false)}
-      />
-      <ImageBackground
-        style={styles.backgroundImage}
-        source={require('../../../assets/home/bannerbackground.jpg')}>
-        <View style={styles.projectCard}>
-          <Text style={styles.projectTitle}>{project.apelidoProjeto}</Text>
-          <Text style={styles.projectCategory}>{project.category}</Text>
-          <View style={styles.bottomProject}>
-            <Text style={styles.bottomKwp}>
-              <Icon name="flash-on" size={20} color="#fff" />
-              {project.kwp}
-              kWp
+  if (loading) {
+    return <LoadingActivity />;
+  } else {
+    return (
+      <ScrollView style={styles.white}>
+        <ImageView
+          images={[
+            {
+              uri: viewerURI,
+            },
+          ]}
+          imageIndex={0}
+          visible={visibleImageViewer}
+          onRequestClose={() => setIsVisibleImageViewer(false)}
+        />
+        <ImageBackground
+          style={styles.backgroundImage}
+          source={require('../../../assets/home/bannerbackground.jpg')}>
+          <View style={styles.projectCard}>
+            <Text style={styles.projectTitle}>
+              {project.data.apelidoProjeto}
             </Text>
-            <Text style={styles.bottomStatus}>Status: {project.Status}</Text>
+            <Text style={styles.projectCategory}>{project.data.category}</Text>
+            <View style={styles.bottomProject}>
+              <Text style={styles.bottomKwp}>
+                <Icon name="flash-on" size={20} color="#fff" />
+                {project.data.kwp}
+                kWp
+              </Text>
+              <Text style={styles.bottomStatus}>
+                Status: {project.data.Status}
+              </Text>
+            </View>
           </View>
-        </View>
-      </ImageBackground>
-      <View style={styles.container}>
-        <TextSection value={'Fotos'} />
-        <ScrollView horizontal>
-          {allMedia.map((item, index) => {
-            return (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  setViewerURI(item);
-                  setIsVisibleImageViewer(true);
-                }}>
-                <ImageBackground
-                  style={styles.backgroundImagePhoto}
-                  source={{uri: item}}
+        </ImageBackground>
+        <View style={styles.container}>
+          <TextSection value={'Fotos'} />
+          <ScrollView horizontal>
+            {allMedia.map((item, index) => {
+              return (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    setViewerURI(item.data.base64);
+                    setIsVisibleImageViewer(true);
+                  }}>
+                  <ImageBackground
+                    style={styles.backgroundImagePhoto}
+                    source={{uri: item.data.base64}}
+                  />
+                </TouchableOpacity>
+              );
+            })}
+            <TouchableOpacity style={styles.iconAdd} onPress={pickImages}>
+              <Icon name="add" size={40} color="#fff" />
+            </TouchableOpacity>
+          </ScrollView>
+          <TextSection value={'Dados Salvos'} />
+          <RenderCollectedItems />
+          <TextSection value={'Documentos'} />
+          <ScrollView horizontal>
+            {allDocuments.map(item => {
+              return (
+                <DocumentCard
+                  title={item.data.documentName}
+                  haveContent={true}
+                  onPressView={() =>
+                    navigation.navigate('PdfViewer', {
+                      data: item.data.documentBase64,
+                    })
+                  }
                 />
-              </TouchableOpacity>
-            );
-          })}
-          <TouchableOpacity style={styles.iconAdd} onPress={pickImages}>
-            <Icon name="add" size={40} color="#fff" />
+              );
+            })}
+          </ScrollView>
+          <TextSection value={'Localização'} />
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL(
+                'https://www.google.com.br/maps/search/' + project.data.coords,
+              );
+            }}>
+            <ImageBackground
+              style={styles.mapBackground}
+              source={require('../../../assets/projectdetails/banner.jpg')}>
+              <Text>Clique para abrir o Maps</Text>
+            </ImageBackground>
           </TouchableOpacity>
-        </ScrollView>
-        <TextSection value={'Dados Salvos'} />
-        <RenderCollectedItems />
-        <TextSection value={'Documentos'} />
-        <ScrollView horizontal>
-          <DocumentCard title={'A.R.T'} haveContent={true} />
-          <DocumentCard title={'Procuração'} haveContent={false} />
-          <DocumentCard title={'Solicitação de Acesso'} haveContent={false} />
-          <DocumentCard title={'Memorial Técnico'} haveContent={false} />
-          <DocumentCard title={'Declaração'} haveContent={false} />
-          <DocumentCard title={'Projeto'} haveContent={false} />
-          <DocumentCard title={'Carta de Aprovação'} haveContent={false} />
-        </ScrollView>
-        <TextSection value={'Localização'} />
-        <TouchableOpacity
-          onPress={() => {
-            Linking.openURL(
-              'https://www.google.com.br/maps/search/' + project.coords,
-            );
-          }}>
-          <ImageBackground
-            style={styles.mapBackground}
-            source={require('../../../assets/projectdetails/banner.jpg')}>
-            <Text>Clique para abrir o Maps</Text>
-          </ImageBackground>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
-  );
+        </View>
+      </ScrollView>
+    );
+  }
 };
 
 const styles = new StyleSheet.create({

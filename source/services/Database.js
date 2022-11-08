@@ -1,73 +1,76 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import database from '@react-native-firebase/database';
+import {getUserAuth} from './Auth';
 
-export const getUserData = async () => {
-  const userLocal = await AsyncStorage.getItem('user').then(async data => {
-    return await JSON.parse(data);
-  });
-  const user = await database()
-    .ref('/gestaoempresa/funcionarios')
+export const createItem = ({path, params}) => {
+  if (!path || !params) {
+    return {error: 'Sem path'};
+  }
+  database().ref(path).push(params);
+};
+
+export const getAllItems = async ({path}) => {
+  if (!path) {
+    return {error: 'Sem path'};
+  }
+  const allItems = await database()
+    .ref(path)
     .once('value')
     .then(snapshot => {
-      const all = snapshot.val();
-      const actUser = all.find(item => {
-        return item._id === userLocal._id;
+      let alldata = [];
+      snapshot.forEach(childSnapshot => {
+        let key = childSnapshot.key,
+          data = childSnapshot.val();
+        alldata.push({key, data});
       });
-      return actUser;
+      return alldata;
     });
-  return user;
+  return allItems;
 };
 
 export const getBusinessData = async () => {
-  const userLocal = await AsyncStorage.getItem('user').then(async data => {
-    return await JSON.parse(data);
-  });
-  const business = await database()
-    .ref('/gestaoempresa/empresa')
+  const userLocal = await getUserAuth();
+  const businessData = await database()
+    .ref(`gestaoempresa/business/${userLocal.businessKey}`)
     .once('value')
     .then(snapshot => {
-      const all = snapshot.val();
-      const actBusiness = all.find(item => {
-        return item._id === userLocal.email_link;
-      });
-      return actBusiness;
+      return snapshot.val();
     });
-  return business;
+  const data = {data: businessData, key: userLocal.businessKey};
+  return data;
+};
+
+export const getUserData = async () => {
+  const userLocal = await getUserAuth();
+  const staffs = await getAllItems({
+    path: `/gestaoempresa/business/${userLocal.businessKey}/staffs`,
+  });
+  const user = await staffs.find(item => {
+    return item.data._id === userLocal._id;
+  });
+  console.log(user);
+  return user;
 };
 
 export const getSurveyData = async () => {
-  const survey = await database()
-    .ref('/gestaoempresa/survey')
-    .once('value')
-    .then(snapshot => {
-      return snapshot.val();
-    });
-  return survey;
+  const userLocal = await getUserAuth();
+  const surveys = await getAllItems({
+    path: `/gestaoempresa/business/${userLocal.businessKey}/surveys`,
+  });
+  return surveys;
 };
 
 export const getStaffsData = async () => {
-  const staffs = await database()
-    .ref('/gestaoempresa/funcionarios')
-    .once('value')
-    .then(snapshot => {
-      return snapshot.val();
-    });
+  const userLocal = await getUserAuth();
+  const staffs = await getAllItems({
+    path: `/gestaoempresa/business/${userLocal.businessKey}/staffs`,
+  });
   return staffs;
 };
 
 export const getProjectsData = async () => {
-  const userLocal = await AsyncStorage.getItem('user').then(async data => {
-    return await JSON.parse(data);
+  const userLocal = await getUserAuth();
+  const projects = await getAllItems({
+    path: `/gestaoempresa/business/${userLocal.businessKey}/projects`,
   });
-  const projects = await database()
-    .ref('/gestaoempresa/projetos')
-    .once('value')
-    .then(snapshot => {
-      const all = snapshot.val();
-      const myBusinessProjects = all.filter(item => {
-        return item.business === userLocal.email_link;
-      });
-      return myBusinessProjects;
-    });
   return projects;
 };

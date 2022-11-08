@@ -12,14 +12,16 @@ import {getStaffsData, getUserData} from '../../services/Database';
 
 const Team = ({navigation}) => {
   const [loading, setLoading] = React.useState(true);
-  const [team, setTeam] = React.useState();
+  const [team, setTeam] = React.useState([]);
 
   const loadData = async () => {
     setLoading(true);
     const allSt = await getStaffsData();
     const useract = await getUserData();
-    const teeam = await allSt.filter(item => item.team.id === useract.team.id);
-    setTeam(teeam);
+    const teeam = await allSt.filter(item => item.key === useract.data.team.id);
+    if (teeam) {
+      setTeam(teeam);
+    }
     setLoading(false);
   };
 
@@ -35,42 +37,51 @@ const Team = ({navigation}) => {
   } else {
     return (
       <View style={styles.container}>
-        <FlatList
-          style={styles.list}
-          contentContainerStyle={styles.listContainer}
-          data={team}
-          horizontal={false}
-          numColumns={2}
-          keyExtractor={item => {
-            return item.id;
-          }}
-          renderItem={({item}) => {
-            return (
-              <TouchableOpacity
-                style={styles.card}
-                onPress={() => {
-                  console.log('click!');
-                }}>
-                <View key={item._id} style={styles.cardHeader}>
-                  <Image
-                    style={styles.icon}
-                    source={{
-                      uri: 'https://lh3.googleusercontent.com/a/ALm5wu2Arf5ek8xCHnDM1fphrGbcvWeeVHnQ5TaVKoyfpV4',
-                    }}
-                  />
-                </View>
-                <Image style={styles.userImage} source={{uri: item.foto}} />
-                <View style={styles.cardFooter}>
-                  <View
-                    style={{alignItems: 'center', justifyContent: 'center'}}>
-                    <Text style={styles.name}>{item.nome}</Text>
-                    <Text style={styles.position}>{item.team.role}</Text>
+        {team.length !== 0 ? (
+          <FlatList
+            style={styles.list}
+            contentContainerStyle={styles.listContainer}
+            data={team}
+            horizontal={false}
+            numColumns={2}
+            keyExtractor={item => {
+              return item.key;
+            }}
+            renderItem={({item}) => {
+              return (
+                <TouchableOpacity
+                  style={styles.card}
+                  onPress={() => {
+                    console.log('click!');
+                  }}>
+                  <View key={item.data._id} style={styles.cardHeader}>
+                    <Image
+                      style={styles.icon}
+                      source={{
+                        uri: 'https://lh3.googleusercontent.com/a/ALm5wu2Arf5ek8xCHnDM1fphrGbcvWeeVHnQ5TaVKoyfpV4',
+                      }}
+                    />
                   </View>
-                </View>
-              </TouchableOpacity>
-            );
-          }}
-        />
+                  <Image
+                    style={styles.userImage}
+                    source={{uri: item.data.foto}}
+                  />
+                  <View style={styles.cardFooter}>
+                    <View
+                      style={{alignItems: 'center', justifyContent: 'center'}}>
+                      <Text style={styles.name}>{item.data.nome}</Text>
+                      <Text style={styles.position}>{item.data.team.role}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        ) : (
+          <View>
+            <Text style={{color: '#000000'}}>Sem team</Text>
+          </View>
+        )}
       </View>
     );
   }

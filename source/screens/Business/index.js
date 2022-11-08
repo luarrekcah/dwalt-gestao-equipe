@@ -30,14 +30,16 @@ const Business = ({navigation}) => {
           <Image
             style={styles.bussinessLogo}
             source={{
-              uri: business.profile.logo,
+              uri: business.data.info.profile.logo,
             }}
           />
           <Text style={styles.bussinessName}>
-            {business.documents.nome_fantasia}
+            {business.data.info.documents.nome_fantasia}
           </Text>
           <TextSection value="Sobre a empresa" />
-          <Text style={styles.bussinessDesc}>{business.profile.about}</Text>
+          <Text style={styles.bussinessDesc}>
+            {business.data.info.profile.about}
+          </Text>
         </ScrollView>
       </View>
     );

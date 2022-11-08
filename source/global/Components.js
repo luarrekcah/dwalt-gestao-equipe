@@ -60,13 +60,13 @@ export const LoadingActivity = () => {
   );
 };
 
-export const DocumentCard = ({title, onPress, haveContent}) => {
+export const DocumentCard = ({title, onPressView, haveContent}) => {
   if (haveContent) {
     return (
       <View style={styles.documentsCard}>
         <Icon name="check" size={30} color="#fff" />
         <Text style={styles.documentsTitle}>{title}</Text>
-        <TouchableOpacity style={styles.documentsButton} onPress={onPress}>
+        <TouchableOpacity style={styles.documentsButton} onPress={onPressView}>
           <Text style={styles.documentsButtonText}>Ver</Text>
         </TouchableOpacity>
       </View>

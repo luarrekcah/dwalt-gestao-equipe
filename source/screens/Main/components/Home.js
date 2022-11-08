@@ -38,7 +38,7 @@ const Home = ({navigation}) => {
     const surveys = await getSurveyData();
     const businesss = await getBusinessData();
     const actSurvey = surveys.filter(
-      i => i.accepted && !i.finished && i.ids.businessId === businesss._id,
+      i => i.accepted && !i.finished && i.ids.businessId === businesss.key,
     );
     setBusiness(businesss);
     setSurvey(surveys);
@@ -63,14 +63,14 @@ const Home = ({navigation}) => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.headerDetail}>
             <Text style={styles.welcome}>
-              Bem vindo{user === undefined ? '' : ' ' + user.nome}!
+              Bem vindo{user === undefined ? '' : ' ' + user.data.nome}!
             </Text>
             <Text style={styles.linkedOn}>
-              Vinculado a {business.documents.nome_fantasia}
+              Vinculado a {business.data.info.documents.nome_fantasia}
             </Text>
           </View>
           <View style={styles.backgroundDetail}>
-            {user.team.name === '' ? (
+            {user.data.team.name === '' ? (
               <View style={[styles.emptyCard, {height: 100}]}>
                 <View>
                   <Text style={styles.titleCards}>Em nenhuma equipe!</Text>
@@ -90,10 +90,10 @@ const Home = ({navigation}) => {
                       fontWeight: 'bold',
                       alignSelf: 'center',
                     }}>
-                    Equipe {user.team.name}
+                    Equipe {user.data.team.name}
                   </Text>
                 </View>
-                <Text>Seu cargo: {user.team.role}</Text>
+                <Text>Seu cargo: {user.data.team.role}</Text>
               </View>
             )}
 
@@ -201,19 +201,19 @@ const Home = ({navigation}) => {
                       source={require('../../../../assets/home/bannerbackground.jpg')}>
                       <View style={styles.projectCard}>
                         <Text style={styles.projectTitle}>
-                          {item.apelidoProjeto}
+                          {item.data.apelidoProjeto}
                         </Text>
                         <Text style={styles.projectCategory}>
-                          {item.category}
+                          {item.data.category}
                         </Text>
                         <View style={styles.bottomProject}>
                           <Text style={styles.bottomKwp}>
                             <Icon name="flash-on" size={20} color="#fff" />
-                            {item.kwp}
+                            {item.data.kwp}
                             kWp
                           </Text>
                           <Text style={styles.bottomStatus}>
-                            Status: {item.Status}
+                            Status: {item.data.Status}
                           </Text>
                         </View>
                       </View>

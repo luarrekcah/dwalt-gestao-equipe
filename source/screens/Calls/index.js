@@ -41,7 +41,6 @@ const Calls = () => {
       .then(snapshot => {
         const all = snapshot.val();
         const haveCurrent = all.filter(item => item.accepted && !item.finished);
-        console.log(haveCurrent.length);
         if (haveCurrent !== 0) {
           return ToastAndroid.show(
             'Finalize primeiro o chamado ativo para aceitar outro.',

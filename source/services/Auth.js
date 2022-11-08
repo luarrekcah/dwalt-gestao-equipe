@@ -11,7 +11,7 @@ export const setUserAuth = async uid => {
 };
 
 export const getUserAuth = async () => {
-  const userAuth = await AsyncStorage.getItem('user');
+  const userAuth = JSON.parse(await AsyncStorage.getItem('user'));
   return userAuth;
 };
 

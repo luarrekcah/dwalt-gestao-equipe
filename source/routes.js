@@ -184,7 +184,6 @@ const Routes = () => {
   });
 
   NetInfo.fetch().then(state => {
-    console.log('Is connected?', state.isConnected);
     setisConnected(state.isConnected);
   });
 

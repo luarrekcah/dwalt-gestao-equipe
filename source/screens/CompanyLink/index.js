@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {
@@ -11,13 +12,15 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Colors from '../../global/colorScheme';
-import database from '@react-native-firebase/database';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {createItem, getAllItems} from '../../services/Database';
+import {saveUserAuth} from '../../services/Auth';
 
 const CompanyLink = ({navigation}) => {
   const [value, setValue] = React.useState('');
   const [user, setUser] = React.useState();
   const [link, setLink] = React.useState(null);
+  const [businessData, setBusinessData] = React.useState(null);
 
   const [modalVisible, setModalVisible] = React.useState(false);
 
@@ -36,60 +39,33 @@ const CompanyLink = ({navigation}) => {
     verifyBusiness();
   };
 
-  const verifyBusiness = () => {
-    database()
-      .ref('/gestaoempresa/empresa')
-      .once('value')
-      .then(async snapshot => {
-        let business = [];
-        if (snapshot.val() !== null) {
-          business = snapshot.val();
-        }
-        const linkFiltered = business.find(item => item._id === value);
-        if (linkFiltered) {
-          setLink(linkFiltered);
-        } else {
-          setLink({error: 'This email doenst exist'});
-        }
-      });
+  const verifyBusiness = async () => {
+    const business = await getAllItems({path: 'gestaoempresa/business'});
+    const foundBusiness = business.find(i => i.data.info.email === value);
+    if (foundBusiness) {
+      setLink(foundBusiness);
+      setBusinessData(foundBusiness);
+    } else {
+      setLink({error: 'This email doenst exist'});
+    }
   };
 
   const linkConfirm = async () => {
     const updatedUser = user;
     updatedUser.email_link = value;
+    updatedUser.businessKey = businessData.key;
     setUser(updatedUser);
-    await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
-    database()
-      .ref('/gestaoempresa/funcionarios')
-      .once('value')
-      .then(async snapshot => {
-        let users = [];
-        if (snapshot.val() !== null) {
-          users = snapshot.val();
-        }
-        const checkUser = users.find(item => item._id === user._id);
-        if (checkUser) {
-          await AsyncStorage.setItem('logged', JSON.stringify({logged: true}));
-          navigation.navigate('Main');
-        } else {
-          users.push(updatedUser);
-          database()
-            .ref('/gestaoempresa/funcionarios')
-            .set(users)
-            .then(async () => {
-              setLink({success: 'user registered'});
-              await AsyncStorage.setItem(
-                'logged',
-                JSON.stringify({logged: true}),
-              );
-              setTimeout(() => {
-                setModalVisible(false);
-                navigation.navigate('Main');
-              }, 1000 * 5);
-              return;
-            });
-        }
-      });
+    saveUserAuth(updatedUser);
+    createItem({
+      path: `gestaoempresa/business/${businessData.key}/staffs`,
+      params: updatedUser,
+    });
+    await AsyncStorage.setItem('logged', JSON.stringify({logged: true}));
+    setLink({success: 'user registered'});
+    setTimeout(() => {
+      setModalVisible(false);
+      navigation.navigate('Main');
+    }, 1000 * 5);
   };
 
   const RenderResult = () => {
@@ -139,10 +115,11 @@ const CompanyLink = ({navigation}) => {
         return (
           <View>
             <Text style={styles.modalTitle}>
-              {link.documents.nome_fantasia}
+              {link.data.info.documents.nome_fantasia}
             </Text>
-            <Text style={styles.modalText}>CNPJ: {link.documents.cnpj}</Text>
-
+            <Text style={styles.modalText}>
+              CNPJ: {link.data.info.documents.cnpj}
+            </Text>
             <TouchableOpacity
               style={[
                 styles.button,

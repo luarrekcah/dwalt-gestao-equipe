@@ -28,20 +28,6 @@ const Business = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
 
-  const signOut = async () => {
-    try {
-      await GoogleSignin.signInSilently();
-      await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut();
-      setUser(null);
-      await AsyncStorage.setItem('user', JSON.stringify(user));
-      await AsyncStorage.setItem('logged', JSON.stringify({logged: false}));
-      navigation.navigate('Login');
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   if (loading) {
     return <LoadingActivity />;
   } else {
@@ -51,14 +37,14 @@ const Business = ({navigation}) => {
           <Image
             style={styles.bussinessLogo}
             source={{
-              uri: user.foto,
+              uri: user.data.foto,
             }}
           />
           <Text style={styles.bussinessName}>
-            {user.nome + ' ' + user.sobrenome}
+            {user.data.nome + ' ' + user.data.sobrenome}
           </Text>
           <View style={styles.emailBackground}>
-            <Text style={styles.email}>{user.email}</Text>
+            <Text style={styles.email}>{user.data.email}</Text>
           </View>
           <TextSection value="Conta" />
           <Button
