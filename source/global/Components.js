@@ -26,9 +26,7 @@ export const MiniCard = ({
   return (
     <View style={styles.miniCard}>
       <Icon name={iconName} size={iconSize} color={iconColor} />
-      <Divisor />
       <Text style={styles.textCardTitle}>{content[0]}</Text>
-      <Divisor />
       <Text style={styles.textCardDesc}>{content[1]}</Text>
     </View>
   );
@@ -164,7 +162,7 @@ const styles = new StyleSheet.create({
   },
   textCardDesc: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: 10,
     textTransform: 'uppercase',
   },
   /* BUTTON */

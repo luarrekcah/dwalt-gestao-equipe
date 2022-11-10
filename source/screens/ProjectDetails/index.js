@@ -17,7 +17,11 @@ import {
 } from '../../global/Components';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageView from 'react-native-image-viewing';
-import {createItem, getAllItems} from '../../services/Database';
+import {
+  createItem,
+  getAllItems,
+  getProjectsData,
+} from '../../services/Database';
 //import MapView from 'react-native-maps'; desinstalar
 
 const ProjectDetails = ({navigation, route}) => {
@@ -63,64 +67,30 @@ const ProjectDetails = ({navigation, route}) => {
       });
     });
   };
-
-  const RenderCollectedItems = () => {
-    return (
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <Text style={styles.collectedCard}>
-          Nome Completo
-          <Icon
-            name={project.data.nomeComp !== '' ? 'check' : 'x'}
-            size={15}
-            color={'#fff'}
-          />
-        </Text>
-        <Text style={styles.collectedCard}>
-          CPF
-          <Icon
-            name={project.cpf !== '' ? 'check' : 'x'}
-            size={15}
-            color={'#fff'}
-          />
-        </Text>
-        <Text style={styles.collectedCard}>
-          Nome da Mãe
-          <Icon
-            name={project.nomeMae !== '' ? 'check' : 'x'}
-            size={15}
-            color={'#fff'}
-          />
-        </Text>
-        <Text style={styles.collectedCard}>
-          Endereço Completo
-          <Icon
-            name={project.endComp !== '' ? 'check' : 'x'}
-            size={15}
-            color={'#fff'}
-          />
-        </Text>
-        <Text style={styles.collectedCard}>
-          Data de Nascimento
-          <Icon
-            name={project.dataNasc !== '' ? 'check' : 'x'}
-            size={15}
-            color={'#fff'}
-          />
-        </Text>
-        <Text style={styles.collectedCard}>
-          E-mail
-          <Icon
-            name={project.email !== '' ? 'check' : 'x'}
-            size={15}
-            color={'#fff'}
-          />
-        </Text>
-        <Text style={styles.collectedCard}>
-          Entre outros dados básicos para homologação
-        </Text>
-      </ScrollView>
-    );
+  const dictionary = {
+    cod: 'Código do produto',
+    nomeComp: 'Nome completo',
+    cpf: 'CPF',
+    dataNasc: 'Data de nascimento',
+    email: 'E-mail',
+    celular: 'Celular',
+    nomeMae: 'Nome da mãe',
+    rg: 'RG',
+    sexo: 'Sexo',
+    estadoCivil: 'Estado civil',
+    patrimonio: 'Patrimônio',
+    ocupacao: 'Ocupação',
+    profissao: 'Profissão',
+    anos: 'Anos trabalhando',
+    meses: 'Meses atuando',
+    renda: 'Renda Mensal',
+    endCompleto: 'Endereço Completo',
   };
+
+  const dictToArray = Object.keys(dictionary).map(key => [
+    key,
+    dictionary[key],
+  ]);
 
   if (loading) {
     return <LoadingActivity />;
@@ -180,7 +150,32 @@ const ProjectDetails = ({navigation, route}) => {
             </TouchableOpacity>
           </ScrollView>
           <TextSection value={'Dados Salvos'} />
-          <RenderCollectedItems />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {dictToArray.map(item => {
+              console.log(dictionary[`${item[0]}`]);
+              console.log(project.data[`${item[0]}`]);
+              return (
+                <TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.collectedCard,
+                      project.data[`${item[0]}`] === ''
+                        ? {backgroundColor: Colors.whitetheme.warning}
+                        : '',
+                    ]}>
+                    {dictionary[`${item[0]}`]}
+                    <Icon
+                      name={
+                        project.data[`${item[0]}`] !== '' ? 'check' : 'warning'
+                      }
+                      size={15}
+                      color={'#fff'}
+                    />
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
           <TextSection value={'Documentos'} />
           <ScrollView horizontal>
             {allDocuments.length !== 0 ? (
