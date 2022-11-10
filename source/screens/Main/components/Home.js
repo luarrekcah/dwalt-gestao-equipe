@@ -91,6 +91,7 @@ const Home = ({navigation}) => {
                       alignSelf: 'center',
                     }}>
                     {`${user.data.team.name}`}
+                    <Icon name={'flash-on'} size={40} color={'#fff'} />
                   </Text>
                 </View>
                 <Text>Seu cargo: {user.data.team.role}</Text>
@@ -108,22 +109,23 @@ const Home = ({navigation}) => {
                   }`,
                   'Chamados',
                 ]}
-                iconName="warning"
-                iconSize={40}
-              />
-              <MiniCard
-                content={['0', 'Clientes Totais']}
-                iconName="group"
+                iconName="alert"
+                colorBackground={'#d97c02'}
                 iconSize={40}
               />
               <MiniCard
                 content={[`${projects.length}`, 'Projetos']}
-                iconName="folder"
+                iconName="solar-panel"
                 iconSize={40}
               />
               <MiniCard
-                content={['0', 'Membros na Equipe']}
-                iconName="group"
+                content={['0', 'Staffs']}
+                iconName="hammer-wrench"
+                iconSize={40}
+              />
+              <MiniCard
+                content={['0', 'Clientes']}
+                iconName="account-multiple"
                 iconSize={40}
               />
             </ScrollView>

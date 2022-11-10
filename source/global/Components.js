@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import Colors from './colorScheme';
+
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export const TextSection = ({value}) => {
   return <Text style={styles.textSection}>{value}</Text>;
@@ -22,9 +23,10 @@ export const MiniCard = ({
   iconSize = 40,
   iconColor = '#fff',
   content = ['Informe', 'Informe'],
+  colorBackground = Colors.whitetheme.primary,
 }) => {
   return (
-    <View style={styles.miniCard}>
+    <View style={[styles.miniCard, {backgroundColor: colorBackground}]}>
       <Icon name={iconName} size={iconSize} color={iconColor} />
       <Text style={styles.textCardTitle}>{content[0]}</Text>
       <Text style={styles.textCardDesc}>{content[1]}</Text>
@@ -61,7 +63,7 @@ export const LoadingActivity = () => {
 export const DocumentCard = ({title, onPressView}) => {
   return (
     <View style={styles.documentsCard}>
-      <Icon name="folder" size={30} color="#fff" />
+      <Icon name="file-document-outline" size={30} color="#fff" />
       <Text style={styles.documentsTitle}>{title}</Text>
       <TouchableOpacity style={styles.documentsButton} onPress={onPressView}>
         <Text style={styles.documentsButtonText}>Ver</Text>

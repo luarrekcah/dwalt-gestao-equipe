@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Linking,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Colors from '../../global/colorScheme';
 import {
   DocumentCard,
@@ -117,7 +117,7 @@ const ProjectDetails = ({navigation, route}) => {
             <Text style={styles.projectCategory}>{project.data.category}</Text>
             <View style={styles.bottomProject}>
               <Text style={styles.bottomKwp}>
-                <Icon name="flash-on" size={20} color="#fff" />
+                <Icon name="flash" size={20} color="#fff" />
                 {project.data.kwp}
                 kWp
               </Text>
@@ -146,7 +146,7 @@ const ProjectDetails = ({navigation, route}) => {
               );
             })}
             <TouchableOpacity style={styles.iconAdd} onPress={pickImages}>
-              <Icon name="add" size={40} color="#fff" />
+              <Icon name="plus" size={40} color="#fff" />
             </TouchableOpacity>
           </ScrollView>
           <TextSection value={'Dados Salvos'} />
@@ -164,7 +164,7 @@ const ProjectDetails = ({navigation, route}) => {
                     {dictionary[`${item[0]}`]}
                     <Icon
                       name={
-                        project.data[`${item[0]}`] !== '' ? 'check' : 'warning'
+                        project.data[`${item[0]}`] !== '' ? 'check' : 'alert'
                       }
                       size={15}
                       color={'#fff'}

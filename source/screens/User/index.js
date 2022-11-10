@@ -56,21 +56,21 @@ const Business = ({navigation}) => {
           />
           <TextSection value="Outros" />
           <Button
-            icon="info"
+            icon="information"
             value="Termos de Uso"
             onPress={() => {
               Linking.openURL('https://www.dlwalt.com/termos');
             }}
           />
           <Button
-            icon="info"
+            icon="information"
             value="Política de Privacidade"
             onPress={() => {
               Linking.openURL('https://www.dlwalt.com/politica');
             }}
           />
           <Button
-            icon="warning"
+            icon="bug"
             value="Relatar Problema"
             onPress={() => {
               Linking.openURL('https://wa.me/+556892402096');
