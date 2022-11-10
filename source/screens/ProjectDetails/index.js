@@ -54,15 +54,13 @@ const ProjectDetails = ({navigation, route}) => {
       includeBase64: true,
       multiple: true,
     }).then(images => {
-      let array = [];
       images.forEach(async i => {
-        array.push({data: {base64: 'data:image/png;base64,' + i.data}});
         createItem({
           path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/photos`,
           params: {base64: 'data:image/png;base64,' + i.data},
         });
+        loadData();
       });
-      setAllmedia(array);
     });
   };
 
@@ -185,19 +183,25 @@ const ProjectDetails = ({navigation, route}) => {
           <RenderCollectedItems />
           <TextSection value={'Documentos'} />
           <ScrollView horizontal>
-            {allDocuments.map(item => {
-              return (
-                <DocumentCard
-                  title={item.data.documentName}
-                  haveContent={true}
-                  onPressView={() =>
-                    navigation.navigate('PdfViewer', {
-                      data: item.data.documentBase64,
-                    })
-                  }
-                />
-              );
-            })}
+            {allDocuments.length !== 0 ? (
+              allDocuments.map(item => {
+                return (
+                  <DocumentCard
+                    title={item.data.documentName}
+                    haveContent={true}
+                    onPressView={() =>
+                      navigation.navigate('PdfViewer', {
+                        data: item.data.documentBase64,
+                      })
+                    }
+                  />
+                );
+              })
+            ) : (
+              <Text style={{color: '#000000'}}>
+                Sem documentos, precisa ser adicionado pela empresa
+              </Text>
+            )}
           </ScrollView>
           <TextSection value={'Localização'} />
           <TouchableOpacity
