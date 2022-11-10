@@ -19,6 +19,7 @@ import CompanyLink from './screens/CompanyLink';
 import Main from './screens/Main';
 import Config from './screens/Config';
 import ProjectDetails from './screens/ProjectDetails';
+import PdfViewer from './screens/PdfViewer';
 
 const AppScreens = ({logged, initiated}) => {
   return (
@@ -153,6 +154,25 @@ const AppScreens = ({logged, initiated}) => {
                 navigation.navigate('ProjectDetails');
               }}>
               <Icon name="help" size={30} color="#fff" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="PdfViewer"
+        component={PdfViewer}
+        options={({navigation}) => ({
+          headerStyle: {backgroundColor: Colors.whitetheme.primary},
+          headerTransparent: false,
+          headerTitle: 'Visualizador de PDF',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {color: 'white'},
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}>
+              <Icon name="arrow-back" size={30} color="#fff" />
             </TouchableOpacity>
           ),
         })}

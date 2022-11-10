@@ -184,14 +184,17 @@ const ProjectDetails = ({navigation, route}) => {
           <TextSection value={'Documentos'} />
           <ScrollView horizontal>
             {allDocuments.length !== 0 ? (
-              allDocuments.map(item => {
+              allDocuments.map((item, index) => {
                 return (
                   <DocumentCard
+                    key={index}
                     title={item.data.documentName}
                     haveContent={true}
                     onPressView={() =>
                       navigation.navigate('PdfViewer', {
-                        data: item.data.documentBase64,
+                        source: {
+                          uri: item.data.documentBase64,
+                        },
                       })
                     }
                   />
