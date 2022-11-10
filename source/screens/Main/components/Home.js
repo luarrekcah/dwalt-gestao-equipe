@@ -90,8 +90,7 @@ const Home = ({navigation}) => {
                       fontWeight: 'bold',
                       alignSelf: 'center',
                     }}>
-                    Equipe{' '}
-                    {user.data.team.name === '' ? 'ERROR' : user.data.team.name}
+                    {`${user.data.team.name}`}
                   </Text>
                 </View>
                 <Text>Seu cargo: {user.data.team.role}</Text>
