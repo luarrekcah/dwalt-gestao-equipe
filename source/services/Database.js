@@ -15,6 +15,19 @@ export const updateItem = ({path, params}) => {
   database().ref(path).update(params);
 };
 
+export const getItems = async ({path}) => {
+  if (!path) {
+    return {error: 'Sem path'};
+  }
+  const items = await database()
+    .ref(path)
+    .once('value')
+    .then(snapshot => {
+      return snapshot.val();
+    });
+  return items;
+};
+
 export const getAllItems = async ({path}) => {
   if (!path) {
     return {error: 'Sem path'};

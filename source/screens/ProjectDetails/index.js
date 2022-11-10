@@ -20,12 +20,18 @@ import {
 } from '../../global/Components';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageView from 'react-native-image-viewing';
-import {createItem, getAllItems, updateItem} from '../../services/Database';
+import {
+  createItem,
+  getAllItems,
+  getItems,
+  updateItem,
+} from '../../services/Database';
 import {getUserAuth} from '../../services/Auth';
 //import MapView from 'react-native-maps'; desinstalar
 
 const ProjectDetails = ({navigation, route}) => {
   const {project} = route.params;
+  const [projectData, setProjectData] = React.useState(project);
   const [allMedia, setAllmedia] = React.useState([]);
   const [allDocuments, setAllDocuments] = React.useState([]);
   const [visibleImageViewer, setIsVisibleImageViewer] = React.useState(false);
@@ -34,6 +40,7 @@ const ProjectDetails = ({navigation, route}) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalData, setModalData] = React.useState({});
   const [value, setValue] = React.useState();
+  const [loadingModal, setLoadingModal] = React.useState(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -48,6 +55,13 @@ const ProjectDetails = ({navigation, route}) => {
         path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/documents`,
       }),
     );
+
+    setProjectData(
+      await getItems({
+        path: `gestaoempresa/business/${project.data.business}/projects/${project.key}`,
+      }),
+    );
+
     setLoading(false);
   };
 
@@ -168,14 +182,14 @@ const ProjectDetails = ({navigation, route}) => {
                   <Text
                     style={[
                       styles.collectedCard,
-                      project.data[`${item[0]}`] === ''
+                      projectData[`${item[0]}`] === ''
                         ? {backgroundColor: Colors.whitetheme.warning}
                         : '',
                     ]}>
                     {dictionary[`${item[0]}`]}
                     <Icon
                       name={
-                        project.data[`${item[0]}`] !== '' ? 'check' : 'alert'
+                        projectData[`${item[0]}`] !== '' ? 'check' : 'alert'
                       }
                       size={15}
                       color={'#fff'}
@@ -235,35 +249,67 @@ const ProjectDetails = ({navigation, route}) => {
             }}>
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Text
-                  style={{color: '#000000', fontSize: 20, fontWeight: 'bold'}}>
-                  Editar informações de {modalData.title}
-                </Text>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Insira a nova informação aqui"
-                  placeholderTextColor="#000000"
-                  autoCapitalize="none"
-                  onChangeText={text => setValue(text)}
-                />
-                <SimpleButton
-                  value="Enviar"
-                  type={'primary'}
-                  onPress={async () => {
-                    const userLocal = await getUserAuth();
-                    const params = JSON.parse(`
-                    {
-                      ${modalData.key}: ${value}
-                    }
-                    `);
-                    console.log(params)
-                    updateItem({
-                      path: `gestaoempresa/business/${userLocal.businessKey}/projects/${project.key}`,
-                      params,
-                    });
-                    loadData();
-                  }}
-                />
+                {loadingModal ? (
+                  <Text
+                    style={{
+                      color: '#000000',
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                    }}>
+                    Carregando...
+                  </Text>
+                ) : (
+                  <View>
+                    <Text
+                      style={{
+                        color: '#000000',
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                      }}>
+                      Editar informações de {modalData.title}
+                    </Text>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Insira a nova informação aqui"
+                      placeholderTextColor="#000000"
+                      autoCapitalize="none"
+                      onChangeText={text => setValue(text)}
+                    />
+                    <SimpleButton
+                      value="Enviar"
+                      type={'success'}
+                      onPress={async () => {
+                        setLoadingModal(true);
+                        const userLocal = await getUserAuth();
+
+                        try {
+                          const params = JSON.parse(
+                            '{"' + modalData.key + '":"' + value + '"}',
+                          );
+                          console.log(params);
+
+                          updateItem({
+                            path: `gestaoempresa/business/${userLocal.businessKey}/projects/${project.key}`,
+                            params,
+                          });
+                        } catch (e) {
+                          console.log(e);
+                          setLoadingModal(false);
+                          setModalVisible(false);
+                        }
+                        setModalVisible(false);
+                        setLoadingModal(false);
+                        loadData();
+                      }}
+                    />
+
+                    <SimpleButton
+                      value="Cancelar"
+                      type={'warning'}
+                      onPress={() => setModalVisible(false)}
+                    />
+                  </View>
+                )}
               </View>
             </View>
           </Modal>
