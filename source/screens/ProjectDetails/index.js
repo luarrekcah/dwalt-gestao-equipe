@@ -151,11 +151,9 @@ const ProjectDetails = ({navigation, route}) => {
           </ScrollView>
           <TextSection value={'Dados Salvos'} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {dictToArray.map(item => {
-              console.log(dictionary[`${item[0]}`]);
-              console.log(project.data[`${item[0]}`]);
+            {dictToArray.map((item, index) => {
               return (
-                <TouchableOpacity>
+                <TouchableOpacity key={index}>
                   <Text
                     style={[
                       styles.collectedCard,
