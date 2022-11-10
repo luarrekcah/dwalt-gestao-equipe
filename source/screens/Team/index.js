@@ -8,7 +8,7 @@ import {
   FlatList,
 } from 'react-native';
 import {LoadingActivity} from '../../global/Components';
-import {getStaffsData, getUserData} from '../../services/Database';
+import {getTeamData} from '../../services/Database';
 
 const Team = ({navigation}) => {
   const [loading, setLoading] = React.useState(true);
@@ -16,12 +16,9 @@ const Team = ({navigation}) => {
 
   const loadData = async () => {
     setLoading(true);
-    const allSt = await getStaffsData();
-    const useract = await getUserData();
-    const teeam = await allSt.filter(item => item.key === useract.data.team.id);
-    if (teeam) {
-      setTeam(teeam);
-    }
+    const t = await getTeamData();
+    console.log(t);
+    setTeam(t);
     setLoading(false);
   };
 
@@ -54,23 +51,21 @@ const Team = ({navigation}) => {
                   onPress={() => {
                     console.log('click!');
                   }}>
-                  <View key={item.data._id} style={styles.cardHeader}>
-                    <Image
-                      style={styles.icon}
-                      source={{
-                        uri: 'https://lh3.googleusercontent.com/a/ALm5wu2Arf5ek8xCHnDM1fphrGbcvWeeVHnQ5TaVKoyfpV4',
-                      }}
-                    />
-                  </View>
+                  <View key={item.data._id} style={styles.cardHeader} />
                   <Image
                     style={styles.userImage}
-                    source={{uri: item.data.foto}}
+                    source={{
+                      uri:
+                        item.data.foto !== undefined
+                          ? item.data.foto
+                          : 'https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png',
+                    }}
                   />
                   <View style={styles.cardFooter}>
                     <View
                       style={{alignItems: 'center', justifyContent: 'center'}}>
-                      <Text style={styles.name}>{item.data.nome}</Text>
-                      <Text style={styles.position}>{item.data.team.role}</Text>
+                      <Text style={styles.name}>{item.data.nickname}</Text>
+                      <Text style={styles.position}>{item.data.role_name}</Text>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -78,8 +73,18 @@ const Team = ({navigation}) => {
             }}
           />
         ) : (
-          <View>
-            <Text style={{color: '#000000'}}>Sem team</Text>
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text style={{fontSize: 20, fontWeight: 'bold', color: '#000000'}}>
+              Sem equipe
+            </Text>
+            <Text style={{fontSize: 20, color: '#000000'}}>
+              Peça para que a empresa responsável lhe adicione em uma equipe.
+            </Text>
           </View>
         )}
       </View>

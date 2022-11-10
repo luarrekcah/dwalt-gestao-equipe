@@ -51,6 +51,14 @@ export const getUserData = async () => {
   return user;
 };
 
+export const getTeamData = async () => {
+  const userData = await getUserData();
+  const staffs = await getAllItems({
+    path: `/gestaoempresa/business/${userData.data.businessKey}/teams/${userData.data.team.id}/members`,
+  });
+  return staffs;
+};
+
 export const getSurveyData = async () => {
   const userLocal = await getUserAuth();
   const surveys = await getAllItems({
