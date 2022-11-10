@@ -60,38 +60,16 @@ export const LoadingActivity = () => {
   );
 };
 
-export const DocumentCard = ({title, onPressView, haveContent}) => {
-  if (haveContent) {
-    return (
-      <View style={styles.documentsCard}>
-        <Icon name="check" size={30} color="#fff" />
-        <Text style={styles.documentsTitle}>{title}</Text>
-        <TouchableOpacity style={styles.documentsButton} onPress={onPressView}>
-          <Text style={styles.documentsButtonText}>Ver</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  } else {
-    return (
-      <View
-        style={[
-          styles.documentsCard,
-          {backgroundColor: Colors.whitetheme.warning},
-        ]}>
-        <Icon name="warning" size={30} color="#fff" />
-        <Text style={styles.documentsTitle}>{title}</Text>
-        <TouchableOpacity style={styles.documentsButton} onPress={onPress}>
-          <Text
-            style={[
-              styles.documentsButtonText,
-              {color: Colors.whitetheme.warning},
-            ]}>
-            Documentação{'\n'}em falta
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+export const DocumentCard = ({title, onPressView}) => {
+  return (
+    <View style={styles.documentsCard}>
+      <Icon name="folder" size={30} color="#fff" />
+      <Text style={styles.documentsTitle}>{title}</Text>
+      <TouchableOpacity style={styles.documentsButton} onPress={onPressView}>
+        <Text style={styles.documentsButtonText}>Ver</Text>
+      </TouchableOpacity>
+    </View>
+  );
 };
 
 export const SimpleButton = ({icon, onPress, value, type}) => {
