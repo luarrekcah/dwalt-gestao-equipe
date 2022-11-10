@@ -17,7 +17,6 @@ const Team = ({navigation}) => {
   const loadData = async () => {
     setLoading(true);
     const t = await getTeamData();
-    console.log(t);
     setTeam(t);
     setLoading(false);
   };

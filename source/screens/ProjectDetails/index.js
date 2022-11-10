@@ -7,21 +7,21 @@ import {
   ImageBackground,
   TouchableOpacity,
   Linking,
+  Modal,
+  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Colors from '../../global/colorScheme';
 import {
   DocumentCard,
   LoadingActivity,
+  SimpleButton,
   TextSection,
 } from '../../global/Components';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageView from 'react-native-image-viewing';
-import {
-  createItem,
-  getAllItems,
-  getProjectsData,
-} from '../../services/Database';
+import {createItem, getAllItems, updateItem} from '../../services/Database';
+import {getUserAuth} from '../../services/Auth';
 //import MapView from 'react-native-maps'; desinstalar
 
 const ProjectDetails = ({navigation, route}) => {
@@ -31,6 +31,9 @@ const ProjectDetails = ({navigation, route}) => {
   const [visibleImageViewer, setIsVisibleImageViewer] = React.useState(false);
   const [viewerURI, setViewerURI] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalData, setModalData] = React.useState({});
+  const [value, setValue] = React.useState();
 
   const loadData = async () => {
     setLoading(true);
@@ -153,7 +156,15 @@ const ProjectDetails = ({navigation, route}) => {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {dictToArray.map((item, index) => {
               return (
-                <TouchableOpacity key={index}>
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    setModalVisible(true);
+                    setModalData({
+                      title: dictionary[`${item[0]}`],
+                      key: item[0],
+                    });
+                  }}>
                   <Text
                     style={[
                       styles.collectedCard,
@@ -212,6 +223,50 @@ const ProjectDetails = ({navigation, route}) => {
               <Text>Clique para abrir o Maps</Text>
             </ImageBackground>
           </TouchableOpacity>
+        </View>
+
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text
+                  style={{color: '#000000', fontSize: 20, fontWeight: 'bold'}}>
+                  Editar informações de {modalData.title}
+                </Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Insira a nova informação aqui"
+                  placeholderTextColor="#000000"
+                  autoCapitalize="none"
+                  onChangeText={text => setValue(text)}
+                />
+                <SimpleButton
+                  value="Enviar"
+                  type={'primary'}
+                  onPress={async () => {
+                    const userLocal = await getUserAuth();
+                    const params = JSON.parse(`
+                    {
+                      ${modalData.key}: ${value}
+                    }
+                    `);
+                    console.log(params)
+                    updateItem({
+                      path: `gestaoempresa/business/${userLocal.businessKey}/projects/${project.key}`,
+                      params,
+                    });
+                    loadData();
+                  }}
+                />
+              </View>
+            </View>
+          </Modal>
         </View>
       </ScrollView>
     );
@@ -309,6 +364,7 @@ const styles = new StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30,
     padding: 10,
+    color: '#000000',
   },
   modalTitle: {
     fontWeight: 'bold',

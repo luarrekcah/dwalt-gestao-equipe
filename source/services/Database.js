@@ -8,6 +8,13 @@ export const createItem = ({path, params}) => {
   database().ref(path).push(params);
 };
 
+export const updateItem = ({path, params}) => {
+  if (!path || !params) {
+    return {error: 'Sem path'};
+  }
+  database().ref(path).update(params);
+};
+
 export const getAllItems = async ({path}) => {
   if (!path) {
     return {error: 'Sem path'};
@@ -47,7 +54,6 @@ export const getUserData = async () => {
   const user = await staffs.find(item => {
     return item.data._id === userLocal._id;
   });
-  console.log(user);
   return user;
 };
 
