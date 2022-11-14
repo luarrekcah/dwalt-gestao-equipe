@@ -46,7 +46,7 @@ const Main = ({navigation}) => {
               {focused || route.name === 'Home' ? (
                 ''
               ) : (
-                <Text>{route.name}</Text>
+                <Text style={styles.iconText}>{route.name}</Text>
               )}
             </View>
           );
@@ -81,6 +81,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     alignItems: 'center',
+  },
+  iconText: {
+    color: "#fff",
   },
 });
 

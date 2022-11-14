@@ -71,7 +71,7 @@ const Home = ({navigation}) => {
           </View>
           <View style={styles.backgroundDetail}>
             {user.data.team.id === '' ? (
-              <View style={[styles.emptyCard, {height: 100}]}>
+              <View style={[styles.emptyCard]}>
                 <View>
                   <Text style={styles.titleCards}>Em nenhuma equipe!</Text>
                   <Text style={{color: Colors.whitetheme.gray, fontSize: 15}}>
@@ -94,7 +94,9 @@ const Home = ({navigation}) => {
                     <Icon name={'flash-on'} size={40} color={'#fff'} />
                   </Text>
                 </View>
-                <Text>Seu cargo: {user.data.team.role}</Text>
+                <Text style={{color: '#fff'}}>
+                  Seu cargo: {user.data.team.role}
+                </Text>
               </View>
             )}
 

@@ -40,6 +40,23 @@ const Business = ({navigation}) => {
           <Text style={styles.bussinessDesc}>
             {business.data.info.profile.about}
           </Text>
+          <TextSection value="Documentos - CNPJ" />
+          <Text style={styles.bussinessDesc}>
+            {business.data.info.documents.nome_fantasia} -{' '}
+            {business.data.info.documents.cnpj}
+          </Text>
+          <TextSection value="Localização" />
+          <Text style={styles.bussinessDesc}>
+            {business.data.info.profile.mainLocation}
+          </Text>
+          <TextSection value="Proprietário(a)" />
+          <Text style={styles.bussinessDesc}>
+            {business.data.info.profile.ownerName}
+          </Text>
+          <TextSection value="Data de registro na plataforma" />
+          <Text style={styles.bussinessDesc}>
+            {business.data.info.createdAt}
+          </Text>
         </ScrollView>
       </View>
     );
@@ -55,6 +72,7 @@ const styles = new StyleSheet.create({
     height: 100,
     alignSelf: 'center',
     margin: 30,
+    borderRadius: 20,
   },
   bussinessName: {
     fontSize: 20,
