@@ -54,14 +54,29 @@ const CompanyLink = ({navigation}) => {
     const updatedUser = user;
     updatedUser.email_link = value;
     updatedUser.businessKey = businessData.key;
-    setUser(updatedUser);
-    saveUserAuth(updatedUser);
-    createItem({
+
+    const allUsers = await getAllItems({
       path: `gestaoempresa/business/${businessData.key}/staffs`,
-      params: updatedUser,
     });
+    let finded = await allUsers.find(item => item.data.email === user.email);
+
+    console.log(finded);
+
+    if (finded) {
+      finded.businessKey = businessData.key;
+      setUser(finded.data);
+      saveUserAuth(finded.data);
+    } else {
+      setUser(updatedUser);
+      saveUserAuth(updatedUser);
+      createItem({
+        path: `gestaoempresa/business/${businessData.key}/staffs`,
+        params: updatedUser,
+      });
+    }
     await AsyncStorage.setItem('logged', JSON.stringify({logged: true}));
     setLink({success: 'user registered'});
+
     setTimeout(() => {
       setModalVisible(false);
       navigation.navigate('Main');
