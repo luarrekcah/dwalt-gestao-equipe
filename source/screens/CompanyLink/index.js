@@ -60,8 +60,6 @@ const CompanyLink = ({navigation}) => {
     });
     let finded = await allUsers.find(item => item.data.email === user.email);
 
-    console.log(finded);
-
     if (finded) {
       finded.businessKey = businessData.key;
       setUser(finded.data);

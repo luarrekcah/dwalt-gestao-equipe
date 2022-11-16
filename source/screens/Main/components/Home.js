@@ -37,9 +37,8 @@ const Home = ({navigation}) => {
     setUser(await getUserData());
     const surveys = await getSurveyData();
     const businesss = await getBusinessData();
-    const actSurvey = surveys.filter(
-      i => i.accepted && !i.finished && i.ids.businessId === businesss.key,
-    );
+    const actSurvey = surveys.filter(i => i.data.accepted && !i.data.finished);
+    console.log(actSurvey);
     setBusiness(businesss);
     setSurvey(surveys);
     setProjects(await getProjectsData());
@@ -90,8 +89,7 @@ const Home = ({navigation}) => {
                       fontWeight: 'bold',
                       alignSelf: 'center',
                     }}>
-                    {`${user.data.team.name}`}
-                    <Icon name={'flash-on'} size={40} color={'#fff'} />
+                    {`Equipe ${user.data.team.name}`}
                   </Text>
                 </View>
                 <Text style={{color: '#fff'}}>
@@ -104,11 +102,7 @@ const Home = ({navigation}) => {
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <MiniCard
                 content={[
-                  `${
-                    survey.filter(
-                      i => !i.finished && i.ids.businessId === business._id,
-                    ).length
-                  }`,
+                  `${survey.filter(i => !i.finished).length}`,
                   'Chamados',
                 ]}
                 iconName="alert"
@@ -136,7 +130,7 @@ const Home = ({navigation}) => {
             {activeSurvey.length !== 0 ? (
               <TouchableOpacity
                 style={styles.marginCard}
-                key={activeSurvey[0].ids.projectId}
+                key={activeSurvey[0].key}
                 onPress={() =>
                   navigation.navigate('ProjectDetails', {
                     project: activeSurvey[0],
@@ -153,7 +147,16 @@ const Home = ({navigation}) => {
                         fontWeight: 'bold',
                         color: '#fff',
                       }}>
-                      {activeSurvey[0].text}
+                      {activeSurvey[0].data.title}
+                    </Text>
+                    <Text
+                      style={{
+                        alignSelf: 'center',
+                        marginTop: 10,
+                        fontSize: 14,
+                        color: '#fff',
+                      }}>
+                      {activeSurvey[0].data.text}
                     </Text>
                     <Text
                       style={{
@@ -163,10 +166,10 @@ const Home = ({navigation}) => {
                         fontWeight: 'bold',
                         color: '#fff',
                       }}>
-                      Status: {activeSurvey[0].status}
+                      Status: {activeSurvey[0].data.status}
                     </Text>
                     <Text style={{alignSelf: 'center'}}>
-                      Solicitado {moment(activeSurvey[0].createdAt).fromNow()}
+                      Solicitado {moment(activeSurvey[0].data.createdAt).fromNow()}
                     </Text>
                   </View>
                 </ImageBackground>
@@ -260,7 +263,6 @@ const styles = new StyleSheet.create({
   projectCard: {
     padding: 30,
     borderRadius: 20,
-    height: 200,
   },
   imageCard: {borderRadius: 20},
   projectTitle: {
