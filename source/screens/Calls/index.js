@@ -78,16 +78,16 @@ const Calls = () => {
         <ScrollView>
           <TextSection value={'Chamado ativo'} />
           {survey.map(item => {
-            if (!item.data.accepted) {
-              return;
-            } else {
+            if (item.data.accepted && !item.data.finished) {
               return (
                 <TouchableOpacity
                   key={item.key}
                   style={[
                     styles.card,
                     {
-                      borderColor: item.data.accepted ? '#02610a' : '#FF0000',
+                      borderColor: item.data.accepted
+                        ? Colors.whitetheme.warning
+                        : '#FF0000',
                     },
                   ]}>
                   <Image
@@ -101,7 +101,7 @@ const Calls = () => {
                   <View style={styles.cardContent}>
                     <Text style={[styles.title]}>{item.data.title}</Text>
                     <Text style={[styles.description]}>{item.data.text}</Text>
-                    <Text style={styles.date}>{item.data.status}</Text>
+                    <Text style={styles.date}>STATUS: {item.data.status}</Text>
                     <Text style={styles.date}>
                       Solicitado {moment(item.data.createdAt).fromNow()}
                     </Text>
@@ -143,7 +143,7 @@ const Calls = () => {
               );
             }
           })}
-          {survey.filter(i => !i.data.finished && i.data.accepted).length !==
+          {survey.filter(i => i.data.accepted && !i.data.finished).length ===
           0 ? (
             <View style={{alignContent: 'center', alignItems: 'center'}}>
               <Text style={{color: '#000000'}}>Não há chamados ativos.</Text>
@@ -159,9 +159,7 @@ const Calls = () => {
             }
           />
           {survey.map(item => {
-            if (item.data.finished && item.data.accepted) {
-              return;
-            } else {
+            if (!item.data.finished && !item.data.accepted) {
               return (
                 <TouchableOpacity
                   key={item.key}
@@ -182,7 +180,7 @@ const Calls = () => {
                   <View style={styles.cardContent}>
                     <Text style={[styles.title]}>{item.data.title}</Text>
                     <Text style={[styles.description]}>{item.data.text}</Text>
-                    <Text style={styles.date}>{item.data.status}</Text>
+                    <Text style={styles.date}>STATUS: {item.data.status}</Text>
                     <Text style={styles.date}>
                       Solicitado {moment(item.data.createdAt).fromNow()}
                     </Text>
@@ -224,7 +222,7 @@ const Calls = () => {
               );
             }
           })}
-          {survey.filter(i => !i.data.finished && !i.data.accepted).length !==
+          {survey.filter(i => !i.data.finished && !i.data.accepted).length ===
           0 ? (
             <View style={{alignContent: 'center', alignItems: 'center'}}>
               <Text style={{color: '#000000'}}>Não há chamados pendentes.</Text>
@@ -263,7 +261,7 @@ const Calls = () => {
                   <View style={styles.cardContent}>
                     <Text style={[styles.title]}>{item.data.title}</Text>
                     <Text style={[styles.description]}>{item.data.text}</Text>
-                    <Text style={styles.date}>{item.data.status}</Text>
+                    <Text style={styles.date}>STATUS: {item.data.status}</Text>
                     <Text style={styles.date}>
                       Solicitado {moment(item.data.createdAt).fromNow()}
                     </Text>
