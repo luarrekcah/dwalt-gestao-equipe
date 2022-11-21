@@ -65,7 +65,7 @@ const Calls = ({navigation}) => {
 
   const concludeSurvey = id => {
     updateItem({
-      path: `/gestaoempresa/business/${user.businessKey}/surveys/${id}`,
+      path: `/gestaoempresa/business/${user.data.businessKey}/surveys/${id}`,
       params: {
         accepted: true,
         finished: true,
@@ -167,6 +167,7 @@ const Calls = ({navigation}) => {
                         type={'success'}
                         onPress={() => {
                           concludeSurvey(item.key);
+                          // do somethin
                         }}
                       />
                     </View>
@@ -333,7 +334,7 @@ const Calls = ({navigation}) => {
                     <SimpleButton
                       icon={item.data.accepted ? 'map' : 'plus'}
                       value={
-                        item.data.accepted ? 'ABRIR ROTAS' : 'ACEITAR CHAMADO'
+                        item.data.accepted ? 'VER NO MAPA' : 'ACEITAR CHAMADO'
                       }
                       type={'success'}
                       onPress={() => {
@@ -363,20 +364,6 @@ const Calls = ({navigation}) => {
                       }}
                     />
                   </View>
-                  {item.data.accepted ? (
-                    <View style={{flex: 1}}>
-                      <SimpleButton
-                        icon={item.data.accepted ? 'check' : ''}
-                        value={item.data.accepted ? 'CONCLUIR' : ''}
-                        type={'success'}
-                        onPress={() => {
-                          concludeSurvey(item.key);
-                        }}
-                      />
-                    </View>
-                  ) : (
-                    ''
-                  )}
                 </TouchableOpacity>
               );
             }
