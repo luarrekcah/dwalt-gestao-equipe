@@ -8,19 +8,24 @@ import {
   TouchableOpacity,
   ToastAndroid,
   ScrollView,
+  Linking,
 } from 'react-native';
 import {
   LoadingActivity,
   SimpleButton,
   TextSection,
 } from '../../global/Components';
-import {getSurveyData, updateItem} from '../../services/Database';
+import {
+  getItems,
+  getSurveyData,
+  getUserData,
+  updateItem,
+} from '../../services/Database';
 
 import moment from '../../vendors/moment';
 import Colors from '../../global/colorScheme';
-import {getUserAuth} from '../../services/Auth';
 
-const Calls = () => {
+const Calls = ({navigation}) => {
   const [survey, setSurvey] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [user, setUser] = React.useState();
@@ -28,7 +33,7 @@ const Calls = () => {
   const loadData = async () => {
     setLoading(true);
     setSurvey(await getSurveyData());
-    setUser(await getUserAuth());
+    setUser(await getUserData());
     setLoading(false);
   };
 
@@ -113,8 +118,22 @@ const Calls = () => {
                         item.data.accepted ? 'ABRIR ROTAS' : 'ACEITAR CHAMADO'
                       }
                       type={'success'}
-                      onPress={() => {
-                        acceptSurvey(item.key);
+                      onPress={async () => {
+                        if (item.data.accepted) {
+                          ToastAndroid.show(
+                            'Abrindo o Google Maps, aguarde 5 segundos.',
+                            ToastAndroid.SHORT,
+                          );
+                          const project = await getItems({
+                            path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
+                          });
+                          Linking.openURL(
+                            'https://www.google.com.br/maps/search/' +
+                              project.coords,
+                          );
+                        } else {
+                          acceptSurvey(item.key);
+                        }
                       }}
                     />
                   </View>
@@ -123,6 +142,21 @@ const Calls = () => {
                       icon="information"
                       value={'VER PROJETO'}
                       type={'primary'}
+                      onPress={async () => {
+                        ToastAndroid.show(
+                          'Abrindo informações do projeto, aguarde.',
+                          ToastAndroid.SHORT,
+                        );
+                        const project = await getItems({
+                          path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
+                        });
+                        navigation.navigate('ProjectDetails', {
+                          project: {
+                            key: item.data.projectId,
+                            data: project,
+                          },
+                        });
+                      }}
                     />
                   </View>
                   {item.data.accepted ? (
@@ -192,8 +226,22 @@ const Calls = () => {
                         item.data.accepted ? 'ABRIR ROTAS' : 'ACEITAR CHAMADO'
                       }
                       type={'success'}
-                      onPress={() => {
-                        acceptSurvey(item.key);
+                      onPress={async () => {
+                        if (item.data.accepted) {
+                          ToastAndroid.show(
+                            'Abrindo o Google Maps, aguarde 5 segundos.',
+                            ToastAndroid.SHORT,
+                          );
+                          const project = await getItems({
+                            path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
+                          });
+                          Linking.openURL(
+                            'https://www.google.com.br/maps/search/' +
+                              project.coords,
+                          );
+                        } else {
+                          acceptSurvey(item.key);
+                        }
                       }}
                     />
                   </View>
@@ -202,6 +250,21 @@ const Calls = () => {
                       icon="information"
                       value={'VER PROJETO'}
                       type={'primary'}
+                      onPress={async () => {
+                        ToastAndroid.show(
+                          'Abrindo informações do projeto, aguarde.',
+                          ToastAndroid.SHORT,
+                        );
+                        const project = await getItems({
+                          path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
+                        });
+                        navigation.navigate('ProjectDetails', {
+                          project: {
+                            key: item.data.projectId,
+                            data: project,
+                          },
+                        });
+                      }}
                     />
                   </View>
                   {item.data.accepted ? (
@@ -283,6 +346,21 @@ const Calls = () => {
                       icon="information"
                       value={'VER PROJETO'}
                       type={'primary'}
+                      onPress={async () => {
+                        ToastAndroid.show(
+                          'Abrindo informações do projeto, aguarde.',
+                          ToastAndroid.SHORT,
+                        );
+                        const project = await getItems({
+                          path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
+                        });
+                        navigation.navigate('ProjectDetails', {
+                          project: {
+                            key: item.data.projectId,
+                            data: project,
+                          },
+                        });
+                      }}
                     />
                   </View>
                   {item.data.accepted ? (

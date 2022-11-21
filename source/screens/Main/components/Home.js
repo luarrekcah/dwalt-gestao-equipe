@@ -7,6 +7,7 @@ import {
   ScrollView,
   ImageBackground,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
 import Colors from '../../../global/colorScheme';
 import {
@@ -18,6 +19,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
   getBusinessData,
+  getItems,
   getProjectsData,
   getSurveyData,
   getUserData,
@@ -38,7 +40,6 @@ const Home = ({navigation}) => {
     const surveys = await getSurveyData();
     const businesss = await getBusinessData();
     const actSurvey = surveys.filter(i => i.data.accepted && !i.data.finished);
-    console.log(actSurvey);
     setBusiness(businesss);
     setSurvey(surveys);
     setProjects(await getProjectsData());
@@ -131,11 +132,21 @@ const Home = ({navigation}) => {
               <TouchableOpacity
                 style={styles.marginCard}
                 key={activeSurvey[0].key}
-                onPress={() =>
+                onPress={async () => {
+                  ToastAndroid.show(
+                    'Abrindo informações do projeto, aguarde.',
+                    ToastAndroid.SHORT,
+                  );
+                  const project = await getItems({
+                    path: `/gestaoempresa/business/${user.data.businessKey}/projects/${activeSurvey[0].data.projectId}`,
+                  });
                   navigation.navigate('ProjectDetails', {
-                    project: activeSurvey[0],
-                  })
-                }>
+                    project: {
+                      key: activeSurvey[0].data.projectId,
+                      data: project,
+                    },
+                  });
+                }}>
                 <ImageBackground
                   imageStyle={styles.imageCard}
                   source={require('../../../../assets/home/survey.jpg')}>
@@ -169,7 +180,8 @@ const Home = ({navigation}) => {
                       Status: {activeSurvey[0].data.status}
                     </Text>
                     <Text style={{alignSelf: 'center'}}>
-                      Solicitado {moment(activeSurvey[0].data.createdAt).fromNow()}
+                      Solicitado{' '}
+                      {moment(activeSurvey[0].data.createdAt).fromNow()}
                     </Text>
                   </View>
                 </ImageBackground>
