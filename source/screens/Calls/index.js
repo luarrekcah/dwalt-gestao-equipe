@@ -52,7 +52,7 @@ const Calls = ({navigation}) => {
       );
     } else {
       updateItem({
-        path: `/gestaoempresa/business/${user.businessKey}/surveys/${id}`,
+        path: `/gestaoempresa/business/${user.data.businessKey}/surveys/${id}`,
         params: {
           accepted: true,
           finished: false,

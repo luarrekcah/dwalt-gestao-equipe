@@ -18,6 +18,7 @@ import {
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
+  getAllItems,
   getBusinessData,
   getItems,
   getProjectsData,
@@ -32,6 +33,8 @@ const Home = ({navigation}) => {
   const [loading, setLoading] = React.useState(true);
   const [survey, setSurvey] = React.useState([]);
   const [projects, setProjects] = React.useState();
+  const [staffs, setStaffs] = React.useState();
+  const [customers, setCustomers] = React.useState();
   const [activeSurvey, setActiveSurvey] = React.useState([]);
 
   const loadData = async () => {
@@ -43,6 +46,16 @@ const Home = ({navigation}) => {
     setBusiness(businesss);
     setSurvey(surveys);
     setProjects(await getProjectsData());
+    setStaffs(
+      await getAllItems({
+        path: `gestaoempresa/business/${businesss.key}/staffs`,
+      }),
+    );
+    setCustomers(
+      await getAllItems({
+        path: `gestaoempresa/business/${businesss.key}/customers`,
+      }),
+    );
     setActiveSurvey(actSurvey);
     setLoading(false);
   };
@@ -116,12 +129,12 @@ const Home = ({navigation}) => {
                 iconSize={40}
               />
               <MiniCard
-                content={['0', 'Staffs']}
+                content={[staffs.length, 'Staffs']}
                 iconName="hammer-wrench"
                 iconSize={40}
               />
               <MiniCard
-                content={['0', 'Clientes']}
+                content={[customers.length, 'Clientes']}
                 iconName="account-multiple"
                 iconSize={40}
               />
