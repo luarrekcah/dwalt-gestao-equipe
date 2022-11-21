@@ -286,7 +286,6 @@ const ProjectDetails = ({navigation, route}) => {
                           const params = JSON.parse(
                             '{"' + modalData.key + '":"' + value + '"}',
                           );
-                          console.log(params);
 
                           updateItem({
                             path: `gestaoempresa/business/${userLocal.businessKey}/projects/${project.key}`,

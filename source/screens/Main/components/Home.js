@@ -116,7 +116,7 @@ const Home = ({navigation}) => {
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <MiniCard
                 content={[
-                  `${survey.filter(i => !i.finished).length}`,
+                  `${survey.filter(i => !i.data.finished).length}`,
                   'Chamados',
                 ]}
                 iconName="alert"
