@@ -192,7 +192,7 @@ const Home = ({navigation}) => {
                       }}>
                       Status: {activeSurvey[0].data.status}
                     </Text>
-                    <Text style={{alignSelf: 'center'}}>
+                    <Text style={{alignSelf: 'center', color: '#fff'}}>
                       Solicitado{' '}
                       {moment(activeSurvey[0].data.createdAt).fromNow()}
                     </Text>
