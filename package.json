@@ -1,6 +1,6 @@
 {
   "name": "Equipe",
-  "version": "2.0.0 BETA",
+  "version": "3.0.0 BETA",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

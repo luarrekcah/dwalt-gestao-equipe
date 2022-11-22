@@ -44,6 +44,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "396650962585-gp5g47vfn4mklc60d0h5c94f06u1ir25.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dlwalt.equipe",
+            "certificate_hash": "185fe9479b8ff7c12db9fd45c16eeb4c9db7a390"
+          }
+        },
+        {
           "client_id": "396650962585-dpskoqf8fgjtfo3r3qfi80eps85q9bma.apps.googleusercontent.com",
           "client_type": 3
         }
