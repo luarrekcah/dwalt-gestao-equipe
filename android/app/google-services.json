@@ -10,10 +10,18 @@
       "client_info": {
         "mobilesdk_app_id": "1:396650962585:android:0867f930df33bb1bce2208",
         "android_client_info": {
-          "package_name": "com.dlwalt.equipe"
+          "package_name": "com.dlwalt.cliente"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "396650962585-flh03dujo8ceg2vehhca9c6010inckgf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dlwalt.cliente",
+            "certificate_hash": "9ee4d7f0fb878e31409e22932c970c16ee0ff3b7"
+          }
+        },
         {
           "client_id": "396650962585-dpskoqf8fgjtfo3r3qfi80eps85q9bma.apps.googleusercontent.com",
           "client_type": 3
@@ -44,8 +52,8 @@
       },
       "oauth_client": [
         {
-          "client_id": "396650962585-gp5g47vfn4mklc60d0h5c94f06u1ir25.apps.googleusercontent.com",
-          "client_type": 1,
+          "client_id": "396650962585-2nbrec6l3p4v30b62cgo1dso0ofhgsg1.apps.googleusercontent.com",
+          "client_type": 3,
           "android_info": {
             "package_name": "com.dlwalt.equipe",
             "certificate_hash": "185fe9479b8ff7c12db9fd45c16eeb4c9db7a390"

@@ -10,10 +10,7 @@ import {saveUserAuth} from '../../services/Auth';
 
 const Login = ({navigation}) => {
   React.useEffect(() => {
-    GoogleSignin.configure({
-      androidClientId:
-        '533204541706-ct5su06a9nqektdq4hcobj1s0qbn4ifo.apps.googleusercontent.com',
-    });
+    GoogleSignin.configure();
   }, []);
 
   const singIn = async () => {
