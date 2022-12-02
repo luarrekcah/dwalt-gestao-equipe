@@ -52,11 +52,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "396650962585-2nbrec6l3p4v30b62cgo1dso0ofhgsg1.apps.googleusercontent.com",
+          "client_id": "396650962585-hcq9k5nmn366cfjhi0qlrceiqm5lii96.apps.googleusercontent.com",
           "client_type": 3,
           "android_info": {
             "package_name": "com.dlwalt.equipe",
-            "certificate_hash": "185fe9479b8ff7c12db9fd45c16eeb4c9db7a390"
+            "certificate_hash": "c99df1cff07413586b5319064b9a66adce40db46"
           }
         },
         {
