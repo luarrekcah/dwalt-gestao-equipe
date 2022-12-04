@@ -39,7 +39,7 @@ const Calls = ({navigation}) => {
 
   React.useEffect(() => {
     loadData();
-  }, []);
+  }, [navigation]);
 
   const acceptSurvey = async id => {
     const haveCurrent = survey.filter(
@@ -106,74 +106,72 @@ const Calls = ({navigation}) => {
                   <View style={styles.cardContent}>
                     <Text style={[styles.title]}>{item.data.title}</Text>
                     <Text style={[styles.description]}>{item.data.text}</Text>
-                    <Text style={styles.date}>STATUS: {item.data.status}</Text>
-                    <Text style={styles.date}>
-                      Solicitado {moment(item.data.createdAt).fromNow()}
+                    <Text style={styles.status}>
+                      STATUS: {item.data.status}
                     </Text>
-                  </View>
-                  <View>
-                    <SimpleButton
-                      icon={item.data.accepted ? 'google-maps' : 'plus'}
-                      value={
-                        item.data.accepted ? 'ABRIR ROTAS' : 'ACEITAR CHAMADO'
-                      }
-                      type={'success'}
-                      onPress={async () => {
-                        if (item.data.accepted) {
+                    <ScrollView horizontal>
+                      <SimpleButton
+                        icon={item.data.accepted ? 'google-maps' : 'plus'}
+                        value={
+                          item.data.accepted ? 'ABRIR ROTAS' : 'ACEITAR CHAMADO'
+                        }
+                        type={'success'}
+                        onPress={async () => {
+                          if (item.data.accepted) {
+                            ToastAndroid.show(
+                              'Abrindo o Google Maps, aguarde 5 segundos.',
+                              ToastAndroid.SHORT,
+                            );
+                            const project = await getItems({
+                              path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
+                            });
+                            Linking.openURL(
+                              'https://www.google.com.br/maps/search/' +
+                                project.coords,
+                            );
+                          } else {
+                            acceptSurvey(item.key);
+                          }
+                        }}
+                      />
+                      <SimpleButton
+                        icon="information"
+                        value={'VER PROJETO'}
+                        type={'primary'}
+                        onPress={async () => {
                           ToastAndroid.show(
-                            'Abrindo o Google Maps, aguarde 5 segundos.',
+                            'Abrindo informações do projeto, aguarde.',
                             ToastAndroid.SHORT,
                           );
                           const project = await getItems({
                             path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
                           });
-                          Linking.openURL(
-                            'https://www.google.com.br/maps/search/' +
-                              project.coords,
-                          );
-                        } else {
-                          acceptSurvey(item.key);
-                        }
-                      }}
-                    />
-                  </View>
-                  <View style={{flex: 1}}>
-                    <SimpleButton
-                      icon="information"
-                      value={'VER PROJETO'}
-                      type={'primary'}
-                      onPress={async () => {
-                        ToastAndroid.show(
-                          'Abrindo informações do projeto, aguarde.',
-                          ToastAndroid.SHORT,
-                        );
-                        const project = await getItems({
-                          path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
-                        });
-                        navigation.navigate('ProjectDetails', {
-                          project: {
-                            key: item.data.projectId,
-                            data: project,
-                          },
-                        });
-                      }}
-                    />
-                  </View>
-                  {item.data.accepted ? (
-                    <View style={{flex: 1}}>
-                      <SimpleButton
-                        icon={item.data.accepted ? 'check' : ''}
-                        value={item.data.accepted ? 'CONCLUIR' : ''}
-                        type={'success'}
-                        onPress={() => {
-                          concludeSurvey(item.key);
-                          // do somethin
+                          navigation.navigate('ProjectDetails', {
+                            project: {
+                              key: item.data.projectId,
+                              data: project,
+                            },
+                          });
                         }}
                       />
-                    </View>
-                  ) : (
-                    ''
-                  )}
+                      {item.data.accepted ? (
+                        <SimpleButton
+                          icon={item.data.accepted ? 'check' : ''}
+                          value={item.data.accepted ? 'CONCLUIR' : ''}
+                          type={'success'}
+                          onPress={() => {
+                            concludeSurvey(item.key);
+                            // do somethin
+                          }}
+                        />
+                      ) : (
+                        ''
+                      )}
+                    </ScrollView>
+                    <Text style={styles.date}>
+                      Solicitado {moment(item.data.createdAt).fromNow()}
+                    </Text>
+                  </View>
                 </TouchableOpacity>
               );
             }
@@ -215,73 +213,71 @@ const Calls = ({navigation}) => {
                   <View style={styles.cardContent}>
                     <Text style={[styles.title]}>{item.data.title}</Text>
                     <Text style={[styles.description]}>{item.data.text}</Text>
-                    <Text style={styles.date}>STATUS: {item.data.status}</Text>
+                    <Text style={styles.status}>
+                      STATUS: {item.data.status}
+                    </Text>
                     <Text style={styles.date}>
                       Solicitado {moment(item.data.createdAt).fromNow()}
                     </Text>
-                  </View>
-                  <View>
-                    <SimpleButton
-                      icon={item.data.accepted ? 'google-maps' : 'plus'}
-                      value={
-                        item.data.accepted ? 'ABRIR ROTAS' : 'ACEITAR CHAMADO'
-                      }
-                      type={'success'}
-                      onPress={async () => {
-                        if (item.data.accepted) {
+                    <ScrollView horizontal>
+                      <SimpleButton
+                        icon={item.data.accepted ? 'google-maps' : 'plus'}
+                        value={
+                          item.data.accepted ? 'ABRIR ROTAS' : 'ACEITAR CHAMADO'
+                        }
+                        type={'success'}
+                        onPress={async () => {
+                          if (item.data.accepted) {
+                            ToastAndroid.show(
+                              'Abrindo o Google Maps, aguarde 5 segundos.',
+                              ToastAndroid.SHORT,
+                            );
+                            const project = await getItems({
+                              path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
+                            });
+                            Linking.openURL(
+                              'https://www.google.com.br/maps/search/' +
+                                project.coords,
+                            );
+                          } else {
+                            acceptSurvey(item.key);
+                          }
+                        }}
+                      />
+                      <SimpleButton
+                        icon="information"
+                        value={'VER PROJETO'}
+                        type={'primary'}
+                        onPress={async () => {
                           ToastAndroid.show(
-                            'Abrindo o Google Maps, aguarde 5 segundos.',
+                            'Abrindo informações do projeto, aguarde.',
                             ToastAndroid.SHORT,
                           );
                           const project = await getItems({
                             path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
                           });
-                          Linking.openURL(
-                            'https://www.google.com.br/maps/search/' +
-                              project.coords,
-                          );
-                        } else {
-                          acceptSurvey(item.key);
-                        }
-                      }}
-                    />
-                  </View>
-                  <View style={{flex: 1}}>
-                    <SimpleButton
-                      icon="information"
-                      value={'VER PROJETO'}
-                      type={'primary'}
-                      onPress={async () => {
-                        ToastAndroid.show(
-                          'Abrindo informações do projeto, aguarde.',
-                          ToastAndroid.SHORT,
-                        );
-                        const project = await getItems({
-                          path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
-                        });
-                        navigation.navigate('ProjectDetails', {
-                          project: {
-                            key: item.data.projectId,
-                            data: project,
-                          },
-                        });
-                      }}
-                    />
-                  </View>
-                  {item.data.accepted ? (
-                    <View style={{flex: 1}}>
-                      <SimpleButton
-                        icon={item.data.accepted ? 'check' : ''}
-                        value={item.data.accepted ? 'CONCLUIR' : ''}
-                        type={'success'}
-                        onPress={() => {
-                          concludeSurvey(item.key);
+                          navigation.navigate('ProjectDetails', {
+                            project: {
+                              key: item.data.projectId,
+                              data: project,
+                            },
+                          });
                         }}
                       />
-                    </View>
-                  ) : (
-                    ''
-                  )}
+                      {item.data.accepted ? (
+                        <SimpleButton
+                          icon={item.data.accepted ? 'check' : ''}
+                          value={item.data.accepted ? 'CONCLUIR' : ''}
+                          type={'success'}
+                          onPress={() => {
+                            concludeSurvey(item.key);
+                          }}
+                        />
+                      ) : (
+                        ''
+                      )}
+                    </ScrollView>
+                  </View>
                 </TouchableOpacity>
               );
             }
@@ -325,44 +321,12 @@ const Calls = ({navigation}) => {
                   <View style={styles.cardContent}>
                     <Text style={[styles.title]}>{item.data.title}</Text>
                     <Text style={[styles.description]}>{item.data.text}</Text>
-                    <Text style={styles.date}>STATUS: {item.data.status}</Text>
+                    <Text style={styles.status}>
+                      STATUS: {item.data.status}
+                    </Text>
                     <Text style={styles.date}>
                       Solicitado {moment(item.data.createdAt).fromNow()}
                     </Text>
-                  </View>
-                  <View>
-                    <SimpleButton
-                      icon={item.data.accepted ? 'map' : 'plus'}
-                      value={
-                        item.data.accepted ? 'VER NO MAPA' : 'ACEITAR CHAMADO'
-                      }
-                      type={'success'}
-                      onPress={() => {
-                        acceptSurvey(item.key);
-                      }}
-                    />
-                  </View>
-                  <View style={{flex: 1}}>
-                    <SimpleButton
-                      icon="information"
-                      value={'VER PROJETO'}
-                      type={'primary'}
-                      onPress={async () => {
-                        ToastAndroid.show(
-                          'Abrindo informações do projeto, aguarde.',
-                          ToastAndroid.SHORT,
-                        );
-                        const project = await getItems({
-                          path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
-                        });
-                        navigation.navigate('ProjectDetails', {
-                          project: {
-                            key: item.data.projectId,
-                            data: project,
-                          },
-                        });
-                      }}
-                    />
                   </View>
                 </TouchableOpacity>
               );
@@ -386,6 +350,7 @@ const styles = new StyleSheet.create({
   cardContent: {
     marginLeft: 10,
     marginTop: 15,
+    marginBottom: 15,
   },
   card: {
     shadowColor: '#00000021',
@@ -416,11 +381,11 @@ const styles = new StyleSheet.create({
   },
   status: {
     color: '#fff',
-    padding: 20,
+    paddingHorizontal: 10,
     backgroundColor: Colors.whitetheme.primary,
-    borderRadius: 20,
+    borderRadius: 5,
+    marginTop: 5,
     alignSelf: 'center',
-    margin: 20,
     width: '100%',
     fontWeight: 'bold',
   },

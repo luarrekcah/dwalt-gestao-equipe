@@ -8,7 +8,7 @@ const Intro = ({navigation}) => {
   const slides = [
     {
       key: 1,
-      title: 'Seja bem vindo(a) ao\n D | Walt Gestão para Equipes!',
+      title: 'Seja bem vindo(a) ao\n  Connect para Equipes!',
       text: 'Essa plataforma lhe deixa mais próximo e conectado da sua empresa de energia solar!',
       image: require('../../../assets/initialScreen/slide_1.png'),
       bg: Colors.whitetheme.primary,
