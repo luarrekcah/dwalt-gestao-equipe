@@ -1134,6 +1134,11 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@notifee/react-native@^7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@notifee/react-native/-/react-native-7.2.0.tgz#30fdb72433914d2dd97d6fafe447c68eaf60c1e0"
+  integrity sha512-4CKmoEsTPtgA6PzkNCpRUMeVQbiCiEEu7s+D0lK2J6o7orumwiHEVMEBTyUk101Bkj4+qZ8Ng3/z746pVfAZVA==
+
 "@pietile-native-kit/page-slider@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@pietile-native-kit/page-slider/-/page-slider-1.2.0.tgz#57c153e8e5717e7e8f7d5bab454b4130cf0799fc"
@@ -1373,6 +1378,11 @@
   version "16.4.6"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/database/-/database-16.4.6.tgz#261a041e79ca5f1cf4bd827def073e634659fd11"
   integrity sha512-vBKqANcCSOkfPUM7cNRIuoHm/RnHDOFzXnW1cZKqhHD4mU7t+GtJwB4yHtAvt0v2dU5e4Oqm8MitDPfMAJ6mcw==
+
+"@react-native-firebase/messaging@^16.4.6":
+  version "16.4.6"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-16.4.6.tgz#dd1a1eccff39eac6cd201792c388fc11afd6b4bf"
+  integrity sha512-5XHc++UxK+wEYifyovemr+K5aUpcDuqzGPAqc2tqrVxtsELmGi9pCOFbCuFhkg5DzNGToNT9Z79DTd+XLCVemA==
 
 "@react-native-google-signin/google-signin@^8.0.1":
   version "8.2.1"

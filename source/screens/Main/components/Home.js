@@ -83,7 +83,7 @@ const Home = ({navigation}) => {
             </Text>
           </View>
           <View style={styles.backgroundDetail}>
-            {user.data.team.id === '' ? (
+            {!user.data.team || user.data.team.id === '' ? (
               <View style={[styles.emptyCard]}>
                 <View>
                   <Text style={styles.titleCards}>Em nenhuma equipe!</Text>

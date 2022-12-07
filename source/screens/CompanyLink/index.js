@@ -11,9 +11,10 @@ import {
   ToastAndroid,
   ActivityIndicator,
 } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 import Colors from '../../global/colorScheme';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {createItem, getAllItems} from '../../services/Database';
+import {createItem, getAllItems, updateItem} from '../../services/Database';
 import {saveUserAuth} from '../../services/Auth';
 
 const CompanyLink = ({navigation}) => {
@@ -51,9 +52,12 @@ const CompanyLink = ({navigation}) => {
   };
 
   const linkConfirm = async () => {
+    await messaging().registerDeviceForRemoteMessages();
+    const token = await messaging().getToken();
     const updatedUser = user;
     updatedUser.email_link = value;
     updatedUser.businessKey = businessData.key;
+    updatedUser.token = token;
 
     const allUsers = await getAllItems({
       path: `gestaoempresa/business/${businessData.key}/staffs`,
@@ -64,6 +68,12 @@ const CompanyLink = ({navigation}) => {
       finded.businessKey = businessData.key;
       setUser(finded.data);
       saveUserAuth(finded.data);
+      updateItem({
+        path: `gestaoempresa/business/${businessData.key}/staffs/${finded.key}`,
+        params: {
+          token,
+        },
+      });
     } else {
       setUser(updatedUser);
       saveUserAuth(updatedUser);

@@ -4,6 +4,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import NetInfo from '@react-native-community/netinfo';
+import notifee from '@notifee/react-native';
+import messaging from '@react-native-firebase/messaging';
 
 import Colors from './global/colorScheme';
 import {LoadingActivity, NotConnected} from './components/Global';
@@ -213,5 +215,12 @@ const Routes = () => {
     </NavigationContainer>
   );
 };
+
+const onMessageReceived = message => {
+  notifee.displayNotification(JSON.parse(message.data.notifee));
+};
+
+messaging().onMessage(onMessageReceived);
+messaging().setBackgroundMessageHandler(onMessageReceived);
 
 export default Routes;
