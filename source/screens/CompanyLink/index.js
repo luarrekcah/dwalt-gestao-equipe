@@ -65,6 +65,7 @@ const CompanyLink = ({navigation}) => {
     let finded = await allUsers.find(item => item.data.email === user.email);
 
     if (finded) {
+      console.log(token);
       finded.businessKey = businessData.key;
       setUser(finded.data);
       saveUserAuth(finded.data);
@@ -75,6 +76,7 @@ const CompanyLink = ({navigation}) => {
         },
       });
     } else {
+      console.log(updatedUser);
       setUser(updatedUser);
       saveUserAuth(updatedUser);
       createItem({
