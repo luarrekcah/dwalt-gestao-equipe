@@ -7,6 +7,8 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {getUserData} from '../../services/Database';
 import {onLogoutPress} from '../../services/Auth';
 
+import {version} from '../../../package.json';
+
 const Business = ({navigation}) => {
   const [user, setUser] = React.useState();
   const [loading, setLoading] = React.useState(true);
@@ -73,7 +75,7 @@ const Business = ({navigation}) => {
               Linking.openURL('https://wa.me/+556892402096');
             }}
           />
-          <Button icon="android" value="Versão" description="v1.0.0" />
+          <Button icon="android" value="Versão" description={version} />
         </ScrollView>
       </View>
     );
@@ -83,6 +85,7 @@ const Business = ({navigation}) => {
 const styles = new StyleSheet.create({
   container: {
     padding: 10,
+    paddingBottom: 100,
   },
   bussinessLogo: {
     width: 200,
