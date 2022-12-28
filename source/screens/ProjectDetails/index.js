@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
   Text,
@@ -15,6 +16,7 @@ import Colors from '../../global/colorScheme';
 import {
   DocumentCard,
   LoadingActivity,
+  PhotoCard,
   SimpleButton,
   TextSection,
 } from '../../global/Components';
@@ -41,6 +43,9 @@ const ProjectDetails = ({navigation, route}) => {
   const [modalData, setModalData] = React.useState({});
   const [value, setValue] = React.useState();
   const [loadingModal, setLoadingModal] = React.useState(false);
+  const [requiredPhotosConfig, setRequiredPhotosConfig] = React.useState();
+  const [requiredPhotos, setRequiredPhotos] = React.useState();
+  const [requiredPics, setrequiredPics] = React.useState([]);
 
   const loadData = async () => {
     setLoading(true);
@@ -61,6 +66,42 @@ const ProjectDetails = ({navigation, route}) => {
         path: `gestaoempresa/business/${project.data.business}/projects/${project.key}`,
       }),
     );
+    const requiredPhotosS = await getAllItems({
+      path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/requiredPhotos`,
+    });
+
+    setRequiredPhotos(requiredPhotosS);
+
+    const requiredPhotosConfigS = await getAllItems({
+      path: `gestaoempresa/business/${project.data.business}/config/projectRequiredImages`,
+    });
+
+    setRequiredPhotosConfig(requiredPhotosConfigS);
+
+    let rP = [];
+
+    requiredPhotosConfigS.forEach(rq => {
+      if (!rq.data.checked) {
+        return;
+      }
+      const find = requiredPhotosS.find(i => i.data.requiredKey === rq.key);
+      if (find) {
+        rP.push({
+          key: rq.key,
+          data: rq.data,
+          array: find.data,
+        });
+      } else {
+        rP.push({
+          key: rq.key,
+          data: rq.data,
+        });
+      }
+    });
+
+    console.log(rP);
+
+    setrequiredPics(rP);
 
     setLoading(false);
   };
@@ -86,22 +127,6 @@ const ProjectDetails = ({navigation, route}) => {
   };
   const dictionary = {
     cod: 'Código do produto',
-    nomeComp: 'Nome completo',
-    cpf: 'CPF',
-    dataNasc: 'Data de nascimento',
-    email: 'E-mail',
-    celular: 'Celular',
-    nomeMae: 'Nome da mãe',
-    rg: 'RG',
-    sexo: 'Sexo',
-    estadoCivil: 'Estado civil',
-    patrimonio: 'Patrimônio',
-    ocupacao: 'Ocupação',
-    profissao: 'Profissão',
-    anos: 'Anos trabalhando',
-    meses: 'Meses atuando',
-    renda: 'Renda Mensal',
-    endCompleto: 'Endereço Completo',
   };
 
   const dictToArray = Object.keys(dictionary).map(key => [
@@ -109,7 +134,7 @@ const ProjectDetails = ({navigation, route}) => {
     dictionary[key],
   ]);
 
-  if (loading) {
+  if (loading && requiredPhotos === undefined) {
     return <LoadingActivity />;
   } else {
     return (
@@ -224,6 +249,21 @@ const ProjectDetails = ({navigation, route}) => {
                 Sem documentos, precisa ser adicionado pela empresa
               </Text>
             )}
+          </ScrollView>
+          <TextSection value={'Fotos do sistema'} />
+          <ScrollView horizontal>
+            {requiredPics.map((item, index) => {
+              return (
+                <PhotoCard
+                  key={item.key}
+                  title={item.data.titulo}
+                  haveContent={item.array ? true : false}
+                  onPressView={() => {
+                    console.log('Teste');
+                  }}
+                />
+              );
+            })}
           </ScrollView>
           <TextSection value={'Localização'} />
           <TouchableOpacity

@@ -414,7 +414,6 @@ const Home = ({navigation}) => {
 const styles = new StyleSheet.create({
   container: {
     backgroundColor: Colors.whitetheme.primary,
-
   },
   welcome: {
     color: '#f5f5f5',

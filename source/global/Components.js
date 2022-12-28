@@ -72,6 +72,66 @@ export const DocumentCard = ({title, onPressView}) => {
   );
 };
 
+export const PhotoCard = ({title, onPressView, haveContent}) => {
+  if (haveContent) {
+    return (
+      <View style={styles.documentsCard}>
+        <Icon name="camera" size={30} color="#fff" />
+        <Text style={styles.documentsTitle}>{title}</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+          }}>
+          <TouchableOpacity
+            style={styles.documentsButton}
+            onPress={onPressView}>
+            <Text style={styles.documentsButtonText}>Ver</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  } else {
+    return (
+      <View
+        style={[
+          {
+            backgroundColor: Colors.whitetheme.warning,
+            borderRadius: 10,
+            padding: 40,
+            alignContent: 'center',
+            alignItems: 'center',
+            marginRight: 10,
+          },
+          ,
+        ]}>
+        <Icon name="alert" size={30} color="#fff" />
+        <Text style={styles.documentsTitle}>{title}</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+          }}>
+          <TouchableOpacity
+            style={styles.documentsButton}
+            onPress={onPressView}>
+            <Text
+              style={{
+                color: Colors.whitetheme.warning,
+                fontWeight: 'bold',
+                fontSize: 14,
+              }}>
+              Adicionar
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+};
+
 export const SimpleButton = ({icon, onPress, value, type}) => {
   if (type === 'primary') {
     return (
