@@ -414,6 +414,7 @@ const Home = ({navigation}) => {
 const styles = new StyleSheet.create({
   container: {
     backgroundColor: Colors.whitetheme.primary,
+
   },
   welcome: {
     color: '#f5f5f5',
@@ -432,6 +433,7 @@ const styles = new StyleSheet.create({
     padding: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    paddingBottom: 100,
   },
   nullWarn: {color: '#000000', alignSelf: 'center'},
   marginCard: {marginVertical: 10},
