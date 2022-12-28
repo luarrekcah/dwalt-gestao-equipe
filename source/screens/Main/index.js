@@ -1,5 +1,5 @@
 import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {AnimatedTabBarNavigator} from 'react-native-animated-nav-tab-bar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Colors from '../../global/colorScheme';
@@ -10,17 +10,22 @@ import User from '../User';
 import Calls from '../Calls';
 import Team from '../Team';
 
-import {StyleSheet, Text, View} from 'react-native';
-
-const Tab = createBottomTabNavigator();
+const Tab = AnimatedTabBarNavigator();
 
 const Main = ({navigation}) => {
   return (
     <Tab.Navigator
+      initialRouteName="Home"
+      tabBarOptions={{
+        activeTintColor: '#ffffff',
+        inactiveTintColor: '#223322',
+        activeBackgroundColor: Colors.whitetheme.primary,
+      }}
+      appearance={{
+        shadow: true,
+        floating: true,
+      }}
       screenOptions={({route}) => ({
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarStyle: {backgroundColor: Colors.whitetheme.primary, height: 75},
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
           if (route.name === 'Home') {
@@ -34,27 +39,9 @@ const Main = ({navigation}) => {
           } else if (route.name === 'Equipe') {
             iconName = focused ? 'people' : 'people-outline';
           }
-          return (
-            <View
-              style={[
-                styles.centerIconsTab,
-                focused
-                  ? [styles.iconTabHome, styles.iconTabActive]
-                  : styles.iconTabHome,
-              ]}>
-              <Ionicons name={iconName} size={size} color={color} />
-              {focused || route.name === 'Home' ? (
-                ''
-              ) : (
-                <Text style={styles.iconText}>{route.name}</Text>
-              )}
-            </View>
-          );
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#fff',
-        tabBarInactiveTintColor: '#c9c9c9',
-      })}
-      initialRouteName="Home">
+      })}>
       <Tab.Screen name="Empresa" component={Business} />
       <Tab.Screen name="Equipe" component={Team} />
       <Tab.Screen name="Home" component={Home} />
@@ -63,28 +50,5 @@ const Main = ({navigation}) => {
     </Tab.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  iconTabHome: {
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-  },
-  iconTabActive: {
-    width: 60,
-    height: 100,
-    backgroundColor: Colors.whitetheme.primaryDark,
-  },
-  centerIconsTab: {
-    justifyContent: 'center',
-    alignContent: 'center',
-    alignItems: 'center',
-  },
-  iconText: {
-    color: "#fff",
-  },
-});
 
 export default Main;
