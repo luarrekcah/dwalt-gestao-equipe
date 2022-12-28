@@ -208,12 +208,13 @@ const ProjectDetails = ({navigation, route}) => {
                     key={index}
                     title={item.data.documentName}
                     haveContent={true}
-                    onPressView={() =>
-                      navigation.navigate('PdfViewer', {
+                    onPressView={
+                      () => Linking.openURL(item.data.documentURL)
+                      /*navigation.navigate('PdfViewer', {
                         source: {
-                          uri: item.data.documentBase64,
+                          uri: item.data.documentURL,
                         },
-                      })
+                      })*/
                     }
                   />
                 );
