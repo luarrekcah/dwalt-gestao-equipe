@@ -15,11 +15,12 @@ import {
   MiniCard,
   TextSection,
 } from '../../../global/Components';
-
+import {status} from '../../../utils/dictionary';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
   getAllItems,
   getBusinessData,
+  getGrowattData,
   getItems,
   getProjectsData,
   getSurveyData,
@@ -36,9 +37,11 @@ const Home = ({navigation}) => {
   const [staffs, setStaffs] = React.useState();
   const [customers, setCustomers] = React.useState();
   const [activeSurvey, setActiveSurvey] = React.useState([]);
+  const [growatt, setGrowatt] = React.useState();
 
   const loadData = async () => {
     setLoading(true);
+    setGrowatt(await getGrowattData());
     setUser(await getUserData());
     const surveys = await getSurveyData();
     const businesss = await getBusinessData();
@@ -58,6 +61,48 @@ const Home = ({navigation}) => {
     );
     setActiveSurvey(actSurvey);
     setLoading(false);
+  };
+
+  const getKwp = () => {
+    let kwpTotal = 0;
+    projects.forEach(item => {
+      kwpTotal += Number(item.data.kwp.replaceAll(',', '.'));
+    });
+    return kwpTotal;
+  };
+
+  const getGrowattProject = plantName => {
+    if (growatt) {
+      const finded = growatt.plantList.data.data.plants.find(
+        g => g.name === plantName,
+      );
+      return finded;
+    } else {
+      return [];
+    }
+  };
+
+  const statusDict = {
+    0: {
+      title: 'Desconectado',
+      color: '#a19f9f',
+    },
+    1: {
+      title: 'Normal',
+      color: '#13fc03',
+    },
+    2: {
+      title: 'Aguardando',
+      color: '#13fc03',
+    },
+    3: {
+      title: 'Falha',
+      color: '#fa3916',
+    },
+    4: {
+      title: 'Offline',
+      color: '#a19f9f',
+    },
   };
 
   React.useEffect(() => {
@@ -126,6 +171,11 @@ const Home = ({navigation}) => {
               <MiniCard
                 content={[`${projects.length}`, 'Projetos']}
                 iconName="solar-panel"
+                iconSize={40}
+              />
+              <MiniCard
+                content={[getKwp(), 'kWp']}
+                iconName="flash"
                 iconSize={40}
               />
               <MiniCard
@@ -232,20 +282,120 @@ const Home = ({navigation}) => {
                       imageStyle={styles.imageCard}
                       source={require('../../../../assets/home/bannerbackground.jpg')}>
                       <View style={styles.projectCard}>
-                        <Text style={styles.projectTitle}>
-                          {item.data.apelidoProjeto}
-                        </Text>
-                        <Text style={styles.projectCategory}>
-                          {item.data.category}
-                        </Text>
-                        <View style={styles.bottomProject}>
-                          <Text style={styles.bottomKwp}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            justifyContent: 'space-between',
+                            marginBottom: 10,
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 20,
+                              color: '#fff',
+                              fontWeight: 'bold',
+                            }}>
+                            {item.data.apelidoProjeto}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 20,
+                              color: '#fff',
+                              fontWeight: 'bold',
+                            }}>
                             <Icon name="flash-on" size={20} color="#fff" />
                             {item.data.kwp}
                             kWp
                           </Text>
-                          <Text style={styles.bottomStatus}>
-                            Status: {item.data.Status}
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            justifyContent: 'space-between',
+                          }}>
+                          <View
+                            style={{
+                              backgroundColor: '#fff',
+                              paddingHorizontal: 10,
+                              marginRight: 20,
+                              paddingVertical: 5,
+                              borderRadius: 100,
+                            }}>
+                            <Text
+                              style={{
+                                color: Colors.whitetheme.primary,
+                                fontWeight: 'bold',
+                                fontSize: 10,
+                              }}>
+                              {item.data.category.toUpperCase()}
+                            </Text>
+                          </View>
+                          {item.data.username_growatt && growatt ? (
+                            <>
+                              <Text
+                                style={{
+                                  color: `${
+                                    statusDict[
+                                      getGrowattProject(
+                                        item.data.username_growatt,
+                                      ).status
+                                    ].color
+                                  }`,
+                                  fontWeight: 'bold',
+                                }}>
+                                {
+                                  statusDict[
+                                    getGrowattProject(
+                                      item.data.username_growatt,
+                                    ).status
+                                  ].title
+                                }
+                              </Text>
+                              <Text
+                                style={{
+                                  fontSize: 20,
+                                  color: '#fff',
+                                  fontWeight: 'bold',
+                                }}>
+                                <Icon
+                                  name="battery-charging-full"
+                                  size={20}
+                                  color="#fff"
+                                />
+                                {
+                                  getGrowattProject(item.data.username_growatt)
+                                    .total_energy
+                                }
+                                kW
+                              </Text>
+                            </>
+                          ) : (
+                            ''
+                          )}
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            justifyContent: 'center',
+                            marginTop: 20,
+                          }}>
+                          <Text style={{color: '#fff', fontWeight: '900'}}>
+                            {status({value: item.data.Status})}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            justifyContent: 'center',
+                          }}>
+                          <Text style={{color: '#fff'}}>
+                            {item.data.RStatus === '' ||
+                            item.data.RStatus === undefined
+                              ? 'Sem observação de Status'
+                              : item.data.RStatus}
                           </Text>
                         </View>
                       </View>
