@@ -259,7 +259,8 @@ const ProjectDetails = ({navigation, route}) => {
                   title={item.data.titulo}
                   haveContent={item.array ? true : false}
                   onPressView={() => {
-                    console.log('Teste');
+                    setViewerURI(item.array.data[0]);
+                    setIsVisibleImageViewer(true);
                   }}
                 />
               );
