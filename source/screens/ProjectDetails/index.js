@@ -11,6 +11,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import storage from '@react-native-firebase/storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Colors from '../../global/colorScheme';
 import {
@@ -84,7 +85,7 @@ const ProjectDetails = ({navigation, route}) => {
       if (!rq.data.checked) {
         return;
       }
-      const find = requiredPhotosS.find(i => i.data.requiredKey === rq.key);
+      const find = requiredPhotosS.find(i => i.key === rq.key);
       if (find) {
         rP.push({
           key: rq.key,
@@ -99,9 +100,9 @@ const ProjectDetails = ({navigation, route}) => {
       }
     });
 
-    console.log(rP);
-
     setrequiredPics(rP);
+
+    //console.log(rP);
 
     setLoading(false);
   };
@@ -121,10 +122,52 @@ const ProjectDetails = ({navigation, route}) => {
           path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/photos`,
           params: {base64: 'data:image/png;base64,' + i.data},
         });
-        loadData();
       });
+      loadData();
     });
   };
+
+  const pickImagesRequired = item => {
+    let imagesArray = [];
+    ImagePicker.openPicker({
+      includeBase64: true,
+      multiple: true,
+    }).then(async images => {
+      for (let index = 0; index < images.length; index++) {
+        const path = `gestaoempresa/business/${
+          project.data.business
+        }/projects/${project.key}/requiredPhotos/${item.data.titulo
+          .replaceAll(' ', '-')
+          .toLowerCase()}-${index}.jpg`;
+        const reference = storage().ref(path);
+        const dataUrl = `data:image/png;base64,${images[index].data}`;
+        await reference.putString(dataUrl, 'data_url');
+        const url = await reference.getDownloadURL();
+        imagesArray.push(url);
+      }
+
+      console.log('array', imagesArray);
+      if (imagesArray.length === 0) {
+        console.warn('Array está vazio');
+      } else {
+        console.log('Array NAO está vazio');
+        const data = {
+          titulo: item.data.titulo,
+          checked: item.data.checked,
+          data: imagesArray,
+        };
+
+        updateItem({
+          path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/requiredPhotos/${item.key}`,
+          params: {
+            data,
+          },
+        });
+        loadData();
+      }
+    });
+  };
+
   const dictionary = {
     cod: 'Código do produto',
   };
@@ -259,8 +302,12 @@ const ProjectDetails = ({navigation, route}) => {
                   title={item.data.titulo}
                   haveContent={item.array ? true : false}
                   onPressView={() => {
-                    setViewerURI(item.array.data[0]);
-                    setIsVisibleImageViewer(true);
+                    if (item.array) {
+                      setViewerURI(item.array.data.data[0]);
+                      setIsVisibleImageViewer(true);
+                    } else {
+                      pickImagesRequired(item);
+                    }
                   }}
                 />
               );
@@ -330,7 +377,7 @@ const ProjectDetails = ({navigation, route}) => {
                           );
 
                           updateItem({
-                            path: `gestaoempresa/business/${userLocal.businessKey}/projects/${project.key}`,
+                            path: `gestaoempresa / business / ${userLocal.businessKey} / projects / ${project.key}`,
                             params,
                           });
                         } catch (e) {

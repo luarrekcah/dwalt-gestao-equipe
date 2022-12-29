@@ -3,21 +3,28 @@ import {getUserAuth} from './Auth';
 
 export const createItem = ({path, params}) => {
   if (!path || !params) {
-    return {error: 'Sem path'};
+    return console.warn('Sem path ou params!');
   }
   database().ref(path).push(params);
 };
 
 export const updateItem = ({path, params}) => {
   if (!path || !params) {
-    return {error: 'Sem path'};
+    return console.warn('Sem path ou params!');
   }
   database().ref(path).update(params);
 };
 
+export const setItem = ({path, params}) => {
+  if (!path || !params) {
+    return console.warn('Sem path ou params!');
+  }
+  database().ref(path).set(params);
+};
+
 export const getItems = async ({path}) => {
   if (!path) {
-    return {error: 'Sem path'};
+    return console.warn('Sem path ou params!');
   }
   const items = await database()
     .ref(path)
@@ -30,7 +37,7 @@ export const getItems = async ({path}) => {
 
 export const getAllItems = async ({path}) => {
   if (!path) {
-    return {error: 'Sem path'};
+    return console.warn('Sem path ou params!');
   }
   const allItems = await database()
     .ref(path)
