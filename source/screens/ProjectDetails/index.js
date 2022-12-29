@@ -10,6 +10,7 @@ import {
   Linking,
   Modal,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import storage from '@react-native-firebase/storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -50,6 +51,9 @@ const ProjectDetails = ({navigation, route}) => {
 
   const loadData = async () => {
     setLoading(true);
+
+    setModalVisible(true);
+    setLoadingModal(true);
     setAllmedia(
       await getAllItems({
         path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/photos`,
@@ -105,6 +109,9 @@ const ProjectDetails = ({navigation, route}) => {
     //console.log(rP);
 
     setLoading(false);
+
+    setModalVisible(false);
+    setLoadingModal(false);
   };
 
   React.useEffect(() => {
@@ -133,6 +140,9 @@ const ProjectDetails = ({navigation, route}) => {
       includeBase64: true,
       multiple: true,
     }).then(async images => {
+      setLoadingModal(true);
+      setModalVisible(true);
+
       for (let index = 0; index < images.length; index++) {
         const path = `gestaoempresa/business/${
           project.data.business
@@ -163,6 +173,8 @@ const ProjectDetails = ({navigation, route}) => {
             data,
           },
         });
+        setLoadingModal(false);
+        setModalVisible(false);
         loadData();
       }
     });
@@ -339,14 +351,20 @@ const ProjectDetails = ({navigation, route}) => {
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 {loadingModal ? (
-                  <Text
-                    style={{
-                      color: '#000000',
-                      fontSize: 20,
-                      fontWeight: 'bold',
-                    }}>
-                    Carregando...
-                  </Text>
+                  <>
+                    <ActivityIndicator
+                      size="large"
+                      color={Colors.whitetheme.primary}
+                    />
+                    <Text
+                      style={{
+                        color: '#000000',
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                      }}>
+                      Carregando...
+                    </Text>
+                  </>
                 ) : (
                   <View>
                     <Text
@@ -385,6 +403,7 @@ const ProjectDetails = ({navigation, route}) => {
                           setLoadingModal(false);
                           setModalVisible(false);
                         }
+
                         setModalVisible(false);
                         setLoadingModal(false);
                         loadData();
