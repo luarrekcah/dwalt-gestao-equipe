@@ -72,11 +72,16 @@ const Home = ({navigation}) => {
   };
 
   const getGrowattProject = plantName => {
-    if (growatt) {
+    const plantNameOK = plantName.replaceAll(' ', '');
+    if (growatt && (plantName !== undefined || plantName !== '')) {
       const finded = growatt.plantList.data.data.plants.find(
-        g => g.name === plantName,
+        g => g.name === plantNameOK,
       );
-      return finded;
+      if (finded) {
+        return finded;
+      } else {
+        return [];
+      }
     } else {
       return [];
     }
@@ -331,7 +336,7 @@ const Home = ({navigation}) => {
                               {item.data.category.toUpperCase()}
                             </Text>
                           </View>
-                          {item.data.username_growatt && growatt ? (
+                          {item.data.overview && growatt ? (
                             <>
                               <Text
                                 style={{
