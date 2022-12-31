@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
   Text,
@@ -95,17 +96,14 @@ export const PhotoCard = ({title, onPressView, haveContent}) => {
   } else {
     return (
       <View
-        style={[
-          {
-            backgroundColor: Colors.whitetheme.warning,
-            borderRadius: 10,
-            padding: 40,
-            alignContent: 'center',
-            alignItems: 'center',
-            marginRight: 10,
-          },
-          ,
-        ]}>
+        style={{
+          backgroundColor: Colors.whitetheme.warning,
+          borderRadius: 10,
+          padding: 40,
+          alignContent: 'center',
+          alignItems: 'center',
+          marginRight: 10,
+        }}>
         <Icon name="alert" size={30} color="#fff" />
         <Text style={styles.documentsTitle}>{title}</Text>
         <View
