@@ -17,6 +17,7 @@ import {
 } from '../../../global/Components';
 import {status} from '../../../utils/dictionary';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import IconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   getAllItems,
   getBusinessData,
@@ -194,8 +195,57 @@ const Home = ({navigation}) => {
                 iconSize={40}
               />
             </ScrollView>
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                marginVertical: 10,
+              }}>
+              <View style={{alignItems: 'center', padding: 10}}>
+                <Text>
+                  <IconCommunity
+                    name="molecule-co2"
+                    size={40}
+                    color={Colors.whitetheme.primary}
+                  />
+                </Text>
+                <Text
+                  style={{color: '#000000', fontSize: 15, fontWeight: 'bold'}}>
+                  {Math.trunc(getKwp() * 30 * 4.5 * 0.85)} kg/ano
+                </Text>
+                <Text style={{color: '#000000'}}>CO² Reduzido</Text>
+              </View>
+              <View style={{alignItems: 'center', padding: 10}}>
+                <Text>
+                  <Icon
+                    name="outdoor-grill"
+                    size={40}
+                    color={Colors.whitetheme.primary}
+                  />
+                </Text>
+                <Text
+                  style={{color: '#000000', fontSize: 15, fontWeight: 'bold'}}>
+                  {Math.trunc(getKwp() * 30 * 4.5 * 0.85 * 0.8)} kg/ano
+                </Text>
+                <Text style={{color: '#000000'}}>Carvão economizado</Text>
+              </View>
+              <View style={{alignItems: 'center', padding: 10}}>
+                <Text>
+                  <IconCommunity
+                    name="forest"
+                    size={40}
+                    color={Colors.whitetheme.primary}
+                  />
+                </Text>
+                <Text
+                  style={{color: '#000000', fontSize: 15, fontWeight: 'bold'}}>
+                  {Math.trunc((getKwp() * 30 * 4.5 * 0.85) / 12.48)}
+                </Text>
+                <Text style={{color: '#000000'}}>Árvores salvas</Text>
+              </View>
+            </View>
             <TextSection value={'Chamado em andamento'} />
-
             {activeSurvey.length !== 0 ? (
               <TouchableOpacity
                 style={styles.marginCard}
