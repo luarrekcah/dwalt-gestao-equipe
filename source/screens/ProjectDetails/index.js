@@ -11,6 +11,7 @@ import {
   Modal,
   TextInput,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import storage from '@react-native-firebase/storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -27,10 +28,12 @@ import ImageView from 'react-native-image-viewing';
 import {
   createItem,
   getAllItems,
+  getGrowattData,
   getItems,
   updateItem,
 } from '../../services/Database';
 import {getUserAuth} from '../../services/Auth';
+import {LineChart} from 'react-native-chart-kit';
 //import MapView from 'react-native-maps'; desinstalar
 
 const ProjectDetails = ({navigation, route}) => {
@@ -48,9 +51,13 @@ const ProjectDetails = ({navigation, route}) => {
   const [requiredPhotosConfig, setRequiredPhotosConfig] = React.useState();
   const [requiredPhotos, setRequiredPhotos] = React.useState();
   const [requiredPics, setrequiredPics] = React.useState([]);
+  const [chardata, setChartdata] = React.useState();
+  const [growatt, setGrowatt] = React.useState();
 
   const loadData = async () => {
     setLoading(true);
+
+    setGrowatt(await getGrowattData());
 
     setModalVisible(true);
     setLoadingModal(true);
@@ -66,11 +73,64 @@ const ProjectDetails = ({navigation, route}) => {
       }),
     );
 
-    setProjectData(
-      await getItems({
-        path: `gestaoempresa/business/${project.data.business}/projects/${project.key}`,
-      }),
-    );
+    const pjData = await getItems({
+      path: `gestaoempresa/business/${project.data.business}/projects/${project.key}`,
+    });
+
+    const power = [],
+      labelsMonths = [];
+
+    if (pjData.month_power) {
+      pjData.month_power.data.data.energys.forEach(m => {
+        const month = m.date.split('-')[1];
+        switch (month) {
+          case '01':
+            labelsMonths.push('Jan');
+            break;
+          case '02':
+            labelsMonths.push('Fev');
+            break;
+          case '03':
+            labelsMonths.push('Mar');
+            break;
+          case '04':
+            labelsMonths.push('Abr');
+            break;
+          case '05':
+            labelsMonths.push('Mai');
+            break;
+          case '06':
+            labelsMonths.push('Jun');
+            break;
+          case '07':
+            labelsMonths.push('Jul');
+            break;
+          case '08':
+            labelsMonths.push('Ago');
+            break;
+          case '09':
+            labelsMonths.push('Set');
+            break;
+          case '10':
+            labelsMonths.push('Out');
+            break;
+          case '11':
+            labelsMonths.push('Nov');
+            break;
+          case '12':
+            labelsMonths.push('Dez');
+            break;
+        }
+        power.push(m.energy);
+      });
+    }
+    setChartdata({
+      labels: labelsMonths,
+      power: power,
+    });
+
+    setProjectData(pjData);
+
     const requiredPhotosS = await getAllItems({
       path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/requiredPhotos`,
     });
@@ -118,6 +178,45 @@ const ProjectDetails = ({navigation, route}) => {
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const statusDict = {
+    0: {
+      title: 'Desconectado',
+      color: '#a19f9f',
+    },
+    1: {
+      title: 'Normal',
+      color: '#13fc03',
+    },
+    2: {
+      title: 'Aguardando',
+      color: '#13fc03',
+    },
+    3: {
+      title: 'Falha',
+      color: '#fa3916',
+    },
+    4: {
+      title: 'Offline',
+      color: '#a19f9f',
+    },
+  };
+
+  const getGrowattProject = plantName => {
+    const plantNameOK = plantName.replaceAll(' ', '');
+    if (growatt && (plantName !== undefined || plantName !== '')) {
+      const finded = growatt.plantList.data.data.plants.find(
+        g => g.name === plantNameOK,
+      );
+      if (finded) {
+        return finded;
+      } else {
+        return [];
+      }
+    } else {
+      return [];
+    }
+  };
 
   const pickImages = () => {
     ImagePicker.openPicker({
@@ -208,23 +307,114 @@ const ProjectDetails = ({navigation, route}) => {
           style={styles.backgroundImage}
           source={require('../../../assets/home/bannerbackground.jpg')}>
           <View style={styles.projectCard}>
-            <Text style={styles.projectTitle}>
-              {project.data.apelidoProjeto}
-            </Text>
-            <Text style={styles.projectCategory}>{project.data.category}</Text>
-            <View style={styles.bottomProject}>
-              <Text style={styles.bottomKwp}>
-                <Icon name="flash" size={20} color="#fff" />
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                marginBottom: 10,
+              }}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: '#fff',
+                  fontWeight: 'bold',
+                }}>
+                {project.data.apelidoProjeto}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: '#fff',
+                  fontWeight: 'bold',
+                }}>
                 {project.data.kwp}
                 kWp
               </Text>
-              <Text style={styles.bottomStatus}>
-                Status: {project.data.Status}
-              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+              }}>
+              <View
+                style={{
+                  backgroundColor: '#fff',
+                  paddingHorizontal: 10,
+                  marginRight: 20,
+                  paddingVertical: 5,
+                  borderRadius: 100,
+                }}>
+                <Text
+                  style={{
+                    color: Colors.whitetheme.primary,
+                    fontWeight: 'bold',
+                    fontSize: 10,
+                  }}>
+                  {project.data.category.toUpperCase()}
+                </Text>
+              </View>
+              {project.data.overview ? (
+                <>
+                  <Text
+                    style={{
+                      color: `${
+                        statusDict[
+                          getGrowattProject(project.data.username_growatt)
+                            .status
+                        ].color
+                      }`,
+                      fontWeight: 'bold',
+                    }}>
+                    {
+                      statusDict[
+                        getGrowattProject(project.data.username_growatt).status
+                      ].title
+                    }
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      color: '#fff',
+                      fontWeight: 'bold',
+                    }}>
+                    <Icon name="battery" size={20} color="#fff" />
+                    {
+                      getGrowattProject(project.data.username_growatt)
+                        .total_energy
+                    }
+                    kW
+                  </Text>
+                </>
+              ) : (
+                ''
+              )}
             </View>
           </View>
         </ImageBackground>
         <View style={styles.container}>
+          <TextSection value={'Informações'} />
+          <Text style={[styles.bottomStatus, {color: '#000000'}]}>
+            <Icon name="alert-circle" size={20} color="#000000" />{' '}
+            {project.data.RStatus === '' || project.data.RStatus === undefined
+              ? 'Sem observação de Status'
+              : project.data.RStatus}
+          </Text>
+          <Text style={[styles.bottomStatus, {color: '#000000'}]}>
+            <Icon name="truck-fast" size={20} color="#000000" />{' '}
+            {project.data.statusRastreio === '' ||
+            project.data.statusRastreio === undefined
+              ? 'Rastreio indisponível'
+              : project.data.statusRastreio}
+          </Text>
+          <Text style={[styles.bottomStatus, {color: '#000000'}]}>
+            <Icon name="wifi" size={20} color="#000000" />{' '}
+            {project.data.username_growatt === '' ||
+            project.data.username_growatt === undefined
+              ? 'Sem nome de usuário growatt'
+              : project.data.username_growatt}
+          </Text>
           <TextSection value={'Fotos'} />
           <ScrollView horizontal>
             {allMedia.map((item, index) => {
@@ -305,6 +495,50 @@ const ProjectDetails = ({navigation, route}) => {
               </Text>
             )}
           </ScrollView>
+          {project.data.overview ? (
+            <>
+              <TextSection value={'Histórico de geração'} />
+              <LineChart
+                data={{
+                  labels: chardata.labels,
+                  datasets: [
+                    {
+                      data: chardata.power,
+                    },
+                  ],
+                }}
+                width={Dimensions.get('window').width - 40} // from react-native
+                height={240}
+                yAxisLabel=""
+                yAxisSuffix="kwh"
+                yAxisInterval={1} // optional, defaults to 1
+                chartConfig={{
+                  backgroundColor: Colors.whitetheme.primary,
+                  backgroundGradientFrom: Colors.whitetheme.primary,
+                  backgroundGradientTo: Colors.whitetheme.primary,
+                  decimalPlaces: 0,
+                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  labelColor: (opacity = 1) =>
+                    `rgba(255, 255, 255, ${opacity})`,
+                  style: {
+                    borderRadius: 16,
+                  },
+                  propsForDots: {
+                    r: '6',
+                    strokeWidth: '2',
+                    stroke: '#fff',
+                  },
+                }}
+                bezier
+                style={{
+                  marginVertical: 8,
+                  borderRadius: 16,
+                }}
+              />
+            </>
+          ) : (
+            ''
+          )}
           <TextSection value={'Fotos do sistema'} />
           <ScrollView horizontal>
             {requiredPics.map((item, index) => {
@@ -438,7 +672,7 @@ const styles = new StyleSheet.create({
     backgroundColor: '#fff',
   },
   backgroundImage: {
-    height: 250,
+    height: 170,
   },
   projectCard: {
     padding: 30,
