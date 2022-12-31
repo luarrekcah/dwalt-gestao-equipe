@@ -395,6 +395,7 @@ const styles = new StyleSheet.create({
     backgroundColor: Colors.whitetheme.primary,
     padding: 30,
     borderRadius: 20,
+    marginBottom: 20,
   },
   status: {
     backgroundColor: '#fff',
