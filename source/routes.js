@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {Linking, TouchableOpacity} from 'react-native';
+import {Linking, TouchableOpacity, Text, View, StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import NetInfo from '@react-native-community/netinfo';
 
 import Colors from './global/colorScheme';
@@ -20,6 +20,13 @@ import Main from './screens/Main';
 import Config from './screens/Config';
 import ProjectDetails from './screens/ProjectDetails';
 import PdfViewer from './screens/PdfViewer';
+import {
+  Menu,
+  MenuOption,
+  MenuOptions,
+  MenuProvider,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 
 const AppScreens = ({logged, initiated}) => {
   return (
@@ -34,7 +41,7 @@ const AppScreens = ({logged, initiated}) => {
         options={({navigation}) => ({
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: true,
-          headerTitle: ' Connect',
+          headerTitle: 'Connect',
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (
@@ -42,7 +49,7 @@ const AppScreens = ({logged, initiated}) => {
               onPress={() => {
                 Linking.openURL('https://www.dlwalt.com/faq');
               }}>
-              <Icon name="help" size={30} color="#fff" />
+              <Icon name="help-circle" size={30} color="#fff" />
             </TouchableOpacity>
           ),
         })}
@@ -61,7 +68,7 @@ const AppScreens = ({logged, initiated}) => {
               onPress={() => {
                 Linking.openURL('https://www.dlwalt.com/faq');
               }}>
-              <Icon name="help" size={30} color="#fff" />
+              <Icon name="help-circle" size={30} color="#fff" />
             </TouchableOpacity>
           ),
         })}
@@ -80,7 +87,7 @@ const AppScreens = ({logged, initiated}) => {
               onPress={() => {
                 Linking.openURL('https://www.dlwalt.com/faq');
               }}>
-              <Icon name="help" size={30} color="#fff" />
+              <Icon name="help-circle" size={30} color="#fff" />
             </TouchableOpacity>
           ),
         })}
@@ -91,7 +98,7 @@ const AppScreens = ({logged, initiated}) => {
         options={({navigation}) => ({
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
-          headerTitle: ' Connect',
+          headerTitle: 'Connect',
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (
@@ -99,7 +106,7 @@ const AppScreens = ({logged, initiated}) => {
               onPress={() => {
                 Linking.openURL('https://www.dlwalt.com/faq');
               }}>
-              <Icon name="help" size={30} color="#fff" />
+              <Icon name="help-circle" size={30} color="#fff" />
             </TouchableOpacity>
           ),
         })}
@@ -118,7 +125,7 @@ const AppScreens = ({logged, initiated}) => {
               onPress={() => {
                 navigation.goBack();
               }}>
-              <Icon name="arrow-back" size={30} color="#fff" />
+              <Icon name="arrow-left-circle" size={30} color="#fff" />
             </TouchableOpacity>
           ),
         })}
@@ -137,16 +144,33 @@ const AppScreens = ({logged, initiated}) => {
               onPress={() => {
                 navigation.goBack();
               }}>
-              <Icon name="arrow-back" size={30} color="#fff" />
+              <Icon name="arrow-left-circle" size={30} color="#fff" />
             </TouchableOpacity>
           ),
           headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('ProjectDetails');
-              }}>
-              <Icon name="help" size={30} color="#fff" />
-            </TouchableOpacity>
+            <View>
+              <Menu>
+                <MenuTrigger>
+                  <Icon name="plus" size={30} color="#fff" />
+                </MenuTrigger>
+                <MenuOptions>
+                  <MenuOption
+                    style={styles.menuOption}
+                    onSelect={() => console.log('a')}>
+                    <View style={styles.center}>
+                      <Text style={styles.menuText}>Atualizar dados</Text>
+                    </View>
+                  </MenuOption>
+                  <MenuOption
+                    style={styles.menuOption}
+                    onSelect={() => console.log('a')}>
+                    <View style={styles.center}>
+                      <Text style={styles.menuText}>Registrar datalogger</Text>
+                    </View>
+                  </MenuOption>
+                </MenuOptions>
+              </Menu>
+            </View>
           ),
         })}
       />
@@ -164,7 +188,7 @@ const AppScreens = ({logged, initiated}) => {
               onPress={() => {
                 navigation.goBack();
               }}>
-              <Icon name="arrow-back" size={30} color="#fff" />
+              <Icon name="arrow-left-circle" size={30} color="#fff" />
             </TouchableOpacity>
           ),
         })}
@@ -208,10 +232,23 @@ const Routes = () => {
   }
 
   return (
-    <NavigationContainer>
-      <AppScreens logged={logged} initiated={initiated} />
-    </NavigationContainer>
+    <MenuProvider>
+      <NavigationContainer>
+        <AppScreens logged={logged} initiated={initiated} />
+      </NavigationContainer>
+    </MenuProvider>
   );
 };
+
+const styles = new StyleSheet.create({
+  menuOption: {paddingHorizontal: 10, paddingVertical: 20},
+  menuText: {color: Colors.whitetheme.primary, fontSize: 15},
+  menuIcon: {paddingRight: 10},
+  center: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default Routes;

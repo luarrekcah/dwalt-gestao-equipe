@@ -15,7 +15,6 @@ import {
   MiniCard,
   TextSection,
 } from '../../../global/Components';
-import {status} from '../../../utils/dictionary';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import IconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
@@ -38,11 +37,9 @@ const Home = ({navigation}) => {
   const [staffs, setStaffs] = React.useState();
   const [customers, setCustomers] = React.useState();
   const [activeSurvey, setActiveSurvey] = React.useState([]);
-  const [growatt, setGrowatt] = React.useState();
 
   const loadData = async () => {
     setLoading(true);
-    setGrowatt(await getGrowattData());
     setUser(await getUserData());
     const surveys = await getSurveyData();
     const businesss = await getBusinessData();
@@ -70,45 +67,6 @@ const Home = ({navigation}) => {
       kwpTotal += Number(item.data.kwp.replaceAll(',', '.'));
     });
     return kwpTotal;
-  };
-
-  const getGrowattProject = plantName => {
-    const plantNameOK = plantName.replaceAll(' ', '');
-    if (growatt && (plantName !== undefined || plantName !== '')) {
-      const finded = growatt.plantList.data.data.plants.find(
-        g => g.name === plantNameOK,
-      );
-      if (finded) {
-        return finded;
-      } else {
-        return [];
-      }
-    } else {
-      return [];
-    }
-  };
-
-  const statusDict = {
-    0: {
-      title: 'Desconectado',
-      color: '#a19f9f',
-    },
-    1: {
-      title: 'Normal',
-      color: '#13fc03',
-    },
-    2: {
-      title: 'Aguardando',
-      color: '#13fc03',
-    },
-    3: {
-      title: 'Falha',
-      color: '#fa3916',
-    },
-    4: {
-      title: 'Offline',
-      color: '#a19f9f',
-    },
   };
 
   React.useEffect(() => {
@@ -180,7 +138,7 @@ const Home = ({navigation}) => {
                 iconSize={40}
               />
               <MiniCard
-                content={[getKwp(), 'kWp']}
+                content={[Math.trunc(getKwp()), 'kWp']}
                 iconName="flash"
                 iconSize={40}
               />
@@ -243,6 +201,77 @@ const Home = ({navigation}) => {
                   {Math.trunc((getKwp() * 30 * 4.5 * 0.85) / 12.48)}
                 </Text>
                 <Text style={{color: '#000000'}}>Árvores salvas</Text>
+              </View>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                marginVertical: 10,
+                borderColor: Colors.whitetheme.primary,
+                borderWidth: 2,
+                borderRadius: 20,
+                padding: 20,
+              }}>
+              <View style={{alignItems: 'center', padding: 10}}>
+                <Text>
+                  <IconCommunity
+                    name="lightning-bolt-circle"
+                    size={40}
+                    color={Colors.whitetheme.success}
+                  />
+                </Text>
+                <Text
+                  style={{color: '#000000', fontSize: 15, fontWeight: 'bold'}}>
+                  0
+                </Text>
+                <Text style={{color: '#000000'}}>on-line</Text>
+              </View>
+
+              <View style={{alignItems: 'center', padding: 10}}>
+                <Text>
+                  <IconCommunity
+                    name="lightning-bolt-circle"
+                    size={40}
+                    color={'#000000'}
+                  />
+                </Text>
+                <Text
+                  style={{color: '#000000', fontSize: 15, fontWeight: 'bold'}}>
+                  0
+                </Text>
+                <Text style={{color: '#000000'}}>Off-line</Text>
+              </View>
+
+              <View style={{alignItems: 'center', padding: 10}}>
+                <Text>
+                  <IconCommunity
+                    name="lightning-bolt-circle"
+                    size={40}
+                    color={Colors.whitetheme.danger}
+                  />
+                </Text>
+                <Text
+                  style={{color: '#000000', fontSize: 15, fontWeight: 'bold'}}>
+                  0
+                </Text>
+                <Text style={{color: '#000000'}}>Defeito</Text>
+              </View>
+
+              <View style={{alignItems: 'center', padding: 10}}>
+                <Text>
+                  <IconCommunity
+                    name="lightning-bolt-circle"
+                    size={40}
+                    color={Colors.whitetheme.warning}
+                  />
+                </Text>
+                <Text
+                  style={{color: '#000000', fontSize: 15, fontWeight: 'bold'}}>
+                  {projects.filter(p => !p.data.overview).length}
+                </Text>
+                <Text style={{color: '#000000'}}>Sem infos</Text>
               </View>
             </View>
             <TextSection value={'Chamado em andamento'} />
@@ -316,149 +345,6 @@ const Home = ({navigation}) => {
                 </View>
               </ImageBackground>
             )}
-
-            <TextSection value={'Projetos'} />
-            {projects.length === 0 ? (
-              <View style={styles.emptyCard}>
-                <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
-                  Nenhum projeto registrado
-                </Text>
-              </View>
-            ) : (
-              projects.map((item, index) => {
-                return (
-                  <TouchableOpacity
-                    style={styles.marginCard}
-                    key={index}
-                    onPress={() =>
-                      navigation.navigate('ProjectDetails', {project: item})
-                    }>
-                    <ImageBackground
-                      imageStyle={styles.imageCard}
-                      source={require('../../../../assets/home/bannerbackground.jpg')}>
-                      <View style={styles.projectCard}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            flexWrap: 'wrap',
-                            justifyContent: 'space-between',
-                            marginBottom: 10,
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 20,
-                              color: '#fff',
-                              fontWeight: 'bold',
-                            }}>
-                            {item.data.apelidoProjeto}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 20,
-                              color: '#fff',
-                              fontWeight: 'bold',
-                            }}>
-                            <Icon name="flash-on" size={20} color="#fff" />
-                            {item.data.kwp}
-                            kWp
-                          </Text>
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            flexWrap: 'wrap',
-                            justifyContent: 'space-between',
-                          }}>
-                          <View
-                            style={{
-                              backgroundColor: '#fff',
-                              paddingHorizontal: 10,
-                              marginRight: 20,
-                              paddingVertical: 5,
-                              borderRadius: 100,
-                            }}>
-                            <Text
-                              style={{
-                                color: Colors.whitetheme.primary,
-                                fontWeight: 'bold',
-                                fontSize: 10,
-                              }}>
-                              {item.data.category.toUpperCase()}
-                            </Text>
-                          </View>
-                          {item.data.overview && growatt ? (
-                            <>
-                              <Text
-                                style={{
-                                  color: `${
-                                    statusDict[
-                                      getGrowattProject(
-                                        item.data.username_growatt,
-                                      ).status
-                                    ].color
-                                  }`,
-                                  fontWeight: 'bold',
-                                }}>
-                                {
-                                  statusDict[
-                                    getGrowattProject(
-                                      item.data.username_growatt,
-                                    ).status
-                                  ].title
-                                }
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 20,
-                                  color: '#fff',
-                                  fontWeight: 'bold',
-                                }}>
-                                <Icon
-                                  name="battery-charging-full"
-                                  size={20}
-                                  color="#fff"
-                                />
-                                {
-                                  getGrowattProject(item.data.username_growatt)
-                                    .total_energy
-                                }
-                                kW
-                              </Text>
-                            </>
-                          ) : (
-                            ''
-                          )}
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            flexWrap: 'wrap',
-                            justifyContent: 'center',
-                            marginTop: 20,
-                          }}>
-                          <Text style={{color: '#fff', fontWeight: '900'}}>
-                            {status({value: item.data.Status})}
-                          </Text>
-                        </View>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            flexWrap: 'wrap',
-                            justifyContent: 'center',
-                          }}>
-                          <Text style={{color: '#fff'}}>
-                            {item.data.RStatus === '' ||
-                            item.data.RStatus === undefined
-                              ? 'Sem observação de Status'
-                              : item.data.RStatus}
-                          </Text>
-                        </View>
-                      </View>
-                    </ImageBackground>
-                  </TouchableOpacity>
-                );
-              })
-            )}
           </View>
         </ScrollView>
       </View>
@@ -491,32 +377,10 @@ const styles = new StyleSheet.create({
   },
   nullWarn: {color: '#000000', alignSelf: 'center'},
   marginCard: {marginVertical: 10},
-  projectCard: {
-    padding: 30,
-    borderRadius: 20,
-  },
   imageCard: {borderRadius: 20},
   projectTitle: {
     color: '#fff',
     fontSize: 25,
-    fontWeight: 'bold',
-  },
-  projectCategory: {
-    color: Colors.whitetheme.gray,
-    fontSize: 20,
-  },
-  bottomProject: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  bottomKwp: {
-    color: '#fff',
-    fontSize: 25,
-    fontWeight: 'bold',
-  },
-  bottomStatus: {
-    color: Colors.whitetheme.gray,
-    fontSize: 15,
     fontWeight: 'bold',
   },
   emptyCard: {
