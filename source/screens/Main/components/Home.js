@@ -89,10 +89,10 @@ const Home = ({navigation}) => {
         ) : (
           <View style={styles.headerDetail}>
             <Text style={styles.welcome}>
-              Bem vindo{user === undefined ? '' : ' ' + user.data.nome}!
+              Bem vindo(a){user === undefined ? '' : ' ' + user.data.nome}!
             </Text>
             <Text style={styles.linkedOn}>
-              Vinculado a {business.data.info.documents.nome_fantasia}
+              Vinculado(a) a {business.data.info.documents.nome_fantasia}
             </Text>
           </View>
         )}
