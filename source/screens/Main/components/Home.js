@@ -8,19 +8,15 @@ import {
   ImageBackground,
   TouchableOpacity,
   ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import Colors from '../../../global/colorScheme';
-import {
-  LoadingActivity,
-  MiniCard,
-  TextSection,
-} from '../../../global/Components';
+import {MiniCard, TextSection} from '../../../global/Components';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import IconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   getAllItems,
   getBusinessData,
-  getGrowattData,
   getItems,
   getProjectsData,
   getSurveyData,
@@ -31,21 +27,27 @@ import moment from '../../../vendors/moment';
 const Home = ({navigation}) => {
   const [user, setUser] = React.useState();
   const [business, setBusiness] = React.useState();
-  const [loading, setLoading] = React.useState(true);
   const [survey, setSurvey] = React.useState([]);
   const [projects, setProjects] = React.useState();
   const [staffs, setStaffs] = React.useState();
   const [customers, setCustomers] = React.useState();
   const [activeSurvey, setActiveSurvey] = React.useState([]);
+  const [loadingUser, setLoadingUser] = React.useState(true);
+  const [loadingInfo, setLoadingInfo] = React.useState(true);
 
   const loadData = async () => {
-    setLoading(true);
+    setLoadingUser(true);
+    setLoadingInfo(true);
+    //-
     setUser(await getUserData());
-    const surveys = await getSurveyData();
     const businesss = await getBusinessData();
-    const actSurvey = surveys.filter(i => i.data.accepted && !i.data.finished);
     setBusiness(businesss);
+    setLoadingUser(false);
+    //-
+    const surveys = await getSurveyData();
+    const actSurvey = surveys.filter(i => i.data.accepted && !i.data.finished);
     setSurvey(surveys);
+    setActiveSurvey(actSurvey);
     setProjects(await getProjectsData());
     setStaffs(
       await getAllItems({
@@ -57,11 +59,14 @@ const Home = ({navigation}) => {
         path: `gestaoempresa/business/${businesss.key}/customers`,
       }),
     );
-    setActiveSurvey(actSurvey);
-    setLoading(false);
+    setLoadingInfo(false);
+    //-
   };
 
   const getKwp = () => {
+    if (projects === undefined) {
+      return;
+    }
     let kwpTotal = 0;
     projects.forEach(item => {
       kwpTotal += Number(item.data.kwp.replaceAll(',', '.'));
@@ -74,15 +79,14 @@ const Home = ({navigation}) => {
       await loadData();
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigation]);
 
-  if (loading) {
-    return <LoadingActivity />;
-  } else {
-    return (
-      <View style={styles.container}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+  return (
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {loadingUser ? (
+          <ActivityIndicator size="large" color={Colors.whitetheme.primary} />
+        ) : (
           <View style={styles.headerDetail}>
             <Text style={styles.welcome}>
               Bem vindo{user === undefined ? '' : ' ' + user.data.nome}!
@@ -91,37 +95,48 @@ const Home = ({navigation}) => {
               Vinculado a {business.data.info.documents.nome_fantasia}
             </Text>
           </View>
-          <View style={styles.backgroundDetail}>
-            {!user.data.team || user.data.team.id === '' ? (
-              <View style={[styles.emptyCard]}>
-                <View>
-                  <Text style={styles.titleCards}>Em nenhuma equipe!</Text>
-                  <Text style={{color: Colors.whitetheme.gray, fontSize: 15}}>
-                    Seu acesso as informações só será liberado assim que a
-                    empresa lhe adicionar em uma equipe.
-                  </Text>
-                </View>
-              </View>
-            ) : (
-              <View style={[styles.emptyCard, {height: 100}]}>
-                <View>
-                  <Text
-                    style={{
-                      color: '#fff',
-                      fontSize: 20,
-                      fontWeight: 'bold',
-                      alignSelf: 'center',
-                    }}>
-                    {`Equipe ${user.data.team.name}`}
-                  </Text>
-                </View>
-                <Text style={{color: '#fff'}}>
-                  Seu cargo: {user.data.team.role}
-                </Text>
-              </View>
-            )}
+        )}
 
-            <TextSection value={'Informações'} />
+        <View style={styles.backgroundDetail}>
+          {loadingUser ? (
+            <ActivityIndicator size="large" color={Colors.whitetheme.primary} />
+          ) : (
+            <View>
+              {!user.data.team || user.data.team.id === '' ? (
+                <View style={[styles.emptyCard]}>
+                  <View>
+                    <Text style={styles.titleCards}>Em nenhuma equipe!</Text>
+                    <Text style={{color: Colors.whitetheme.gray, fontSize: 15}}>
+                      Seu acesso as informações só será liberado assim que a
+                      empresa lhe adicionar em uma equipe.
+                    </Text>
+                  </View>
+                </View>
+              ) : (
+                <View style={[styles.emptyCard, {height: 100}]}>
+                  <View>
+                    <Text
+                      style={{
+                        color: '#fff',
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        alignSelf: 'center',
+                      }}>
+                      {`Equipe ${user.data.team.name}`}
+                    </Text>
+                  </View>
+                  <Text style={{color: '#fff'}}>
+                    Seu cargo: {user.data.team.role}
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
+
+          <TextSection value={'Informações'} />
+          {loadingInfo ? (
+            <ActivityIndicator size="large" color={Colors.whitetheme.primary} />
+          ) : (
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <MiniCard
                 content={[
@@ -153,6 +168,11 @@ const Home = ({navigation}) => {
                 iconSize={40}
               />
             </ScrollView>
+          )}
+
+          {loadingUser ? (
+            <ActivityIndicator size="large" color={Colors.whitetheme.primary} />
+          ) : (
             <View
               style={{
                 flexDirection: 'row',
@@ -169,7 +189,11 @@ const Home = ({navigation}) => {
                   />
                 </Text>
                 <Text
-                  style={{color: '#000000', fontSize: 15, fontWeight: 'bold'}}>
+                  style={{
+                    color: '#000000',
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                  }}>
                   {Math.trunc(getKwp() * 30 * 4.5 * 0.85)} kg/ano
                 </Text>
                 <Text style={{color: '#000000'}}>CO² Reduzido</Text>
@@ -183,7 +207,11 @@ const Home = ({navigation}) => {
                   />
                 </Text>
                 <Text
-                  style={{color: '#000000', fontSize: 15, fontWeight: 'bold'}}>
+                  style={{
+                    color: '#000000',
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                  }}>
                   {Math.trunc(getKwp() * 30 * 4.5 * 0.85 * 0.8)} kg/ano
                 </Text>
                 <Text style={{color: '#000000'}}>Carvão economizado</Text>
@@ -197,12 +225,21 @@ const Home = ({navigation}) => {
                   />
                 </Text>
                 <Text
-                  style={{color: '#000000', fontSize: 15, fontWeight: 'bold'}}>
+                  style={{
+                    color: '#000000',
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                  }}>
                   {Math.trunc((getKwp() * 30 * 4.5 * 0.85) / 12.48)}
                 </Text>
                 <Text style={{color: '#000000'}}>Árvores salvas</Text>
               </View>
             </View>
+          )}
+
+          {loadingInfo ? (
+            <ActivityIndicator size="large" color={Colors.whitetheme.primary} />
+          ) : (
             <View
               style={{
                 flexDirection: 'row',
@@ -274,82 +311,83 @@ const Home = ({navigation}) => {
                 <Text style={{color: '#000000'}}>Sem infos</Text>
               </View>
             </View>
-            <TextSection value={'Chamado em andamento'} />
-            {activeSurvey.length !== 0 ? (
-              <TouchableOpacity
-                style={styles.marginCard}
-                key={activeSurvey[0].key}
-                onPress={async () => {
-                  ToastAndroid.show(
-                    'Abrindo informações do projeto, aguarde.',
-                    ToastAndroid.SHORT,
-                  );
-                  const project = await getItems({
-                    path: `/gestaoempresa/business/${user.data.businessKey}/projects/${activeSurvey[0].data.projectId}`,
-                  });
-                  navigation.navigate('ProjectDetails', {
-                    project: {
-                      key: activeSurvey[0].data.projectId,
-                      data: project,
-                    },
-                  });
-                }}>
-                <ImageBackground
-                  imageStyle={styles.imageCard}
-                  source={require('../../../../assets/home/survey.jpg')}>
-                  <View style={styles.projectCard}>
-                    <Text
-                      style={{
-                        alignSelf: 'center',
-                        fontSize: 20,
-                        fontWeight: 'bold',
-                        color: '#fff',
-                      }}>
-                      {activeSurvey[0].data.title}
-                    </Text>
-                    <Text
-                      style={{
-                        alignSelf: 'center',
-                        marginTop: 10,
-                        fontSize: 14,
-                        color: '#fff',
-                      }}>
-                      {activeSurvey[0].data.text}
-                    </Text>
-                    <Text
-                      style={{
-                        marginVertical: 20,
-                        alignSelf: 'center',
-                        fontSize: 15,
-                        fontWeight: 'bold',
-                        color: '#fff',
-                      }}>
-                      Status: {activeSurvey[0].data.status}
-                    </Text>
-                    <Text style={{alignSelf: 'center', color: '#fff'}}>
-                      Solicitado{' '}
-                      {moment(activeSurvey[0].data.createdAt).fromNow()}
-                    </Text>
-                  </View>
-                </ImageBackground>
-              </TouchableOpacity>
-            ) : (
+          )}
+
+          <TextSection value={'Chamado em andamento'} />
+
+          {activeSurvey.length !== 0 ? (
+            <TouchableOpacity
+              style={styles.marginCard}
+              key={activeSurvey[0].key}
+              onPress={async () => {
+                ToastAndroid.show(
+                  'Abrindo informações do projeto, aguarde.',
+                  ToastAndroid.SHORT,
+                );
+                const project = await getItems({
+                  path: `/gestaoempresa/business/${user.data.businessKey}/projects/${activeSurvey[0].data.projectId}`,
+                });
+                navigation.navigate('ProjectDetails', {
+                  project: {
+                    key: activeSurvey[0].data.projectId,
+                    data: project,
+                  },
+                });
+              }}>
               <ImageBackground
                 imageStyle={styles.imageCard}
-                source={require('../../../../assets/home/no-content.jpg')}>
-                <View style={styles.emptyCardNB}>
+                source={require('../../../../assets/home/survey.jpg')}>
+                <View style={styles.projectCard}>
                   <Text
-                    style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
-                    Nenhuma solicitação ativa
+                    style={{
+                      alignSelf: 'center',
+                      fontSize: 20,
+                      fontWeight: 'bold',
+                      color: '#fff',
+                    }}>
+                    {activeSurvey[0].data.title}
+                  </Text>
+                  <Text
+                    style={{
+                      alignSelf: 'center',
+                      marginTop: 10,
+                      fontSize: 14,
+                      color: '#fff',
+                    }}>
+                    {activeSurvey[0].data.text}
+                  </Text>
+                  <Text
+                    style={{
+                      marginVertical: 20,
+                      alignSelf: 'center',
+                      fontSize: 15,
+                      fontWeight: 'bold',
+                      color: '#fff',
+                    }}>
+                    Status: {activeSurvey[0].data.status}
+                  </Text>
+                  <Text style={{alignSelf: 'center', color: '#fff'}}>
+                    Solicitado{' '}
+                    {moment(activeSurvey[0].data.createdAt).fromNow()}
                   </Text>
                 </View>
               </ImageBackground>
-            )}
-          </View>
-        </ScrollView>
-      </View>
-    );
-  }
+            </TouchableOpacity>
+          ) : (
+            <ImageBackground
+              imageStyle={styles.imageCard}
+              source={require('../../../../assets/home/no-content.jpg')}>
+              <View style={styles.emptyCardNB}>
+                <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
+                  Nenhuma solicitação ativa
+                </Text>
+              </View>
+            </ImageBackground>
+          )}
+        </View>
+      </ScrollView>
+    </View>
+  );
 };
 
 const styles = new StyleSheet.create({
