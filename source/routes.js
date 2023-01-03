@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Linking, TouchableOpacity, Text, View, StyleSheet} from 'react-native';
+import {
+  Linking,
+  TouchableOpacity,
+  Text,
+  View,
+  StyleSheet,
+  ToastAndroid,
+} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -27,6 +34,7 @@ import {
   MenuProvider,
   MenuTrigger,
 } from 'react-native-popup-menu';
+import UpdateProject from './screens/UpdateProject';
 
 const AppScreens = ({logged, initiated}) => {
   return (
@@ -133,10 +141,10 @@ const AppScreens = ({logged, initiated}) => {
       <Stack.Screen
         name="ProjectDetails"
         component={ProjectDetails}
-        options={({navigation}) => ({
+        options={({navigation, route}) => ({
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
-          headerTitle: 'Detalhes de Projeto',
+          headerTitle: `Detalhes ${route.params.project.data.apelidoProjeto}`,
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (
@@ -156,14 +164,32 @@ const AppScreens = ({logged, initiated}) => {
                 <MenuOptions>
                   <MenuOption
                     style={styles.menuOption}
-                    onSelect={() => console.log('a')}>
+                    onSelect={() => {
+                      const project = route.params.project;
+                      navigation.navigate('UpdateProject', {project});
+                    }}>
                     <View style={styles.center}>
                       <Text style={styles.menuText}>Atualizar dados</Text>
                     </View>
                   </MenuOption>
                   <MenuOption
                     style={styles.menuOption}
-                    onSelect={() => console.log('a')}>
+                    onSelect={() => {
+                      if (
+                        route.params.project.data.overview &&
+                        route.params.project.data.username_growatt !== ''
+                      ) {
+                        return ToastAndroid.show(
+                          'Em breve',
+                          ToastAndroid.SHORT,
+                        );
+                      } else {
+                        return ToastAndroid.show(
+                          'Opção indisponível para esse projeto',
+                          ToastAndroid.SHORT,
+                        );
+                      }
+                    }}>
                     <View style={styles.center}>
                       <Text style={styles.menuText}>Registrar datalogger</Text>
                     </View>
@@ -181,6 +207,25 @@ const AppScreens = ({logged, initiated}) => {
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
           headerTitle: 'Visualizador de PDF',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {color: 'white'},
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}>
+              <Icon name="arrow-left-circle" size={30} color="#fff" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="UpdateProject"
+        component={UpdateProject}
+        options={({navigation}) => ({
+          headerStyle: {backgroundColor: Colors.whitetheme.primary},
+          headerTransparent: false,
+          headerTitle: `Editar dados`,
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (

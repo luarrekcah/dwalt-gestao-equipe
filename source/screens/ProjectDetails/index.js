@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
@@ -12,6 +14,7 @@ import {
   TextInput,
   ActivityIndicator,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
 import storage from '@react-native-firebase/storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -36,6 +39,10 @@ import {getUserAuth} from '../../services/Auth';
 import {LineChart} from 'react-native-chart-kit';
 //import MapView from 'react-native-maps'; desinstalar
 
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
+
 const ProjectDetails = ({navigation, route}) => {
   const {project} = route.params;
   const [projectData, setProjectData] = React.useState(project);
@@ -53,11 +60,22 @@ const ProjectDetails = ({navigation, route}) => {
   const [requiredPics, setrequiredPics] = React.useState([]);
   const [chardata, setChartdata] = React.useState();
   const [growatt, setGrowatt] = React.useState();
+  const [refreshing, setRefreshing] = React.useState(false);
 
   const loadData = async () => {
     setLoading(true);
 
     setGrowatt(await getGrowattData());
+
+    const pjData = await getItems({
+      path: `gestaoempresa/business/${project.data.business}/projects/${project.key}`,
+    });
+
+    setProjectData(
+      await getItems({
+        path: `gestaoempresa/business/${project.data.business}/projects/${project.key}`,
+      }),
+    );
 
     setModalVisible(true);
     setLoadingModal(true);
@@ -72,10 +90,6 @@ const ProjectDetails = ({navigation, route}) => {
         path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/documents`,
       }),
     );
-
-    const pjData = await getItems({
-      path: `gestaoempresa/business/${project.data.business}/projects/${project.key}`,
-    });
 
     const power = [],
       labelsMonths = [];
@@ -129,8 +143,6 @@ const ProjectDetails = ({navigation, route}) => {
       power: power,
     });
 
-    setProjectData(pjData);
-
     const requiredPhotosS = await getAllItems({
       path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/requiredPhotos`,
     });
@@ -174,10 +186,15 @@ const ProjectDetails = ({navigation, route}) => {
     setLoadingModal(false);
   };
 
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await loadData();
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   React.useEffect(() => {
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigation]);
 
   const statusDict = {
     0: {
@@ -292,7 +309,11 @@ const ProjectDetails = ({navigation, route}) => {
     return <LoadingActivity />;
   } else {
     return (
-      <ScrollView style={styles.white}>
+      <ScrollView
+        style={styles.white}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <ImageView
           images={[
             {
