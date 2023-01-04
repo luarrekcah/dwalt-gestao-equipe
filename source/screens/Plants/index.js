@@ -12,16 +12,20 @@ import {statusCheck} from '../../utils/dictionary';
 import Colors from '../../global/colorScheme';
 import {LoadingActivity} from '../../global/Components';
 import {getGrowattData, getProjectsData} from '../../services/Database';
+import SearchBar from 'react-native-dynamic-search-bar';
 
 const Plants = ({route, navigation}) => {
   const [loading, setLoading] = React.useState(true);
   const [projects, setProjects] = React.useState();
   const [growatt, setGrowatt] = React.useState();
+  const [query, setQuery] = React.useState('');
+  const [queryData, setQueryData] = React.useState('');
 
   const loadData = async () => {
     setLoading(true);
     setGrowatt(await getGrowattData());
     setProjects(await getProjectsData());
+    setQueryData(await getProjectsData());
     setLoading(false);
   };
 
@@ -72,11 +76,27 @@ const Plants = ({route, navigation}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigation]);
 
+  const searchFunction = text => {
+    const updatedData = projects.filter(item => {
+      const item_data = `${item.data.apelidoProjeto.toUpperCase()})`;
+      const text_data = text.toUpperCase();
+      return item_data.indexOf(text_data) > -1;
+    });
+    setQuery(text);
+    setQueryData(updatedData);
+  };
+
   if (loading) {
     return <LoadingActivity />;
   } else {
     return (
       <View style={styles.container}>
+        <SearchBar
+          style={{marginVertical: 20}}
+          placeholder="Pesquise a planta"
+          onPress={() => console.log('a')}
+          onChangeText={text => searchFunction(text)}
+        />
         <ScrollView>
           {projects.length === 0 ? (
             <View style={styles.emptyCard}>
@@ -85,7 +105,7 @@ const Plants = ({route, navigation}) => {
               </Text>
             </View>
           ) : (
-            projects.map((item, index) => {
+            queryData.map((item, index) => {
               return (
                 <TouchableOpacity
                   style={styles.marginCard}
