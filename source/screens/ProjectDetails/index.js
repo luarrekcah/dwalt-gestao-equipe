@@ -15,6 +15,8 @@ import {
   ActivityIndicator,
   Dimensions,
   RefreshControl,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 import storage from '@react-native-firebase/storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -34,6 +36,7 @@ import {
   getGrowattData,
   getItems,
   updateItem,
+  deleteItem,
 } from '../../services/Database';
 import {getUserAuth} from '../../services/Auth';
 import {LineChart} from 'react-native-chart-kit';
@@ -239,27 +242,36 @@ const ProjectDetails = ({navigation, route}) => {
     ImagePicker.openPicker({
       includeBase64: true,
       multiple: true,
-    }).then(images => {
-      images.forEach(async i => {
-        for (let index = 0; index < images.length; index++) {
-          const path = `gestaoempresa/business/${
-            project.data.business
-          }/projects/${project.key}/photos/${new Date().getTime()}-${index}-${
-            project.key
-          }.jpg`;
-          const reference = storage().ref(path);
-          const dataUrl = `data:image/png;base64,${images[index].data}`;
-          await reference.putString(dataUrl, 'data_url');
-          const url = await reference.getDownloadURL();
+    }).then(async images => {
+      ToastAndroid.show('Enviando fotos, aguarde...', ToastAndroid.LONG);
+      for (let index = 0; index < images.length; index++) {
+        const path = `gestaoempresa/business/${
+          project.data.business
+        }/projects/${project.key}/photos/${new Date().getTime()}-${index}-${
+          project.key
+        }.jpg`;
+        const reference = storage().ref(path);
+        const dataUrl = `data:image/png;base64,${images[index].data}`;
+        await reference.putString(dataUrl, 'data_url');
+        const url = await reference.getDownloadURL();
 
-          createItem({
-            path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/photos`,
-            params: {url, path},
-          });
-        }
-      });
+        createItem({
+          path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/photos`,
+          params: {url, path},
+        });
+      }
+
       loadData();
     });
+  };
+
+  const deleteImage = item => {
+    console.log(item);
+    storage().ref(item.data.path).delete();
+    deleteItem({
+      path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/photos/${item.key}`,
+    });
+    loadData();
   };
 
   const pickImagesRequired = item => {
@@ -454,6 +466,20 @@ const ProjectDetails = ({navigation, route}) => {
               return (
                 <TouchableOpacity
                   key={index}
+                  onLongPress={() => {
+                    Alert.alert(
+                      'Apagar Imagem',
+                      'Tem certeza que deseja apagar essa imagem?',
+                      [
+                        {
+                          text: 'Não',
+                          onPress: () => console.log('Cancel'),
+                          style: 'cancel',
+                        },
+                        {text: 'Sim', onPress: () => deleteImage(item)},
+                      ],
+                    );
+                  }}
                   onPress={() => {
                     setViewerURI(item.data.url);
                     setIsVisibleImageViewer(true);
