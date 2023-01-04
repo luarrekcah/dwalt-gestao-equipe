@@ -19,7 +19,7 @@ const UpdateProject = ({navigation, route}) => {
   const {project} = route.params;
   const [projectData, setProjectData] = React.useState(project);
 
-  const [Status, setStatus] = React.useState(project.data.Status || '');
+  //const [Status, setStatus] = React.useState(project.data.Status || '');
   const [RStatus, setRStatus] = React.useState(project.data.RStatus || '');
   const [statusRastreio, setStatusRastreio] = React.useState(
     project.data.statusRastreio || '',
@@ -39,7 +39,7 @@ const UpdateProject = ({navigation, route}) => {
       });
       if (getProject) {
         setProjectData(getProject);
-        setStatus(getProject.data.Status);
+        // setStatus(getProject.data.Status);
         setRStatus(getProject.data.RStatus);
         setStatusRastreio(getProject.data.statusRastreio);
         setUsername_growatt(getProject.data.username_growatt);
@@ -52,7 +52,6 @@ const UpdateProject = ({navigation, route}) => {
   const updateData = async () => {
     setLoading(true);
     const itens = {
-      Status,
       RStatus,
       statusRastreio,
       username_growatt,
@@ -84,7 +83,6 @@ const UpdateProject = ({navigation, route}) => {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Text style={styles.items}>Status</Text>
           <Text style={styles.items}>Observação de Status</Text>
           <TextInput
             style={styles.textInput}
