@@ -241,10 +241,22 @@ const ProjectDetails = ({navigation, route}) => {
       multiple: true,
     }).then(images => {
       images.forEach(async i => {
-        createItem({
-          path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/photos`,
-          params: {base64: 'data:image/png;base64,' + i.data},
-        });
+        for (let index = 0; index < images.length; index++) {
+          const path = `gestaoempresa/business/${
+            project.data.business
+          }/projects/${project.key}/photos/${new Date().getTime()}-${index}-${
+            project.key
+          }.jpg`;
+          const reference = storage().ref(path);
+          const dataUrl = `data:image/png;base64,${images[index].data}`;
+          await reference.putString(dataUrl, 'data_url');
+          const url = await reference.getDownloadURL();
+
+          createItem({
+            path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/photos`,
+            params: {url, path},
+          });
+        }
       });
       loadData();
     });
@@ -443,12 +455,12 @@ const ProjectDetails = ({navigation, route}) => {
                 <TouchableOpacity
                   key={index}
                   onPress={() => {
-                    setViewerURI(item.data.base64);
+                    setViewerURI(item.data.url);
                     setIsVisibleImageViewer(true);
                   }}>
                   <ImageBackground
                     style={styles.backgroundImagePhoto}
-                    source={{uri: item.data.base64}}
+                    source={{uri: item.data.url}}
                   />
                 </TouchableOpacity>
               );
