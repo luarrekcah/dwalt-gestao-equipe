@@ -18,8 +18,9 @@ const Plants = ({route, navigation}) => {
   const [loading, setLoading] = React.useState(true);
   const [projects, setProjects] = React.useState();
   const [growatt, setGrowatt] = React.useState();
-  const [query, setQuery] = React.useState('');
   const [queryData, setQueryData] = React.useState('');
+
+  const [spinner, setSpinner] = React.useState(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -77,13 +78,14 @@ const Plants = ({route, navigation}) => {
   }, [navigation]);
 
   const searchFunction = text => {
+    setSpinner(true);
     const updatedData = projects.filter(item => {
       const item_data = `${item.data.apelidoProjeto.toUpperCase()})`;
       const text_data = text.toUpperCase();
       return item_data.indexOf(text_data) > -1;
     });
-    setQuery(text);
     setQueryData(updatedData);
+    setSpinner(false);
   };
 
   if (loading) {
@@ -94,8 +96,8 @@ const Plants = ({route, navigation}) => {
         <SearchBar
           style={{marginVertical: 20}}
           placeholder="Pesquise a planta"
-          onPress={() => console.log('a')}
           onChangeText={text => searchFunction(text)}
+          spinnerVisibility={spinner}
         />
         <ScrollView>
           {projects.length === 0 ? (
@@ -248,7 +250,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.whitetheme.backgroundColor,
     marginHorizontal: 20,
-    paddingBottom: 100,
+    paddingBottom: 150,
   },
   emptyCard: {
     padding: 30,
