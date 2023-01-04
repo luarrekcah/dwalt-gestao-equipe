@@ -40,6 +40,8 @@ import {
 } from '../../services/Database';
 import {getUserAuth} from '../../services/Auth';
 import {LineChart} from 'react-native-chart-kit';
+import {Timeline} from 'react-native-just-timeline';
+import moment from '../../vendors/moment';
 //import MapView from 'react-native-maps'; desinstalar
 
 const wait = timeout => {
@@ -54,7 +56,13 @@ const ProjectDetails = ({navigation, route}) => {
   const [visibleImageViewer, setIsVisibleImageViewer] = React.useState(false);
   const [viewerURI, setViewerURI] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalVisibleHistory, setModalVisibleHistory] = React.useState(false);
+
+  const [titleHistoric, setTitleHistoric] = React.useState();
+  const [descHistoric, setDescHistoric] = React.useState();
+
   const [modalData, setModalData] = React.useState({});
   const [value, setValue] = React.useState();
   const [loadingModal, setLoadingModal] = React.useState(false);
@@ -64,6 +72,8 @@ const ProjectDetails = ({navigation, route}) => {
   const [chardata, setChartdata] = React.useState();
   const [growatt, setGrowatt] = React.useState();
   const [refreshing, setRefreshing] = React.useState(false);
+
+  const [historicData, setHistoricData] = React.useState([]);
 
   const loadData = async () => {
     setLoading(true);
@@ -93,6 +103,16 @@ const ProjectDetails = ({navigation, route}) => {
         path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/documents`,
       }),
     );
+
+    const historicTimeline = await getAllItems({
+      path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/historic`,
+    });
+
+    const dataTimeline = [];
+    historicTimeline.forEach(i => {
+      dataTimeline.push(i.data);
+    });
+    setHistoricData(dataTimeline);
 
     const power = [],
       labelsMonths = [];
@@ -272,6 +292,34 @@ const ProjectDetails = ({navigation, route}) => {
       path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/photos/${item.key}`,
     });
     loadData();
+  };
+
+  const addHistoric = () => {
+    if (titleHistoric && descHistoric) {
+      createItem({
+        path: `gestaoempresa/business/${project.data.business}/projects/${project.key}/historic`,
+        params: {
+          title: {
+            content: titleHistoric,
+          },
+          description: {
+            content: descHistoric,
+          },
+          time: {
+            content: moment().format('ll'),
+          },
+        },
+      });
+      setModalVisibleHistory(false);
+      loadData();
+      setTitleHistoric('');
+      setDescHistoric('');
+    } else {
+      return ToastAndroid.show(
+        'Preencha todos os dados para enviar.',
+        ToastAndroid.SHORT,
+      );
+    }
   };
 
   const pickImagesRequired = item => {
@@ -631,6 +679,30 @@ const ProjectDetails = ({navigation, route}) => {
               <Text>Clique para abrir o Maps</Text>
             </ImageBackground>
           </TouchableOpacity>
+          <TextSection value={'Histórico de projeto'} />
+          <View>
+            <TouchableOpacity
+              style={{
+                backgroundColor: Colors.whitetheme.primary,
+                width: '100%',
+                alignContent: 'center',
+                alignItems: 'center',
+                borderRadius: 20,
+                marginVertical: 20,
+              }}
+              onPress={() => setModalVisibleHistory(true)}>
+              <Icon name="plus" size={40} color="#fff" />
+            </TouchableOpacity>
+            {historicData.length !== 0 ? (
+              <View>
+                <ScrollView>
+                  <Timeline data={historicData} />
+                </ScrollView>
+              </View>
+            ) : (
+              ''
+            )}
+          </View>
         </View>
 
         <View style={styles.centeredView}>
@@ -688,7 +760,7 @@ const ProjectDetails = ({navigation, route}) => {
                           );
 
                           updateItem({
-                            path: `gestaoempresa / business / ${userLocal.businessKey} / projects / ${project.key}`,
+                            path: `gestaoempresa/business/${userLocal.businessKey}/projects/${project.key}`,
                             params,
                           });
                         } catch (e) {
@@ -710,6 +782,50 @@ const ProjectDetails = ({navigation, route}) => {
                     />
                   </View>
                 )}
+              </View>
+            </View>
+          </Modal>
+        </View>
+
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisibleHistory}
+            onRequestClose={() => {
+              setModalVisibleHistory(!modalVisibleHistory);
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={[styles.items, {fontSize: 25, marginBottom: 30}]}>
+                  Adicionar Histórico
+                </Text>
+                <Text style={styles.items}>Título curto</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={t => setTitleHistoric(t)}
+                  value={titleHistoric}
+                />
+                <Text style={styles.items}>Descrição curta</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={t => setDescHistoric(t)}
+                  value={descHistoric}
+                />
+                <SimpleButton
+                  value="Adicionar"
+                  type={'primary'}
+                  onPress={() => addHistoric()}
+                />
+                <TouchableOpacity
+                  style={{marginTop: 30}}
+                  onPress={() => {
+                    setModalVisibleHistory(false);
+                    setTitleHistoric('');
+                    setDescHistoric('');
+                  }}>
+                  <Text style={{color: '#000000'}}>Cancelar</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </Modal>
@@ -816,6 +932,17 @@ const styles = new StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
   },
+  input: {
+    margin: 10,
+    width: Dimensions.get('window').width - 40,
+    borderColor: Colors.whitetheme.primary,
+    placeholderTextColor: Colors.whitetheme.primary,
+    color: Colors.whitetheme.primary,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 25,
+  },
+  items: {color: '#6a6a6b', fontWeight: 'bold'},
 });
 
 export default ProjectDetails;
