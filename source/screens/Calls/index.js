@@ -4,17 +4,12 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   TouchableOpacity,
   ToastAndroid,
   ScrollView,
   Linking,
 } from 'react-native';
-import {
-  LoadingActivity,
-  SimpleButton,
-  TextSection,
-} from '../../global/Components';
+import {LoadingActivity, TextSection} from '../../global/Components';
 import {
   getItems,
   getSurveyData,
@@ -26,6 +21,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import moment from '../../vendors/moment';
 import Colors from '../../global/colorScheme';
+import {createNotification} from '../../services/Notification';
 
 const Calls = ({navigation}) => {
   const [survey, setSurvey] = React.useState([]);
@@ -43,7 +39,7 @@ const Calls = ({navigation}) => {
     loadData();
   }, [navigation]);
 
-  const acceptSurvey = async id => {
+  const acceptSurvey = async (id, projectId) => {
     const haveCurrent = survey.filter(
       item => item.data.accepted && !item.data.finished,
     );
@@ -53,6 +49,14 @@ const Calls = ({navigation}) => {
         ToastAndroid.SHORT,
       );
     } else {
+      const project = await getItems({
+        path: `/gestaoempresa/business/${user.data.businessKey}/projects/${projectId}`,
+      });
+
+      if (!project || !project.customerID) {
+        return console.warn('Erro, sem customer!');
+      }
+
       updateItem({
         path: `/gestaoempresa/business/${user.data.businessKey}/surveys/${id}`,
         params: {
@@ -61,6 +65,12 @@ const Calls = ({navigation}) => {
           status: 'Chamado foi atendido pela empresa',
         },
       });
+      createNotification(
+        'Chamado atendido!',
+        'Seu chamado acabou de ser atendido pela empresa',
+        user.data.businessKey,
+        project.customerID,
+      );
       loadData();
     }
   };
@@ -116,7 +126,7 @@ const Calls = ({navigation}) => {
                               project.coords,
                           );
                         } else {
-                          acceptSurvey(item.key);
+                          acceptSurvey(item.key, item.data.projectId);
                         }
                       }}>
                       <Text style={{color: Colors.whitetheme.primary}}>
@@ -243,7 +253,7 @@ const Calls = ({navigation}) => {
                               project.coords,
                           );
                         } else {
-                          acceptSurvey(item.key);
+                          acceptSurvey(item.key, item.data.projectId);
                         }
                       }}>
                       <Text style={{color: Colors.whitetheme.warning}}>
