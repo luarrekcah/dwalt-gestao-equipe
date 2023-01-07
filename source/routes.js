@@ -11,6 +11,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import NetInfo from '@react-native-community/netinfo';
+import {
+  Menu,
+  MenuOption,
+  MenuOptions,
+  MenuProvider,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 
 import Colors from './global/colorScheme';
 import {LoadingActivity, NotConnected} from './components/Global';
@@ -27,14 +34,8 @@ import Main from './screens/Main';
 import Config from './screens/Config';
 import ProjectDetails from './screens/ProjectDetails';
 import PdfViewer from './screens/PdfViewer';
-import {
-  Menu,
-  MenuOption,
-  MenuOptions,
-  MenuProvider,
-  MenuTrigger,
-} from 'react-native-popup-menu';
 import UpdateProject from './screens/UpdateProject';
+import ScanScreen from './screens/ScanScreen';
 
 const AppScreens = ({logged, initiated}) => {
   return (
@@ -115,6 +116,14 @@ const AppScreens = ({logged, initiated}) => {
                 Linking.openURL('https://www.dlwalt.com/faq');
               }}>
               <Icon name="help-circle" size={30} color="#fff" />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('ScanScreen');
+              }}>
+              <Icon name="qrcode-scan" size={30} color="#fff" />
             </TouchableOpacity>
           ),
         })}
@@ -225,7 +234,26 @@ const AppScreens = ({logged, initiated}) => {
         options={({navigation}) => ({
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
-          headerTitle: `Editar dados`,
+          headerTitle: 'Editar dados',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {color: 'white'},
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}>
+              <Icon name="arrow-left-circle" size={30} color="#fff" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="ScanScreen"
+        component={ScanScreen}
+        options={({navigation}) => ({
+          headerStyle: {backgroundColor: Colors.whitetheme.primary},
+          headerTransparent: false,
+          headerTitle: 'Leitura de QR',
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (

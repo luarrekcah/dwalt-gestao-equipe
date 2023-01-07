@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {Image, Linking, ScrollView, StyleSheet, Text, View} from 'react-native';
 import Colors from '../../global/colorScheme';

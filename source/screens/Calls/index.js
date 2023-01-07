@@ -168,27 +168,6 @@ const Calls = ({navigation}) => {
                         INFOS
                       </Text>
                     </TouchableOpacity>
-
-                    {item.data.accepted ? (
-                      <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => {
-                          concludeSurvey(item.key);
-                        }}>
-                        <Text style={{color: Colors.whitetheme.primary}}>
-                          <Icon
-                            name={item.data.accepted ? 'check' : ''}
-                            size={20}
-                            color={Colors.whitetheme.primary}
-                          />
-                        </Text>
-                        <Text style={{color: Colors.whitetheme.primary}}>
-                          {item.data.accepted ? 'FECHAR' : ''}
-                        </Text>
-                      </TouchableOpacity>
-                    ) : (
-                      ''
-                    )}
                   </View>
                   <Text
                     style={{

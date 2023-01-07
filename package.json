@@ -31,6 +31,7 @@
     "react-native-animated-nav-tab-bar": "^3.1.8",
     "react-native-app-intro-slider": "^4.0.4",
     "react-native-blob-util": "^0.16.4",
+    "react-native-camera-kit": "^13.0.0",
     "react-native-chart-kit": "^6.12.0",
     "react-native-dynamic-search-bar": "^2.0.2",
     "react-native-image-crop-picker": "^0.38.1",
