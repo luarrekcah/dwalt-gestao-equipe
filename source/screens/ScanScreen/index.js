@@ -28,7 +28,7 @@ const ScanScreen = ({navigation}) => {
   const [user, setUser] = React.useState();
   const [allMedia, setAllmedia] = React.useState([]);
   const [loadingMedia, setLoadingMedia] = React.useState(true);
-  const [obs, setObs] = React.useState();
+  const [obs, setObs] = React.useState('');
 
   const loadUser = async () => {
     setUser(await getUserData());
@@ -170,7 +170,7 @@ const ScanScreen = ({navigation}) => {
                 placeholderTextColor={Colors.whitetheme.primary}
                 value={obs}
                 multiline={true}
-                placeholder={'Descrição do chamado'}
+                placeholder={'Observações sobre o chamado'}
                 onChangeText={text => {
                   setObs(text);
                 }}
