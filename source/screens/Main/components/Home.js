@@ -442,6 +442,9 @@ const styles = new StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
   },
+  projectCard: {
+    paddingVertical: 30,
+  },
 });
 
 export default Home;
