@@ -1,12 +1,15 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
-  StyleSheet,
+  TextInput,
   View,
   Text,
   Vibration,
   TouchableOpacity,
   ToastAndroid,
   ActivityIndicator,
+  StyleSheet,
+  Dimensions,
 } from 'react-native';
 import {CameraScreen} from 'react-native-camera-kit';
 import Colors from '../../global/colorScheme';
@@ -25,6 +28,7 @@ const ScanScreen = ({navigation}) => {
   const [user, setUser] = React.useState();
   const [allMedia, setAllmedia] = React.useState([]);
   const [loadingMedia, setLoadingMedia] = React.useState(true);
+  const [obs, setObs] = React.useState();
 
   const loadUser = async () => {
     setUser(await getUserData());
@@ -83,7 +87,6 @@ const ScanScreen = ({navigation}) => {
           path: `/gestaoempresa/business/${user.data.businessKey}/surveys/${key}/photos`,
           params: {url, path},
         });
-
         ToastAndroid.show(`Foto ${index + 1} enviada.`, ToastAndroid.SHORT);
       }
       await loadData(key);
@@ -105,7 +108,7 @@ const ScanScreen = ({navigation}) => {
               </Text>
             )}
           </TouchableOpacity>
-          {allMedia.length >= 5 ? (
+          {allMedia.length >= 5 && obs.length > 50 ? (
             <TouchableOpacity
               style={styles.button}
               onPress={() => concludeSurvey(data.key)}>
@@ -138,6 +141,8 @@ const ScanScreen = ({navigation}) => {
         accepted: true,
         finished: true,
         status: 'Chamado concluído',
+        obs,
+        staffEnded: user.key,
       },
     });
     ToastAndroid.show('Chamado concluído', ToastAndroid.LONG);
@@ -160,6 +165,16 @@ const ScanScreen = ({navigation}) => {
                 }}>
                 {dic[data.type]}
               </Text>
+              <TextInput
+                style={styles.textInput}
+                placeholderTextColor={Colors.whitetheme.primary}
+                value={obs}
+                multiline={true}
+                placeholder={'Descrição do chamado'}
+                onChangeText={text => {
+                  setObs(text);
+                }}
+              />
               <Options />
             </View>
           ) : (
@@ -191,6 +206,16 @@ const styles = new StyleSheet.create({
     alignContent: 'center',
     paddingVertical: 20,
     marginTop: 20,
+  },
+  textInput: {
+    margin: 10,
+    width: Dimensions.get('window').width - 40,
+    borderColor: Colors.whitetheme.primary,
+    placeholderTextColor: Colors.whitetheme.primary,
+    color: Colors.whitetheme.primary,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 25,
   },
 });
 
