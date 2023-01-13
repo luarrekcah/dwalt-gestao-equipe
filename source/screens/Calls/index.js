@@ -22,6 +22,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import moment from '../../vendors/moment';
 import Colors from '../../global/colorScheme';
 import {createNotification} from '../../services/Notification';
+import {NoTeam} from '../../components/Global';
 
 const Calls = ({navigation}) => {
   const [survey, setSurvey] = React.useState([]);
@@ -75,20 +76,10 @@ const Calls = ({navigation}) => {
     }
   };
 
-  const concludeSurvey = id => {
-    updateItem({
-      path: `/gestaoempresa/business/${user.data.businessKey}/surveys/${id}`,
-      params: {
-        accepted: true,
-        finished: true,
-        status: 'Chamado concluído',
-      },
-    });
-    loadData();
-  };
-
   if (loading) {
     return <LoadingActivity />;
+  } else if (user.data.team.id === '') {
+    return <NoTeam />;
   } else {
     return (
       <View style={styles.container}>

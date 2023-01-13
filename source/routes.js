@@ -134,7 +134,7 @@ const AppScreens = ({logged, initiated}) => {
         options={({navigation}) => ({
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
-          headerTitle: 'Configurações do Aplicativo',
+          headerTitle: 'Config',
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (
@@ -153,7 +153,7 @@ const AppScreens = ({logged, initiated}) => {
         options={({navigation, route}) => ({
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
-          headerTitle: `Detalhes ${route.params.project.data.apelidoProjeto}`,
+          headerTitle: `Detalhes`,
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (
@@ -215,7 +215,7 @@ const AppScreens = ({logged, initiated}) => {
         options={({navigation}) => ({
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
-          headerTitle: 'Visualizador de PDF',
+          headerTitle: 'Visualizador',
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (
@@ -234,7 +234,7 @@ const AppScreens = ({logged, initiated}) => {
         options={({navigation}) => ({
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
-          headerTitle: 'Editar dados',
+          headerTitle: 'Editando',
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (
@@ -253,7 +253,7 @@ const AppScreens = ({logged, initiated}) => {
         options={({navigation}) => ({
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
-          headerTitle: 'Leitura de QR',
+          headerTitle: 'Leitor QR',
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (

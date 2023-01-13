@@ -60,6 +60,19 @@ export const LoadingActivity = () => {
   );
 };
 
+export const NoTeam = () => {
+  return (
+    <View style={[styles.container, styles.horizontal, {marginTop: '50%'}]}>
+      <View style={{alignContent: 'center', alignItems: 'center'}}>
+        <Icon name={'lock'} size={40} color={Colors.whitetheme.primary} />
+        <Text style={{color: Colors.whitetheme.primary}}>
+          Limitamos seu acesso porque você não está em uma equipe!
+        </Text>
+      </View>
+    </View>
+  );
+};
+
 export const NotConnected = () => {
   return (
     <View

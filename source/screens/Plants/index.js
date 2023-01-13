@@ -11,14 +11,20 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {statusCheck} from '../../utils/dictionary';
 import Colors from '../../global/colorScheme';
 import {LoadingActivity} from '../../global/Components';
-import {getGrowattData, getProjectsData} from '../../services/Database';
+import {
+  getGrowattData,
+  getProjectsData,
+  getUserData,
+} from '../../services/Database';
 import SearchBar from 'react-native-dynamic-search-bar';
+import {NoTeam} from '../../components/Global';
 
 const Plants = ({route, navigation}) => {
   const [loading, setLoading] = React.useState(true);
   const [projects, setProjects] = React.useState();
   const [growatt, setGrowatt] = React.useState();
   const [queryData, setQueryData] = React.useState('');
+  const [user, setUser] = React.useState();
 
   const [spinner, setSpinner] = React.useState(false);
 
@@ -27,6 +33,7 @@ const Plants = ({route, navigation}) => {
     setGrowatt(await getGrowattData());
     setProjects(await getProjectsData());
     setQueryData(await getProjectsData());
+    setUser(await getUserData());
     setLoading(false);
   };
 
@@ -90,6 +97,8 @@ const Plants = ({route, navigation}) => {
 
   if (loading) {
     return <LoadingActivity />;
+  } else if (user.data.team.id === '') {
+    return <NoTeam />;
   } else {
     return (
       <View style={styles.container}>
