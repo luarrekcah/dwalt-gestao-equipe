@@ -31,11 +31,11 @@ const Main = ({navigation}) => {
           let iconName;
           if (route.name === 'Home') {
             iconName = focused ? 'home-variant' : 'home-variant-outline';
-          } else if (route.name === 'Empresa') {
+          } else if (route.name === 'Info') {
             iconName = focused ? 'domain' : 'domain';
-          } else if (route.name === 'Usuário') {
+          } else if (route.name === 'Perfil') {
             iconName = focused ? 'account-circle' : 'account-circle-outline';
-          } else if (route.name === 'Chamados') {
+          } else if (route.name === 'Alertas') {
             iconName = focused ? 'alert' : 'alert-outline';
           } else if (route.name === 'Equipe') {
             iconName = focused
@@ -49,12 +49,12 @@ const Main = ({navigation}) => {
           return <Icon name={iconName} size={size} color={color} />;
         },
       })}>
-      <Tab.Screen name="Empresa" component={Business} />
+      <Tab.Screen name="Info" component={Business} />
       <Tab.Screen name="Equipe" component={Team} />
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Plantas" component={Plants} />
-      <Tab.Screen name="Chamados" component={Calls} />
-      <Tab.Screen name="Usuário" component={User} />
+      <Tab.Screen name="Alertas" component={Calls} />
+      <Tab.Screen name="Perfil" component={User} />
     </Tab.Navigator>
   );
 };
