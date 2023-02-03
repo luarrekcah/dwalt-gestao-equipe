@@ -131,6 +131,23 @@ const Calls = ({navigation}) => {
                         {item.data.accepted ? 'ROTAS' : 'ACEITAR'}
                       </Text>
                     </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={async () => {
+                        navigation.navigate('AddSurveyData', {key: item.key});
+                      }}>
+                      <Text style={{color: Colors.whitetheme.primary}}>
+                        <Icon
+                          name={'plus'}
+                          size={20}
+                          color={Colors.whitetheme.primary}
+                        />
+                      </Text>
+                      <Text style={{color: Colors.whitetheme.primary}}>
+                        EXECUTAR OS
+                      </Text>
+                    </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.button}
                       onPress={async () => {

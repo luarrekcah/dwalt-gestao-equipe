@@ -36,6 +36,7 @@ import ProjectDetails from './screens/ProjectDetails';
 import PdfViewer from './screens/PdfViewer';
 import UpdateProject from './screens/UpdateProject';
 import ScanScreen from './screens/ScanScreen';
+import AddSurveyData from './screens/AddSurveyData';
 
 const AppScreens = ({logged, initiated}) => {
   return (
@@ -153,7 +154,7 @@ const AppScreens = ({logged, initiated}) => {
         options={({navigation, route}) => ({
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
-          headerTitle: `Detalhes`,
+          headerTitle: 'Detalhes',
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (
@@ -254,6 +255,25 @@ const AppScreens = ({logged, initiated}) => {
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
           headerTitle: 'Leitor QR',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {color: 'white'},
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}>
+              <Icon name="arrow-left-circle" size={30} color="#fff" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="AddSurveyData"
+        component={AddSurveyData}
+        options={({navigation}) => ({
+          headerStyle: {backgroundColor: Colors.whitetheme.primary},
+          headerTransparent: false,
+          headerTitle: 'Adicionar dados',
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (
