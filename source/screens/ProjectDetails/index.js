@@ -243,16 +243,11 @@ const ProjectDetails = ({navigation, route}) => {
   };
 
   const getGrowattProject = plantName => {
-    const plantNameOK = plantName.replaceAll(' ', '');
-    if (growatt && (plantName !== undefined || plantName !== '')) {
+    if (growatt) {
       const finded = growatt.plantList.data.data.plants.find(
-        g => g.name === plantNameOK,
+        g => g.name === plantName,
       );
-      if (finded) {
-        return finded;
-      } else {
-        return [];
-      }
+      return finded;
     } else {
       return [];
     }
@@ -430,6 +425,8 @@ const ProjectDetails = ({navigation, route}) => {
                 flexDirection: 'row',
                 flexWrap: 'wrap',
                 justifyContent: 'space-between',
+                alignContent: 'center',
+                alignItems: 'center',
               }}>
               <View
                 style={{
@@ -448,7 +445,10 @@ const ProjectDetails = ({navigation, route}) => {
                   {project.data.category.toUpperCase()}
                 </Text>
               </View>
-              {project.data.overview ? (
+              {project.data.username_growatt &&
+              growatt &&
+              project.data.overview &&
+              getGrowattProject(project.data.username_growatt) ? (
                 <>
                   <Text
                     style={{
@@ -466,19 +466,26 @@ const ProjectDetails = ({navigation, route}) => {
                       ].title
                     }
                   </Text>
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      color: '#fff',
-                      fontWeight: 'bold',
-                    }}>
-                    <Icon name="battery" size={20} color="#fff" />
-                    {
-                      getGrowattProject(project.data.username_growatt)
-                        .total_energy
-                    }
-                    kW
-                  </Text>
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        color: '#fff',
+                        fontWeight: 'bold',
+                      }}>
+                      Geração hoje
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        color: '#fff',
+                        fontWeight: 'bold',
+                      }}>
+                      <Icon name="battery-charging" size={20} color="#fff" />
+                      {project.data.overview.data.data.today_energy}
+                      kW
+                    </Text>
+                  </View>
                 </>
               ) : (
                 ''
@@ -508,6 +515,20 @@ const ProjectDetails = ({navigation, route}) => {
               ? 'Sem nome de usuário growatt'
               : project.data.username_growatt}
           </Text>
+          {project.data.overview ? (
+            <View>
+              <Text style={[styles.bottomStatus, {color: '#000000'}]}>
+                <Icon name="update" size={20} color="#000000" />{' '}
+                {project.data.overview.data.data.last_update_time === '' ||
+                project.data.overview.data.data.last_update_time === undefined
+                  ? 'Sem nome de usuário growatt'
+                  : project.data.overview.data.data.last_update_time}
+              </Text>
+            </View>
+          ) : (
+            ''
+          )}
+
           <TextSection value={'Fotos'} />
           <ScrollView horizontal>
             {allMedia.map((item, index) => {
@@ -602,7 +623,7 @@ const ProjectDetails = ({navigation, route}) => {
               </Text>
             )}
           </ScrollView>
-          {project.data.overview ? (
+          {project.data.month_power && chardata ? (
             <>
               <TextSection value={'Histórico de geração'} />
               <LineChart
