@@ -38,16 +38,11 @@ const Plants = ({route, navigation}) => {
   };
 
   const getGrowattProject = plantName => {
-    const plantNameOK = plantName.replaceAll(' ', '');
-    if (growatt && (plantName !== undefined || plantName !== '')) {
+    if (growatt) {
       const finded = growatt.plantList.data.data.plants.find(
-        g => g.name === plantNameOK,
+        g => g.name === plantName,
       );
-      if (finded) {
-        return finded;
-      } else {
-        return [];
-      }
+      return finded;
     } else {
       return [];
     }
@@ -159,6 +154,8 @@ const Plants = ({route, navigation}) => {
                           flexDirection: 'row',
                           flexWrap: 'wrap',
                           justifyContent: 'space-between',
+                          alignContent: 'center',
+                          alignItems: 'center',
                         }}>
                         <View
                           style={{
@@ -177,7 +174,10 @@ const Plants = ({route, navigation}) => {
                             {item.data.category.toUpperCase()}
                           </Text>
                         </View>
-                        {item.data.overview && growatt ? (
+                        {item.data.username_growatt &&
+                        item.data.overview &&
+                        growatt &&
+                        getGrowattProject(item.data.username_growatt) ? (
                           <>
                             <Text
                               style={{
@@ -197,23 +197,30 @@ const Plants = ({route, navigation}) => {
                                 ].title
                               }
                             </Text>
-                            <Text
-                              style={{
-                                fontSize: 20,
-                                color: '#fff',
-                                fontWeight: 'bold',
-                              }}>
-                              <Icon
-                                name="battery-charging-full"
-                                size={20}
-                                color="#fff"
-                              />
-                              {
-                                getGrowattProject(item.data.username_growatt)
-                                  .total_energy
-                              }
-                              kW
-                            </Text>
+                            <View>
+                              <Text
+                                style={{
+                                  fontSize: 15,
+                                  color: '#fff',
+                                  fontWeight: 'bold',
+                                }}>
+                                Geração hoje
+                              </Text>
+                              <Text
+                                style={{
+                                  fontSize: 20,
+                                  color: '#fff',
+                                  fontWeight: 'bold',
+                                }}>
+                                <Icon
+                                  name="battery-charging"
+                                  size={20}
+                                  color="#fff"
+                                />
+                                {item.data.overview.data.data.today_energy}
+                                kW
+                              </Text>
+                            </View>
                           </>
                         ) : (
                           ''
