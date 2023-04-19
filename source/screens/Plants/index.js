@@ -111,7 +111,7 @@ const Plants = ({route, navigation}) => {
               </Text>
             </View>
           ) : (
-            queryData.map((item, index) => {
+            queryData.reverse().map((item, index) => {
               return (
                 <TouchableOpacity
                   style={styles.marginCard}
