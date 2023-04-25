@@ -35,6 +35,24 @@ export const MiniCard = ({
   );
 };
 
+export const ShortCuts = ({
+  iconName,
+  iconSize = 40,
+  iconColor = '#fff',
+  content = ['Informe'],
+  colorBackground = Colors.whitetheme.primary,
+  onPress,
+}) => {
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <View style={[styles.miniCard, {backgroundColor: colorBackground}]}>
+        <Icon name={iconName} size={iconSize} color={iconColor} />
+        <Text style={styles.textCardDesc}>{content[0]}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
 export const Button = ({
   icon = 'info',
   value,

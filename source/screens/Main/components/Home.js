@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Colors from '../../../global/colorScheme';
-import {MiniCard, TextSection} from '../../../global/Components';
+import {MiniCard, ShortCuts, TextSection} from '../../../global/Components';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import IconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
@@ -140,6 +140,47 @@ const Home = ({navigation}) => {
                 )}
               </View>
             )}
+
+            <TextSection value={'Atalhos'} />
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <ShortCuts
+                content={['Cadastro']}
+                iconName="account-plus"
+                iconSize={40}
+                colorBackground="#4c4d4c"
+                onPress={() => {
+                  navigation.navigate('NewCustomer');
+                }}
+              />
+              <ShortCuts
+                content={['Chamados']}
+                iconName="alert"
+                iconSize={40}
+                colorBackground="#4c4d4c"
+                onPress={() => {
+                  navigation.navigate('Calls');
+                }}
+              />
+              <ShortCuts
+                content={['Equipe']}
+                iconName="account-group"
+                iconSize={40}
+                colorBackground="#4c4d4c"
+                onPress={() => {
+                  navigation.navigate('Team');
+                }}
+              />
+              <ShortCuts
+                content={['Empresa']}
+                iconName="domain"
+                iconSize={40}
+                colorBackground="#4c4d4c"
+                onPress={() => {
+                  navigation.navigate('Business');
+                }}
+              />
+            </ScrollView>
 
             <TextSection value={'Informações'} />
             {loadingInfo ? (
