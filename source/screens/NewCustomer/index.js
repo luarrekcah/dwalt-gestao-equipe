@@ -107,9 +107,10 @@ const NewCustomer = ({navigation}) => {
 
   const registerCustomer = async values => {
     values.createdAt = moment().format();
+    values.password = '123456'; // Alterar para pegar o da empresa
     const path = `/gestaoempresa/business/${user.data.businessKey}/customers`;
     if (AllMedia.length !== 0) {
-      let photos = [];
+      let photos = {};
       for (let index = 0; index < AllMedia.length; index++) {
         const base64URL = AllMedia[index];
 
@@ -122,10 +123,14 @@ const NewCustomer = ({navigation}) => {
         await reference.putString(base64URL, 'data_url');
         const url = await reference.getDownloadURL();
 
-        photos.push({
+        const data = {
           path: pathImage,
           url,
-        });
+        };
+
+        const date = new Date().getTime().toString();
+
+        photos[date] = data;
       }
 
       values.photos = photos;
@@ -458,15 +463,11 @@ const NewCustomer = ({navigation}) => {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Picker
-            style={{backgroundColor: Colors.whitetheme.primary}}
-            selectedValue={clientType}
-            onValueChange={handleClientTypeChange}>
-            <Picker.Item label="Pessoa Física" value="pf" />
-            <Picker.Item label="Pessoa Jurídica" value="pj" />
-          </Picker>
-          {clientType === 'pf' ? <RenderPF /> : <RenderPJ />}
-          <View>
+          <Text style={styles.text}>
+            Tire as fotos com sua câmera e faça o envio. Selecione-as primeiro e
+            depois preencha os dados.
+          </Text>
+          <View style={{marginBottom: 30}}>
             <TouchableOpacity
               style={styles.button}
               onPress={() => pickImages()}>
@@ -479,6 +480,14 @@ const NewCustomer = ({navigation}) => {
               )}
             </TouchableOpacity>
           </View>
+          <Picker
+            style={{backgroundColor: Colors.whitetheme.primary}}
+            selectedValue={clientType}
+            onValueChange={handleClientTypeChange}>
+            <Picker.Item label="Pessoa Física" value="pf" />
+            <Picker.Item label="Pessoa Jurídica" value="pj" />
+          </Picker>
+          {clientType === 'pf' ? <RenderPF /> : <RenderPJ />}
         </View>
       </ScrollView>
     );
