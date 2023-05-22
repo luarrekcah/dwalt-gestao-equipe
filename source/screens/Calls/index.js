@@ -99,6 +99,35 @@ const Calls = ({navigation}) => {
                       </Text>
                     </View>
                   </View>
+                  {item.data.customer ? (
+                    <View
+                      style={{
+                        padding: 20,
+                        backgroundColor: '#fff',
+                        borderRadius: 20,
+                      }}>
+                      <Text
+                        style={{
+                          color: '#000',
+                          fontSize: 15,
+                          marginBottom: 10,
+                          fontWeight: 'bold',
+                        }}>
+                        DADOS DO CLIENTE
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Nome: {item.data.customer.name}
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Documento: {item.data.customer.document}
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Projeto: {item.data.project.name}
+                      </Text>
+                    </View>
+                  ) : (
+                    ''
+                  )}
                   <Text style={{marginVertical: 20}}>{item.data.text}</Text>
                   <View style={[styles.row, {marginVertical: 20}]}>
                     <TouchableOpacity
@@ -110,14 +139,21 @@ const Calls = ({navigation}) => {
                             ToastAndroid.SHORT,
                           );
                           const project = await getItems({
-                            path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
+                            path: `/gestaoempresa/business/${
+                              user.data.businessKey
+                            }/projects/${
+                              item.data.projectId || item.data.project.id
+                            }`,
                           });
                           Linking.openURL(
                             'https://www.google.com.br/maps/search/' +
                               project.coords,
                           );
                         } else {
-                          acceptSurvey(item.key, item.data.projectId);
+                          acceptSurvey(
+                            item.key,
+                            item.data.projectId || item.data.project.id,
+                          );
                         }
                       }}>
                       <Text style={{color: Colors.whitetheme.primary}}>
@@ -156,11 +192,15 @@ const Calls = ({navigation}) => {
                           ToastAndroid.SHORT,
                         );
                         const project = await getItems({
-                          path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
+                          path: `/gestaoempresa/business/${
+                            user.data.businessKey
+                          }/projects/${
+                            item.data.projectId || item.data.project.id
+                          }`,
                         });
                         navigation.navigate('ProjectDetails', {
                           project: {
-                            key: item.data.projectId,
+                            key: item.data.projectId || item.data.project.id,
                             data: project,
                           },
                         });
@@ -223,6 +263,35 @@ const Calls = ({navigation}) => {
                     </View>
                   </View>
                   <Text style={{marginVertical: 20}}>{item.data.text}</Text>
+                  {item.data.customer ? (
+                    <View
+                      style={{
+                        padding: 20,
+                        backgroundColor: '#fff',
+                        borderRadius: 20,
+                      }}>
+                      <Text
+                        style={{
+                          color: '#000',
+                          fontSize: 15,
+                          marginBottom: 10,
+                          fontWeight: 'bold',
+                        }}>
+                        DADOS DO CLIENTE
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Nome: {item.data.customer.name}
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Documento: {item.data.customer.document}
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Projeto: {item.data.project.name}
+                      </Text>
+                    </View>
+                  ) : (
+                    ''
+                  )}
                   <View style={[styles.row, {marginVertical: 20}]}>
                     <TouchableOpacity
                       style={styles.button}
@@ -233,14 +302,21 @@ const Calls = ({navigation}) => {
                             ToastAndroid.SHORT,
                           );
                           const project = await getItems({
-                            path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
+                            path: `/gestaoempresa/business/${
+                              user.data.businessKey
+                            }/projects/${
+                              item.data.projectId || item.data.project.id
+                            }`,
                           });
                           Linking.openURL(
                             'https://www.google.com.br/maps/search/' +
                               project.coords,
                           );
                         } else {
-                          acceptSurvey(item.key, item.data.projectId);
+                          acceptSurvey(
+                            item.key,
+                            item.data.projectId || item.data.project.id,
+                          );
                         }
                       }}>
                       <Text style={{color: Colors.whitetheme.warning}}>
@@ -262,11 +338,15 @@ const Calls = ({navigation}) => {
                           ToastAndroid.SHORT,
                         );
                         const project = await getItems({
-                          path: `/gestaoempresa/business/${user.data.businessKey}/projects/${item.data.projectId}`,
+                          path: `/gestaoempresa/business/${
+                            user.data.businessKey
+                          }/projects/${
+                            item.data.projectId || item.data.project.id
+                          }`,
                         });
                         navigation.navigate('ProjectDetails', {
                           project: {
-                            key: item.data.projectId,
+                            key: item.data.projectId || item.data.project.id,
                             data: project,
                           },
                         });
@@ -330,6 +410,35 @@ const Calls = ({navigation}) => {
                       </Text>
                     </View>
                   </View>
+                  {item.data.customer ? (
+                    <View
+                      style={{
+                        padding: 20,
+                        backgroundColor: '#fff',
+                        borderRadius: 20,
+                      }}>
+                      <Text
+                        style={{
+                          color: '#000',
+                          fontSize: 15,
+                          marginBottom: 10,
+                          fontWeight: 'bold',
+                        }}>
+                        DADOS DO CLIENTE
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Nome: {item.data.customer.name}
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Documento: {item.data.customer.document}
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Projeto: {item.data.project.name}
+                      </Text>
+                    </View>
+                  ) : (
+                    ''
+                  )}
                   <Text style={{marginVertical: 20}}>{item.data.text}</Text>
                   <Text
                     style={{
@@ -340,35 +449,6 @@ const Calls = ({navigation}) => {
                   </Text>
                 </View>
               );
-              /*return (
-                <TouchableOpacity
-                  key={item.key}
-                  style={[
-                    styles.card,
-                    {
-                      borderColor: item.data.accepted ? '#02610a' : '#FF0000',
-                    },
-                  ]}>
-                  <Image
-                    style={styles.image}
-                    source={{
-                      uri: item.data.accepted
-                        ? 'https://img.icons8.com/color/344/time-span.png'
-                        : 'https://img.icons8.com/flat_round/64/000000/delete-sign.png',
-                    }}
-                  />
-                  <View style={styles.cardContent}>
-                    <Text style={[styles.title]}>{item.data.title}</Text>
-                    <Text style={[styles.description]}>{item.data.text}</Text>
-                    <Text style={styles.status}>
-                      STATUS: {item.data.status}
-                    </Text>
-                    <Text style={styles.date}>
-                      Solicitado {moment(item.data.createdAt).fromNow()}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              );*/
             }
           })}
         </ScrollView>
