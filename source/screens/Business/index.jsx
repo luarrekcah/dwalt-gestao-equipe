@@ -1,66 +1,45 @@
 import React from 'react';
 import {Text, View, Image, StyleSheet, ScrollView} from 'react-native';
 import Colors from '../../global/colorScheme';
-import {LoadingActivity, TextSection} from '../../global/Components';
-import {getBusinessData} from '../../services/Database';
+import {TextSection} from '../../global/Components';
+import {useBusiness} from '../../hooks/BusinessContext';
 
 const Business = ({navigation}) => {
-  const [business, setBusiness] = React.useState();
-  const [loading, setLoading] = React.useState(true);
-
-  const loadData = async () => {
-    setLoading(true);
-    setBusiness(await getBusinessData());
-    setLoading(false);
-  };
-
-  React.useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      loadData();
-    });
-    return unsubscribe;
-  }, [navigation]);
-
-  if (loading) {
-    return <LoadingActivity />;
-  } else {
-    return (
-      <View style={styles.container}>
-        <ScrollView>
-          <Image
-            style={styles.bussinessLogo}
-            source={{
-              uri: business.data.info.profile.logo,
-            }}
-          />
-          <Text style={styles.bussinessName}>
-            {business.data.info.documents.nome_fantasia}
-          </Text>
-          <TextSection value="Sobre a empresa" />
-          <Text style={styles.bussinessDesc}>
-            {business.data.info.profile.about}
-          </Text>
-          <TextSection value="Documentos - CNPJ" />
-          <Text style={styles.bussinessDesc}>
-            {business.data.info.documents.nome_fantasia} -{' '}
-            {business.data.info.documents.cnpj}
-          </Text>
-          <TextSection value="Localização" />
-          <Text style={styles.bussinessDesc}>
-            {business.data.info.profile.mainLocation}
-          </Text>
-          <TextSection value="Proprietário(a)" />
-          <Text style={styles.bussinessDesc}>
-            {business.data.info.profile.ownerName}
-          </Text>
-          <TextSection value="Data de registro na plataforma" />
-          <Text style={styles.bussinessDesc}>
-            {business.data.info.createdAt}
-          </Text>
-        </ScrollView>
-      </View>
-    );
-  }
+  const {business, setBusiness} = useBusiness();
+  return (
+    <View style={styles.container}>
+      <ScrollView>
+        <Image
+          style={styles.bussinessLogo}
+          source={{
+            uri: business.data.info.profile.logo,
+          }}
+        />
+        <Text style={styles.bussinessName}>
+          {business.data.info.documents.nome_fantasia}
+        </Text>
+        <TextSection value="Sobre a empresa" />
+        <Text style={styles.bussinessDesc}>
+          {business.data.info.profile.about}
+        </Text>
+        <TextSection value="Documentos - CNPJ" />
+        <Text style={styles.bussinessDesc}>
+          {business.data.info.documents.nome_fantasia} -{' '}
+          {business.data.info.documents.cnpj}
+        </Text>
+        <TextSection value="Localização" />
+        <Text style={styles.bussinessDesc}>
+          {business.data.info.profile.mainLocation}
+        </Text>
+        <TextSection value="Proprietário(a)" />
+        <Text style={styles.bussinessDesc}>
+          {business.data.info.profile.ownerName}
+        </Text>
+        <TextSection value="Data de registro na plataforma" />
+        <Text style={styles.bussinessDesc}>{business.data.info.createdAt}</Text>
+      </ScrollView>
+    </View>
+  );
 };
 
 const styles = new StyleSheet.create({

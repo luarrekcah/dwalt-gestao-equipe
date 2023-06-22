@@ -24,10 +24,16 @@ import {
 } from '../../../services/Database';
 import moment from '../../../vendors/moment';
 import {NoTeam} from '../../../components/Global';
+import {useUser} from '../../../hooks/UserContext';
+import {
+  loadDataFromStorage,
+  saveDataToStorage,
+} from '../../../services/AsyncStorage';
+import {useBusiness} from '../../../hooks/BusinessContext';
 
 const Home = ({navigation}) => {
-  const [user, setUser] = React.useState();
-  const [business, setBusiness] = React.useState();
+  const {user, setUser} = useUser();
+  const {business, setBusiness} = useBusiness();
   const [survey, setSurvey] = React.useState([]);
   const [projects, setProjects] = React.useState();
   const [staffs, setStaffs] = React.useState();
@@ -36,32 +42,117 @@ const Home = ({navigation}) => {
   const [loadingUser, setLoadingUser] = React.useState(true);
   const [loadingInfo, setLoadingInfo] = React.useState(true);
 
+  const fetchAndUpdateData = async () => {
+    try {
+      const userData = await getUserData();
+      const businessData = await getBusinessData();
+      const surveysData = await getSurveyData();
+      const projectsData = await getProjectsData();
+      const staffData = await getAllItems({
+        path: `gestaoempresa/business/${businessData.key}/staffs`,
+      });
+      const customersData = await getAllItems({
+        path: `gestaoempresa/business/${businessData.key}/customers`,
+      });
+
+      await saveDataToStorage('userData', userData);
+      await saveDataToStorage('surveyData', surveysData);
+      await saveDataToStorage('businessData', businessData);
+      await saveDataToStorage('projectsData', projectsData);
+      await saveDataToStorage('staffData', staffData);
+      await saveDataToStorage('customersData', customersData);
+
+      setUser(userData);
+      setSurvey(surveysData);
+      setBusiness(businessData);
+      setProjects(projectsData);
+      setStaffs(staffData);
+      setCustomers(customersData);
+
+      const actSurvey = surveysData.filter(
+        i => i.data.accepted && !i.data.finished,
+      );
+      setActiveSurvey(actSurvey);
+    } catch (error) {
+      console.log('Error updating data:', error);
+    }
+  };
+
   const loadData = async () => {
     setLoadingUser(true);
     setLoadingInfo(true);
-    //-
-    setUser(await getUserData());
-    const businesss = await getBusinessData();
-    setBusiness(businesss);
-    setLoadingUser(false);
-    //-
-    const surveys = await getSurveyData();
-    const actSurvey = surveys.filter(i => i.data.accepted && !i.data.finished);
-    setSurvey(surveys);
-    setActiveSurvey(actSurvey);
-    setProjects(await getProjectsData());
-    setStaffs(
-      await getAllItems({
-        path: `gestaoempresa/business/${businesss.key}/staffs`,
-      }),
-    );
-    setCustomers(
-      await getAllItems({
-        path: `gestaoempresa/business/${businesss.key}/customers`,
-      }),
-    );
-    setLoadingInfo(false);
-    //-
+
+    try {
+      const storedUserData = await loadDataFromStorage('userData');
+      const storedSurveyData = await loadDataFromStorage('surveyData');
+      const storedBusinessData = await loadDataFromStorage('businessData');
+      const storedProjectsData = await loadDataFromStorage('projectsData');
+      const storedStaffData = await loadDataFromStorage('staffData');
+      const storedCustomersData = await loadDataFromStorage('customersData');
+
+      if (
+        storedStaffData &&
+        storedUserData &&
+        storedSurveyData &&
+        storedBusinessData &&
+        storedProjectsData &&
+        storedCustomersData
+      ) {
+        setUser(storedUserData);
+        setBusiness(storedBusinessData);
+        setProjects(storedProjectsData);
+        setSurvey(storedSurveyData);
+        setStaffs(storedStaffData);
+        setCustomers(storedCustomersData);
+
+        const actSurvey = storedSurveyData.filter(
+          i => i.data.accepted && !i.data.finished,
+        );
+        setActiveSurvey(actSurvey);
+
+        setLoadingInfo(false);
+        setLoadingUser(false);
+
+        fetchAndUpdateData();
+      } else {
+        const userData = await getUserData();
+        const businessData = await getBusinessData();
+        const surveysData = await getSurveyData();
+        const projectsData = await getProjectsData();
+        const staffData = await getAllItems({
+          path: `gestaoempresa/business/${businessData.key}/staffs`,
+        });
+        const customersData = await getAllItems({
+          path: `gestaoempresa/business/${businessData.key}/customers`,
+        });
+
+        await saveDataToStorage('userData', userData);
+        await saveDataToStorage('surveyData', surveysData);
+        await saveDataToStorage('businessData', businessData);
+        await saveDataToStorage('projectsData', projectsData);
+        await saveDataToStorage('staffData', staffData);
+        await saveDataToStorage('customersData', customersData);
+
+        setUser(userData);
+        setSurvey(surveysData);
+        setBusiness(businessData);
+        setProjects(projectsData);
+        setStaffs(staffData);
+        setCustomers(customersData);
+
+        const actSurvey = surveysData.filter(
+          i => i.data.accepted && !i.data.finished,
+        );
+        setActiveSurvey(actSurvey);
+
+        setLoadingUser(false);
+        setLoadingInfo(false);
+      }
+    } catch (error) {
+      console.log('Error loading data:', error);
+      setLoadingUser(false);
+      setLoadingInfo(false);
+    }
   };
 
   const getKwp = () => {

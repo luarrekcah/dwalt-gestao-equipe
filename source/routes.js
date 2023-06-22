@@ -41,6 +41,8 @@ import Calls from './screens/Calls';
 import Team from './screens/Team';
 import Business from './screens/Business';
 import NewCustomer from './screens/NewCustomer';
+import {UserProvider} from './hooks/UserContext';
+import {BusinessProvider} from './hooks/BusinessContext';
 
 const AppScreens = ({logged, initiated}) => {
   return (
@@ -407,7 +409,11 @@ const Routes = () => {
   return (
     <MenuProvider>
       <NavigationContainer>
-        <AppScreens logged={logged} initiated={initiated} />
+        <UserProvider>
+          <BusinessProvider>
+            <AppScreens logged={logged} initiated={initiated} />
+          </BusinessProvider>
+        </UserProvider>
       </NavigationContainer>
     </MenuProvider>
   );

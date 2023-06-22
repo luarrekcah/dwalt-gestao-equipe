@@ -10,12 +10,7 @@ import {
   Linking,
 } from 'react-native';
 import {LoadingActivity, TextSection} from '../../global/Components';
-import {
-  getItems,
-  getSurveyData,
-  getUserData,
-  updateItem,
-} from '../../services/Database';
+import {getItems, getSurveyData, updateItem} from '../../services/Database';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -23,17 +18,47 @@ import moment from '../../vendors/moment';
 import Colors from '../../global/colorScheme';
 import {createNotification} from '../../services/Notification';
 import {NoTeam} from '../../components/Global';
+import {useUser} from '../../hooks/UserContext';
+import {
+  loadDataFromStorage,
+  saveDataToStorage,
+} from '../../services/AsyncStorage';
 
 const Calls = ({navigation}) => {
+  const {user, setUser} = useUser();
   const [survey, setSurvey] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  const [user, setUser] = React.useState();
+
+  const fetchAndUpdateData = async () => {
+    try {
+      const surveyData = await getSurveyData();
+      await saveDataToStorage('surveyData', surveyData);
+      setSurvey(surveyData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const loadData = async () => {
     setLoading(true);
-    setSurvey(await getSurveyData());
-    setUser(await getUserData());
-    setLoading(false);
+
+    try {
+      const storedSurveyData = await loadDataFromStorage('surveyData');
+
+      if (storedSurveyData) {
+        setSurvey(storedSurveyData);
+        setLoading(false);
+        fetchAndUpdateData();
+      } else {
+        const surveyData = await getSurveyData();
+        await saveDataToStorage('surveyData', surveyData);
+        setSurvey(surveyData);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   React.useEffect(() => {

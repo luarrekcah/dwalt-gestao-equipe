@@ -11,30 +11,62 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {statusCheck} from '../../utils/dictionary';
 import Colors from '../../global/colorScheme';
 import {LoadingActivity} from '../../global/Components';
-import {
-  getGrowattData,
-  getProjectsData,
-  getUserData,
-} from '../../services/Database';
+import {getGrowattData, getProjectsData} from '../../services/Database';
 import SearchBar from 'react-native-dynamic-search-bar';
 import {NoTeam} from '../../components/Global';
+import {useUser} from '../../hooks/UserContext';
+import {
+  loadDataFromStorage,
+  saveDataToStorage,
+} from '../../services/AsyncStorage';
 
 const Plants = ({route, navigation}) => {
-  const [loading, setLoading] = React.useState(true);
-  const [projects, setProjects] = React.useState();
+  const {user, setUser} = useUser();
+  const [projects, setProjects] = React.useState([]);
   const [growatt, setGrowatt] = React.useState();
   const [queryData, setQueryData] = React.useState('');
-  const [user, setUser] = React.useState();
+
+  const [loading, setLoading] = React.useState(true);
 
   const [spinner, setSpinner] = React.useState(false);
 
+  const fetchAndUpdateData = async () => {
+    try {
+      const projectsData = await getProjectsData();
+      const growattData = await getGrowattData();
+
+      await saveDataToStorage('projectsData', projectsData);
+      await saveDataToStorage('growattData', growattData);
+
+      setGrowatt(growattData);
+      setQueryData(projectsData);
+      setProjects(projectsData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const loadData = async () => {
     setLoading(true);
-    setGrowatt(await getGrowattData());
-    setProjects(await getProjectsData());
-    setQueryData(await getProjectsData());
-    setUser(await getUserData());
-    setLoading(false);
+
+    try {
+      const storedProjectsData = await loadDataFromStorage('projectsData');
+      const storedGrowattData = await loadDataFromStorage('growattData');
+
+      if (storedGrowattData && storedProjectsData) {
+        setGrowatt(storedGrowattData);
+        setProjects(storedProjectsData);
+        setQueryData(storedProjectsData);
+        setLoading(false);
+        fetchAndUpdateData();
+      } else {
+        fetchAndUpdateData();
+
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getGrowattProject = plantName => {

@@ -17,14 +17,15 @@ import storage from '@react-native-firebase/storage';
 import {Formik} from 'formik';
 import MaskInput, {Masks} from 'react-native-mask-input';
 
-import {createItem, getAllItems, getUserData} from '../../services/Database';
+import {createItem, getAllItems} from '../../services/Database';
 import Colors from '../../global/colorScheme';
 import {LoadingActivity} from '../../components/Global';
 import axios from 'axios';
 import moment from 'moment/moment';
+import {useUser} from '../../hooks/UserContext';
 
 const NewCustomer = ({navigation}) => {
-  const [user, setUser] = React.useState();
+  const {user, setUser} = useUser();
   const [loading, setLoading] = React.useState(true);
   const [loadingMedia, setLoadingMedia] = React.useState(false);
   const [AllMedia, setAllmedia] = React.useState([]);
@@ -37,13 +38,11 @@ const NewCustomer = ({navigation}) => {
 
   const loadData = async () => {
     setLoading(true);
-    const userAc = await getUserData();
     const customers = await getAllItems({
-      path: `/gestaoempresa/business/${userAc.data.businessKey}`,
+      path: `/gestaoempresa/business/${user.data.businessKey}`,
     });
 
     setAllCustomers(customers);
-    setUser(userAc);
     setLoading(false);
   };
 
