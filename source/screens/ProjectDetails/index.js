@@ -687,6 +687,24 @@ const ProjectDetails = ({navigation, route}) => {
               );
             })}
           </ScrollView>
+          <TextSection value={'Dados do cliente'} />
+          <TouchableOpacity
+            style={{
+              backgroundColor: Colors.whitetheme.primary,
+              width: '100%',
+              paddingVertical: 20,
+              alignContent: 'center',
+              alignItems: 'center',
+              borderRadius: 20,
+              marginVertical: 20,
+            }}
+            onPress={() => {
+              navigation.navigate('SeeUser', {
+                customerID: project.data.customerID,
+              });
+            }}>
+            <Text style={{color: '#fff'}}>Ver dados</Text>
+          </TouchableOpacity>
           <TextSection value={'Localização'} />
           <TouchableOpacity
             onPress={() => {
@@ -862,7 +880,6 @@ const styles = new StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     backgroundColor: '#fff',
-    top: -40,
   },
   white: {
     backgroundColor: '#fff',
@@ -873,7 +890,7 @@ const styles = new StyleSheet.create({
   projectCard: {
     padding: 30,
     borderRadius: 20,
-    height: 200,
+    height: 250,
   },
   projectTitle: {
     color: '#fff',

@@ -43,6 +43,7 @@ import Business from './screens/Business';
 import NewCustomer from './screens/NewCustomer';
 import {UserProvider} from './hooks/UserContext';
 import {BusinessProvider} from './hooks/BusinessContext';
+import SeeUser from './screens/SeeUser';
 
 const AppScreens = ({logged, initiated}) => {
   return (
@@ -356,6 +357,25 @@ const AppScreens = ({logged, initiated}) => {
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
           headerTitle: 'Registrar cliente',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {color: 'white'},
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}>
+              <Icon name="arrow-left-circle" size={30} color="#fff" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="SeeUser"
+        component={SeeUser}
+        options={({navigation}) => ({
+          headerStyle: {backgroundColor: Colors.whitetheme.primary},
+          headerTransparent: false,
+          headerTitle: 'Dados do Cliente',
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (
