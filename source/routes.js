@@ -44,6 +44,7 @@ import NewCustomer from './screens/NewCustomer';
 import {UserProvider} from './hooks/UserContext';
 import {BusinessProvider} from './hooks/BusinessContext';
 import SeeUser from './screens/SeeUser';
+import NewProject from './screens/NewProject';
 
 const AppScreens = ({logged, initiated}) => {
   return (
@@ -376,6 +377,25 @@ const AppScreens = ({logged, initiated}) => {
           headerStyle: {backgroundColor: Colors.whitetheme.primary},
           headerTransparent: false,
           headerTitle: 'Dados do Cliente',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {color: 'white'},
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}>
+              <Icon name="arrow-left-circle" size={30} color="#fff" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="NewProject"
+        component={NewProject}
+        options={({navigation}) => ({
+          headerStyle: {backgroundColor: Colors.whitetheme.primary},
+          headerTransparent: false,
+          headerTitle: 'Novo Projeto',
           headerTitleAlign: 'center',
           headerTitleStyle: {color: 'white'},
           headerLeft: () => (

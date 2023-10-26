@@ -1,5 +1,6 @@
 import database from '@react-native-firebase/database';
 import {getUserAuth} from './Auth';
+import {fetchGrowatt} from '../api/service';
 
 export const createItem = ({path, params}) => {
   if (!path || !params) {
@@ -98,9 +99,8 @@ export const getBusinessData = async () => {
 
 export const getGrowattData = async () => {
   const userLocal = await getUserAuth();
-  const growatt = await getItems({
-    path: `gestaoempresa/business/${userLocal.businessKey}/growatt`,
-  });
+  const growatt = await fetchGrowatt({businessKey: userLocal.businessKey});
+
   return growatt;
 };
 

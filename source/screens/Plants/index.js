@@ -1,106 +1,65 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ImageBackground,
-  ScrollView,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {statusCheck} from '../../utils/dictionary';
-import Colors from '../../global/colorScheme';
+import {View, Text, FlatList} from 'react-native';
 import {LoadingActivity} from '../../global/Components';
-import {getGrowattData, getProjectsData} from '../../services/Database';
+import {getGrowattData} from '../../services/Database';
 import SearchBar from 'react-native-dynamic-search-bar';
 import {NoTeam} from '../../components/Global';
 import {useUser} from '../../hooks/UserContext';
-import {
-  loadDataFromStorage,
-  saveDataToStorage,
-} from '../../services/AsyncStorage';
+import {fetchProjects} from '../../api/service';
+import {useBusiness} from '../../hooks/BusinessContext';
+import {styles} from './styles';
+import ProjectItem from './components/ProjectItem';
 
-const Plants = ({route, navigation}) => {
+const Plants = ({navigation}) => {
   const {user, setUser} = useUser();
+  const {business, setBusiness} = useBusiness();
   const [projects, setProjects] = React.useState([]);
+  const [queryData, setQueryData] = React.useState([]);
   const [growatt, setGrowatt] = React.useState();
-  const [queryData, setQueryData] = React.useState('');
+  const [page, setPage] = React.useState(1);
+  const [limit] = React.useState(10);
 
   const [loading, setLoading] = React.useState(true);
-
+  const [onSearching, setOnSearching] = React.useState(true);
   const [spinner, setSpinner] = React.useState(false);
 
-  const fetchAndUpdateData = async () => {
-    try {
-      const projectsData = await getProjectsData();
-      const growattData = await getGrowattData();
+  const fetchNewProjects = async () => {
+    if (!spinner && !onSearching) {
+      const newPage = page + 1;
 
-      await saveDataToStorage('projectsData', projectsData);
-      await saveDataToStorage('growattData', growattData);
+      setPage(newPage);
 
-      setGrowatt(growattData);
-      setQueryData(projectsData);
-      setProjects(projectsData);
-    } catch (error) {
-      console.log(error);
+      try {
+        const newProjects = await fetchProjects({
+          businessKey: business.key,
+          page: newPage,
+          limit,
+        });
+
+        setProjects([...projects, ...newProjects]);
+        setQueryData([...projects, ...newProjects]);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
   const loadData = async () => {
     setLoading(true);
 
-    try {
-      const storedProjectsData = await loadDataFromStorage('projectsData');
-      const storedGrowattData = await loadDataFromStorage('growattData');
+    const allProjectsData = await fetchProjects({
+      businessKey: business.key,
+      page,
+      limit,
+    });
 
-      if (storedGrowattData && storedProjectsData) {
-        setGrowatt(storedGrowattData);
-        setProjects(storedProjectsData);
-        setQueryData(storedProjectsData);
-        setLoading(false);
-        fetchAndUpdateData();
-      } else {
-        fetchAndUpdateData();
+    const growattData = await getGrowattData();
 
-        setLoading(false);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    setGrowatt(growattData);
+    setProjects(allProjectsData);
+    setQueryData(allProjectsData);
 
-  const getGrowattProject = plantName => {
-    if (growatt) {
-      const finded = growatt.plantList.data.data.plants.find(
-        g => g.name === plantName,
-      );
-      return finded;
-    } else {
-      return [];
-    }
-  };
-
-  const statusDict = {
-    0: {
-      title: 'Desconectado',
-      color: '#a19f9f',
-    },
-    1: {
-      title: 'Normal',
-      color: '#13fc03',
-    },
-    2: {
-      title: 'Aguardando',
-      color: '#13fc03',
-    },
-    3: {
-      title: 'Falha',
-      color: '#fa3916',
-    },
-    4: {
-      title: 'Offline',
-      color: '#a19f9f',
-    },
+    setLoading(false);
   };
 
   React.useEffect(() => {
@@ -111,209 +70,71 @@ const Plants = ({route, navigation}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigation]);
 
-  const searchFunction = text => {
+  const searchFunction = async text => {
     setSpinner(true);
-    const updatedData = projects.filter(item => {
-      const item_data = `${item.data.apelidoProjeto.toUpperCase()})`;
-      const text_data = text.toUpperCase();
-      return item_data.indexOf(text_data) > -1;
+    setOnSearching(true);
+    const allProjects = await fetchProjects({
+      businessKey: business.key,
     });
-    setQueryData(updatedData);
+
+    if (text === '') {
+      setOnSearching(false);
+      setQueryData(allProjects);
+    } else {
+      const updatedData = allProjects.filter(item => {
+        const item_data = `${item.data.apelidoProjeto.toUpperCase()}`;
+        const text_data = text.toUpperCase();
+        return item_data.indexOf(text_data) > -1;
+      });
+      setQueryData(updatedData);
+    }
+
     setSpinner(false);
   };
 
-  if (loading) {
+  if (loading || !user) {
     return <LoadingActivity />;
-  } else if (user.data.team.id === '') {
+  } else if (!user || user.data.team.id === '') {
     return <NoTeam />;
   } else {
     return (
       <View style={styles.container}>
         <SearchBar
-          style={{marginVertical: 20}}
+          style={styles.searchBar}
           placeholder="Pesquise a planta"
           onChangeText={text => searchFunction(text)}
           spinnerVisibility={spinner}
         />
-        <ScrollView>
-          {projects.length === 0 ? (
+        <View>
+          {projects.length === 0 || queryData.length === 0 ? (
             <View style={styles.emptyCard}>
-              <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>
-                Nenhum projeto registrado
+              <Text style={styles.nullProjectsWarn}>
+                {projects.length === 0
+                  ? 'Nenhum Projeto Registrado'
+                  : queryData.length === 0
+                  ? 'Nenhum Projeto Encontrado'
+                  : ''}
               </Text>
             </View>
           ) : (
-            queryData.reverse().map((item, index) => {
-              return (
-                <TouchableOpacity
-                  style={styles.marginCard}
+            <FlatList
+              data={queryData.reverse()}
+              onEndReachedThreshold={0.5}
+              onEndReached={fetchNewProjects}
+              renderItem={({item, index}) => (
+                <ProjectItem
                   key={index}
-                  onPress={() =>
-                    navigation.navigate('ProjectDetails', {project: item})
-                  }>
-                  <ImageBackground
-                    imageStyle={styles.imageCard}
-                    source={require('../../../assets/home/bannerbackground.jpg')}>
-                    <View style={styles.projectCard}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          flexWrap: 'wrap',
-                          justifyContent: 'space-between',
-                          marginBottom: 10,
-                        }}>
-                        <Text
-                          style={{
-                            fontSize: 20,
-                            color: '#fff',
-                            fontWeight: 'bold',
-                          }}>
-                          {item.data.apelidoProjeto}
-                        </Text>
-                        <Text
-                          style={{
-                            fontSize: 20,
-                            color: '#fff',
-                            fontWeight: 'bold',
-                          }}>
-                          <Icon name="flash" size={20} color="#fff" />
-                          {item.data.kwp}
-                          kWp
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          flexWrap: 'wrap',
-                          justifyContent: 'space-between',
-                          alignContent: 'center',
-                          alignItems: 'center',
-                        }}>
-                        <View
-                          style={{
-                            backgroundColor: '#fff',
-                            paddingHorizontal: 10,
-                            marginRight: 20,
-                            paddingVertical: 5,
-                            borderRadius: 100,
-                          }}>
-                          <Text
-                            style={{
-                              color: Colors.whitetheme.primary,
-                              fontWeight: 'bold',
-                              fontSize: 10,
-                            }}>
-                            {item.data.category.toUpperCase()}
-                          </Text>
-                        </View>
-                        {item.data.username_growatt &&
-                        item.data.overview &&
-                        growatt &&
-                        getGrowattProject(item.data.username_growatt) ? (
-                          <>
-                            <Text
-                              style={{
-                                color: `${
-                                  statusDict[
-                                    getGrowattProject(
-                                      item.data.username_growatt,
-                                    ).status
-                                  ].color
-                                }`,
-                                fontWeight: 'bold',
-                              }}>
-                              {
-                                statusDict[
-                                  getGrowattProject(item.data.username_growatt)
-                                    .status
-                                ].title
-                              }
-                            </Text>
-                            <View>
-                              <Text
-                                style={{
-                                  fontSize: 15,
-                                  color: '#fff',
-                                  fontWeight: 'bold',
-                                }}>
-                                Geração hoje
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 20,
-                                  color: '#fff',
-                                  fontWeight: 'bold',
-                                }}>
-                                <Icon
-                                  name="battery-charging"
-                                  size={20}
-                                  color="#fff"
-                                />
-                                {item.data.overview.data.data.today_energy}
-                                kW
-                              </Text>
-                            </View>
-                          </>
-                        ) : (
-                          ''
-                        )}
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          flexWrap: 'wrap',
-                          justifyContent: 'center',
-                          marginTop: 20,
-                        }}>
-                        <Text style={{color: '#fff', fontWeight: '900'}}>
-                          {statusCheck({value: item.data.Status})}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          flexWrap: 'wrap',
-                          justifyContent: 'center',
-                        }}>
-                        <Text style={{color: '#fff'}}>
-                          {item.data.RStatus === '' ||
-                          item.data.RStatus === undefined
-                            ? 'Sem observação de Status'
-                            : item.data.RStatus}
-                        </Text>
-                      </View>
-                    </View>
-                  </ImageBackground>
-                </TouchableOpacity>
-              );
-            })
+                  item={item}
+                  growatt={growatt}
+                  navigation={navigation}
+                />
+              )}
+            />
           )}
-        </ScrollView>
+        </View>
       </View>
     );
   }
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.whitetheme.backgroundColor,
-    marginHorizontal: 20,
-    paddingBottom: 150,
-  },
-  emptyCard: {
-    padding: 30,
-    borderRadius: 20,
-    height: 200,
-    backgroundColor: Colors.whitetheme.primaryDark,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  projectCard: {
-    padding: 30,
-    borderRadius: 20,
-  },
-  marginCard: {marginVertical: 10},
-  imageCard: {borderRadius: 20},
-});
 
 export default Plants;

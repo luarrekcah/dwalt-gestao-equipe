@@ -25,7 +25,7 @@ import axios from 'axios';
 import moment from 'moment/moment';
 import {useUser} from '../../hooks/UserContext';
 
-const NewCustomer = ({navigation}) => {
+const NewProject = ({navigation}) => {
   const {user, setUser} = useUser();
   const [loading, setLoading] = React.useState(true);
   const [loadingMedia, setLoadingMedia] = React.useState(false);
@@ -393,4 +393,4 @@ const styles = new StyleSheet.create({
   },
 });
 
-export default NewCustomer;
+export default NewProject;
