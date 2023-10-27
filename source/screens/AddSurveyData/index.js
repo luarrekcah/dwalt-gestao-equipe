@@ -15,6 +15,7 @@ import Colors from '../../global/colorScheme';
 import {
   createItem,
   getAllItems,
+  getItems,
   getUserData,
   updateItem,
 } from '../../services/Database';
@@ -36,11 +37,15 @@ const AddSurveyData = ({navigation, route}) => {
     }
     const userAc = await getUserData();
     setUser(userAc);
+    const OS = await getItems({
+      path: `gestaoempresa/business/${userAc.data.businessKey}/surveys/${key}`,
+    });
     setAllmedia(
       await getAllItems({
         path: `gestaoempresa/business/${userAc.data.businessKey}/surveys/${key}/photos`,
       }),
     );
+    setObs(OS.obs || '');
     setLoadingMedia(false);
     setLoading(false);
   };
@@ -91,7 +96,7 @@ const AddSurveyData = ({navigation, route}) => {
           <TouchableOpacity
             style={styles.button}
             onPress={() => concludeSurvey()}>
-            <Text style={{color: '#fff'}}>Concluir chamado</Text>
+            <Text style={{color: '#fff'}}>Solicitar Conclusão do Chamado</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -105,7 +110,9 @@ const AddSurveyData = ({navigation, route}) => {
                 ToastAndroid.LONG,
               )
             }>
-            <Text style={{color: '#fff'}}>Concluir chamado (Bloqueado)</Text>
+            <Text style={{color: '#fff'}}>
+              Solicitar Conclusão do Chamado (Bloqueado)
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -117,13 +124,17 @@ const AddSurveyData = ({navigation, route}) => {
       path: `/gestaoempresa/business/${user.data.businessKey}/surveys/${key}`,
       params: {
         accepted: true,
-        finished: true,
-        status: 'Chamado concluído',
+        finished: false,
+        waitingApproval: true,
+        status: 'Chamado aguardando aprovação para ser finalizado',
         obs,
         staffEnded: user.key,
       },
     });
-    ToastAndroid.show('Chamado concluído', ToastAndroid.LONG);
+    ToastAndroid.show(
+      'Chamado aguardando aprovação para ser finalizado',
+      ToastAndroid.LONG,
+    );
     navigation.goBack();
   };
 

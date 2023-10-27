@@ -67,7 +67,8 @@ const Calls = ({navigation}) => {
 
   const acceptSurvey = async (id, projectId) => {
     const haveCurrent = survey.filter(
-      item => item.data.accepted && !item.data.finished,
+      item =>
+        item.data.accepted && !item.data.finished && !item.data.waitingApproval,
     );
     if (haveCurrent.length !== 0) {
       return ToastAndroid.show(
@@ -88,9 +89,11 @@ const Calls = ({navigation}) => {
         params: {
           accepted: true,
           finished: false,
+          waitingApproval: false,
           status: 'Chamado foi atendido pela empresa',
         },
       });
+
       createNotification(
         'Chamado atendido!',
         'Seu chamado acabou de ser atendido pela empresa',
@@ -109,9 +112,13 @@ const Calls = ({navigation}) => {
     return (
       <View style={styles.container}>
         <ScrollView>
-          <TextSection value={'Chamado ativo'} />
+          <TextSection value={'OS ativa'} />
           {survey.map(item => {
-            if (item.data.accepted && !item.data.finished) {
+            if (
+              item.data.accepted &&
+              !item.data.finished &&
+              !item.data.waitingApproval
+            ) {
               return (
                 <View style={styles.card} key={item.key}>
                   <View style={styles.row}>
@@ -130,6 +137,7 @@ const Calls = ({navigation}) => {
                         padding: 20,
                         backgroundColor: '#fff',
                         borderRadius: 20,
+                        marginTop: 10,
                       }}>
                       <Text
                         style={{
@@ -200,13 +208,17 @@ const Calls = ({navigation}) => {
                       }}>
                       <Text style={{color: Colors.whitetheme.primary}}>
                         <Icon
-                          name={'plus'}
+                          name={
+                            item.data.waitingApproval ? 'database-edit' : 'plus'
+                          }
                           size={20}
                           color={Colors.whitetheme.primary}
                         />
                       </Text>
                       <Text style={{color: Colors.whitetheme.primary}}>
-                        EXECUTAR OS
+                        {item.data.waitingApproval
+                          ? 'Corrigir OS'
+                          : 'EXECUTAR OS'}
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -256,14 +268,182 @@ const Calls = ({navigation}) => {
           {survey.filter(i => i.data.accepted && !i.data.finished).length ===
           0 ? (
             <View style={{alignContent: 'center', alignItems: 'center'}}>
-              <Text style={{color: '#000000'}}>Não há chamados ativos.</Text>
+              <Text style={{color: '#000000'}}>Não há OS ativa.</Text>
             </View>
           ) : (
             ''
           )}
           <TextSection
             value={
-              'Chamados pendentes (' +
+              'OS Aguardando Encerramento (' +
+              survey.filter(i => !i.data.finished && i.data.waitingApproval)
+                .length +
+              ')'
+            }
+          />
+          {survey.map(item => {
+            if (
+              item.data.accepted &&
+              !item.data.finished &&
+              item.data.waitingApproval
+            ) {
+              return (
+                <View style={styles.card} key={item.key}>
+                  <View style={styles.row}>
+                    <Text style={{color: '#fff', fontWeight: 'bold'}}>
+                      {item.data.title}
+                    </Text>
+                    <View style={styles.status}>
+                      <Text style={{color: Colors.whitetheme.primary}}>
+                        {item.data.status}
+                      </Text>
+                    </View>
+                  </View>
+                  {item.data.customer ? (
+                    <View
+                      style={{
+                        padding: 20,
+                        backgroundColor: '#fff',
+                        borderRadius: 20,
+                        marginTop: 10,
+                      }}>
+                      <Text
+                        style={{
+                          color: '#000',
+                          fontSize: 15,
+                          marginBottom: 10,
+                          fontWeight: 'bold',
+                        }}>
+                        DADOS DO CLIENTE
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Nome: {item.data.customer.name}
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Documento: {item.data.customer.document}
+                      </Text>
+                      <Text style={{color: '#000'}}>
+                        Projeto: {item.data.project.name}
+                      </Text>
+                    </View>
+                  ) : (
+                    ''
+                  )}
+                  <Text style={{marginVertical: 20}}>{item.data.text}</Text>
+                  <View style={[styles.row, {marginVertical: 20}]}>
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={async () => {
+                        if (item.data.accepted) {
+                          ToastAndroid.show(
+                            'Abrindo o Google Maps, aguarde 5 segundos.',
+                            ToastAndroid.SHORT,
+                          );
+                          const project = await getItems({
+                            path: `/gestaoempresa/business/${
+                              user.data.businessKey
+                            }/projects/${
+                              item.data.projectId || item.data.project.id
+                            }`,
+                          });
+                          Linking.openURL(
+                            'https://www.google.com.br/maps/search/' +
+                              project.coords,
+                          );
+                        } else {
+                          acceptSurvey(
+                            item.key,
+                            item.data.projectId || item.data.project.id,
+                          );
+                        }
+                      }}>
+                      <Text style={{color: Colors.whitetheme.primary}}>
+                        <Icon
+                          name={item.data.accepted ? 'google-maps' : 'plus'}
+                          size={20}
+                          color={Colors.whitetheme.primary}
+                        />
+                      </Text>
+                      <Text style={{color: Colors.whitetheme.primary}}>
+                        {item.data.accepted ? 'ROTAS' : 'ACEITAR'}
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={async () => {
+                        navigation.navigate('AddSurveyData', {key: item.key});
+                      }}>
+                      <Text style={{color: Colors.whitetheme.primary}}>
+                        <Icon
+                          name={
+                            item.data.waitingApproval ? 'database-edit' : 'plus'
+                          }
+                          size={20}
+                          color={Colors.whitetheme.primary}
+                        />
+                      </Text>
+                      <Text style={{color: Colors.whitetheme.primary}}>
+                        {item.data.waitingApproval
+                          ? 'Corrigir OS'
+                          : 'EXECUTAR OS'}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={async () => {
+                        ToastAndroid.show(
+                          'Abrindo informações do projeto, aguarde.',
+                          ToastAndroid.SHORT,
+                        );
+                        const project = await getItems({
+                          path: `/gestaoempresa/business/${
+                            user.data.businessKey
+                          }/projects/${
+                            item.data.projectId || item.data.project.id
+                          }`,
+                        });
+                        navigation.navigate('ProjectDetails', {
+                          project: {
+                            key: item.data.projectId || item.data.project.id,
+                            data: project,
+                          },
+                        });
+                      }}>
+                      <Text style={{color: Colors.whitetheme.primary}}>
+                        <Icon
+                          name={'information'}
+                          size={20}
+                          color={Colors.whitetheme.primary}
+                        />
+                      </Text>
+                      <Text style={{color: Colors.whitetheme.primary}}>
+                        INFOS
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <Text
+                    style={{
+                      color: '#fff',
+                    }}>
+                    <Icon name={'clock'} size={20} color={'#fff'} />{' '}
+                    {moment(item.data.createdAt).fromNow()}
+                  </Text>
+                </View>
+              );
+            }
+          })}
+          {survey.filter(i => i.data.waitingApproval && !i.data.finished)
+            .length === 0 ? (
+            <View style={{alignContent: 'center', alignItems: 'center'}}>
+              <Text style={{color: '#000000'}}>Não há OS em fila.</Text>
+            </View>
+          ) : (
+            ''
+          )}
+          <TextSection
+            value={
+              'OS pendentes (' +
               survey.filter(i => !i.data.finished && !i.data.accepted).length +
               ')'
             }
@@ -409,8 +589,8 @@ const Calls = ({navigation}) => {
           )}
           <TextSection
             value={
-              'Chamados antigos (' +
-              survey.filter(i => i.data.finished).length +
+              'OSs antigas (' +
+              survey.reverse().filter(i => i.data.finished).length +
               ')'
             }
           />
@@ -448,6 +628,7 @@ const Calls = ({navigation}) => {
                           fontSize: 15,
                           marginBottom: 10,
                           fontWeight: 'bold',
+                          marginTop: 10,
                         }}>
                         DADOS DO CLIENTE
                       </Text>

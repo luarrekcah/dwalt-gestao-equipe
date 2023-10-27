@@ -22,3 +22,14 @@ export const fetchGrowatt = async ({businessKey}) => {
     throw error;
   }
 };
+
+export const fetchGeneralLenghts = async ({businessKey}) => {
+  try {
+    const response = await api.get(`/general/${businessKey}/length`);
+    console.log(businessKey);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar dados:', error);
+    throw error;
+  }
+};
