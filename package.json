@@ -1,6 +1,6 @@
 {
   "name": "Equipe",
-  "version": "1.2.3",
+  "version": "1.2.6",
   "private": true,
   "scripts": {
     "android": "npx react-native run-android",
@@ -48,6 +48,7 @@
     "react-native-spinkit": "^1.5.1",
     "react-native-svg": "^13.4.0",
     "react-native-vector-icons": "^9.2.0",
+    "react-native-vision-camera": "^2.14.1",
     "styled-components": "^5.3.6"
   },
   "devDependencies": {

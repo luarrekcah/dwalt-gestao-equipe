@@ -22,6 +22,7 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import {LoadingActivity} from '../../components/Global';
+import CameraComponent from './components/Camera';
 
 const AddSurveyData = ({navigation, route}) => {
   const {key} = route.params;
@@ -30,6 +31,7 @@ const AddSurveyData = ({navigation, route}) => {
   const [loadingMedia, setLoadingMedia] = React.useState(true);
   const [obs, setObs] = React.useState('');
   const [loading, setLoading] = React.useState(true);
+  const [cameraVisible, setCameraVisible] = React.useState(false);
   const loadData = async () => {
     setLoading(true);
     if (!key) {
@@ -83,7 +85,13 @@ const AddSurveyData = ({navigation, route}) => {
   const Options = () => {
     return (
       <View>
-        <TouchableOpacity style={styles.button} onPress={() => pickImages()}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            pickImages();
+
+            //setCameraVisible(true);
+          }}>
           {loadingMedia ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
@@ -141,33 +149,37 @@ const AddSurveyData = ({navigation, route}) => {
   if (loading && user === undefined) {
     return <LoadingActivity />;
   } else {
-    return (
-      <View style={styles.container}>
-        <View>
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: 'bold',
-              alignSelf: 'center',
-              color: Colors.whitetheme.primary,
-              marginVertical: 40,
-            }}>
-            Passos para concluir OS
-          </Text>
-          <TextInput
-            style={styles.textInput}
-            placeholderTextColor={Colors.whitetheme.primary}
-            value={obs}
-            multiline={true}
-            placeholder={'Observações sobre o chamado'}
-            onChangeText={text => {
-              setObs(text);
-            }}
-          />
-          <Options />
+    if (cameraVisible) {
+      return <CameraComponent />;
+    } else {
+      return (
+        <View style={styles.container}>
+          <View>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                alignSelf: 'center',
+                color: Colors.whitetheme.primary,
+                marginVertical: 40,
+              }}>
+              Passos para concluir OS
+            </Text>
+            <TextInput
+              style={styles.textInput}
+              placeholderTextColor={Colors.whitetheme.primary}
+              value={obs}
+              multiline={true}
+              placeholder={'Observações sobre o chamado'}
+              onChangeText={text => {
+                setObs(text);
+              }}
+            />
+            <Options />
+          </View>
         </View>
-      </View>
-    );
+      );
+    }
   }
 };
 
