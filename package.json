@@ -1,6 +1,6 @@
 {
   "name": "Equipe",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "private": true,
   "scripts": {
     "android": "npx react-native run-android",
