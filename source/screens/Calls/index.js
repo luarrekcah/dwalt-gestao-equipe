@@ -70,9 +70,9 @@ const Calls = ({navigation}) => {
       item =>
         item.data.accepted && !item.data.finished && !item.data.waitingApproval,
     );
-    if (haveCurrent.length !== 0) {
+    if (haveCurrent.length >= 3) {
       return ToastAndroid.show(
-        'Finalize primeiro o chamado ativo para aceitar outro.',
+        'Limite de 3 chamados ativos por vez atingido.',
         ToastAndroid.SHORT,
       );
     } else {
